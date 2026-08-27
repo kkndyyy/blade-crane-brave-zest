@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Applies update.zip over this folder when its version is newer.
- * Pure Node unzip (no npm deps) so it can run before npm install.
+ * Understands GitHub archive zips (repo-main/...).
  */
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { inflateRawSync } from "node:zlib";
@@ -26,7 +26,6 @@ function localVersion() {
   return readVersion(readFileSync(localVersionPath, "utf8"));
 }
 
-/** @returns {Record<string, Uint8Array>} */
 function unzipEntries(buf) {
   const u8 = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
   const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
@@ -60,14 +59,29 @@ function unzipEntries(buf) {
   return out;
 }
 
+function stripArchiveRoot(files) {
+  const keys = Object.keys(files);
+  if (!keys.length) return files;
+  const first = keys[0].split("/")[0];
+  const allPrefixed = keys.every((k) => k === first || k.startsWith(first + "/"));
+  const looksLikeGithub = allPrefixed && /^.+-main$/.test(first);
+  if (!looksLikeGithub) return files;
+  const next = {};
+  for (const [k, v] of Object.entries(files)) {
+    const rest = k.slice(first.length + 1);
+    if (rest) next[rest] = v;
+  }
+  return next;
+}
+
 if (!existsSync(zipPath)) process.exit(0);
 
 let files;
 try {
-  files = unzipEntries(readFileSync(zipPath));
+  files = stripArchiveRoot(unzipEntries(readFileSync(zipPath)));
 } catch (err) {
   console.error("[update] cannot read update.zip:", err?.message || err);
-  process.exit(0);
+  process.exit(1);
 }
 
 const remoteText = files["public/version.json"] || files["version.json"];
@@ -79,8 +93,17 @@ if (remote === local && existsSync(join(root, "src", "lib", "store.ts"))) {
 }
 
 console.log(`[update] ${local} -> ${remote || "update.zip"}`);
-const skipPart = new Set(["node_modules", "dist", ".git", "update.zip", "hellforge-editor.zip"]);
-const skipFile = new Set(["update.bat", "run.bat", "update-mirrors.txt", "hellforge-update.zip"]);
+const skipPart = new Set([
+  "node_modules",
+  "dist",
+  ".git",
+  "screenshots",
+  "artifacts",
+  "update.zip",
+  "hellforge-editor.zip",
+  "hellforge-update.zip",
+]);
+const skipFile = new Set(["update.bat", "run.bat", "update-mirrors.txt"]);
 for (const [name, data] of Object.entries(files)) {
   const parts = name.split("/").filter(Boolean);
   if (parts.some((x) => skipPart.has(x))) continue;

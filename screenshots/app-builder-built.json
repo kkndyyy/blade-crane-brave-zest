@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "헬포지",
+      "hasCanvas": false,
+      "bodyTextLen": 384,
+      "bodyTextHash": "f3915b4917d732ce5b1b51d817db673fae2c712c461439ed9311d2f43f8c62a8",
+      "bodyTextPrefix": "헬포지 엽굵 · D2R 모드 작업대 파일 없음 MPQ 열기 샘플 다른 이름 저장 드랍률 유니크 세트 룬 피규어 캐릭",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "헬포지",
+      "hasCanvas": false,
+      "bodyTextLen": 326,
+      "bodyTextHash": "752d87e36d6b1c889e7c7745d3a6bedad57030a1014346d4184cb78583388b3e",
+      "bodyTextPrefix": "헬포지 엽굵 · D2R 모드 작업대 샘플 드랍률 유니크 세트 룬 피규어 캐릭터 스킬 몬스터 스킬 SANCTUARY ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

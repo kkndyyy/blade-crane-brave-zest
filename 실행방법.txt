@@ -1,0 +1,15 @@
+Hellforge (Yupgoolg D2R editor) - run on your PC
+================================================
+
+1) Install Node.js LTS from https://nodejs.org  (check Add to PATH)
+
+2) Unzip hellforge-editor.zip to a folder.
+
+3) Double-click run.bat  (English filename - do not use 실행.bat if it errors)
+
+4) Browser opens http://127.0.0.1:8080
+   Use Sample, MPQ Open, or drag-drop an .mpq file.
+
+Keep the black window open. Do not Run as Administrator.
+
+Update later: copy the new run.bat AND update.zip into the same folder, then run.bat again.

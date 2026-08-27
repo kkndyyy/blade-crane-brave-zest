@@ -1,0 +1,4 @@
+- Target system: LG U+ Medialog bizmbo (Spring Boot 2.7.14 + Websquare 5 + JSP WAR, artifact bizmbo 2.1.0) [2026-08-27]
+- Attached baselines: /home/workdir/attachments/bizm_bo-ASIS.zip and bizm_bo-TOBE.zip [2026-08-27]
+- TO-BE theme: AES256 (CryptUtil) → LGU+ KMS (KmsEncryptUtil) for CI and payment numbers [2026-08-27]
+- Saved design spec: /home/workdir/artifacts/bizmbo_ASIS_TOBE_분석툴_설계서.docx [2026-08-27]

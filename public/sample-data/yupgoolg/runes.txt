@@ -1,0 +1,810 @@
+Name	*Rune Name	complete	disallowCraftingInLadder	disallowCraftingInNonLadder	firstLadderSeason	lastLadderSeason	*Patch Release	itype1	itype2	itype3	itype4	itype5	itype6	etype1	etype2	etype3	*RunesUsed	Rune1	Rune2	Rune3	Rune4	Rune5	Rune6	T1Code1	T1Param1	T1Min1	T1Max1	T1Code2	T1Param2	T1Min2	T1Max2	T1Code3	T1Param3	T1Min3	T1Max3	T1Code4	T1Param4	T1Min4	T1Max4	T1Code5	T1Param5	T1Min5	T1Max5	T1Code6	T1Param6	T1Min6	T1Max6	T1Code7	T1Param7	T1Min7	T1Max7	*eol
+Runeword1	Ancients' Pledge	1					109	shld	boot	lcha	gcha						RalOrtTal	r08	r09	r07				res-cold		30	30	res-all		13	13	ac%		50	50	dmg-to-mana		10	10													0
+Runeword2	Armageddon																																																			0
+Runeword3	Authority	1						tors	lcha								HelShaelRal	r15	r13	r08				gethit-skill	Psychic Ward	2	10	hit-skill	Miasma Chains	10	15	war		2	2	dmg%		40	60													0
+Runeword4	Beast	1					110	axe	scep	hamm							BerTirUmMalLum	r30	r03	r22	r23	r17		swing2		40	40	aura	Fanaticism	9	9	dmg%		240	270	str		25	40	charged	Summon Grizzly	5	13	oskill	Wearbear	3	3	oskill	Shape Shifting	3	3	0
+Runeword5	Beauty																																																			0
+Runeword6	Black	1					109	club	hamm	mace	thro	ajav					ThulIoNef	r10	r16	r04				crush		40	40	dmg%		120	120	swing2		15	15	red-mag		2	2	att		200	200	charged	74	12	4					0
+Runeword7	Blood																																																			0
+Runeword8	Bone	1					111	tors	lcha								SolUmUm	r12	r22	r22				hit-skill	tBone Spear	15	10	gethit-skill	Bone Armor	15	10	nec		2	2	mana		100	150													0
+Runeword9	Bramble	1					110	tors									RalOhmSurEth	r08	r27	r29	r05			balance2		50	50	ac		300	300	aura	Thorns	15	21	heal-kill		13	13	extra-pois		25	50	res-pois		100	100	charged	Spirit of Barbs	33	13	0
+Runeword10	Brand	1					Previously Ladder Only	miss	glov	thro	gcha						JahLoMalGul	r31	r28	r23	r25			dmg%		260	340	dmg-demon		280	330	hit-skill	tBone Spear	100	18	gethit-skill	Amplify Damage	35	14	knock		1	1	noheal		1	1	explosivearrow		15	15	0
+Runeword11	Breath of the Dying	1					110	weap	thro	dols							VexHelElEldZodEth	r26	r15	r01	r02	r33	r05	swing2		60	60	dmg-undead		125	125	lifesteal		12	15	noheal		1	1	dmg%		350	400	all-stats		30	30					0
+Runeword12	Broken Promise																																																			0
+Runeword13	Call to Arms	1					110	weap	thro								AmnRalMalIstOhm	r11	r08	r23	r24	r27		swing2		40	40	dmg%		200	240	allskills		1	1	oskill	Battle Command	2	6	oskill	Battle Orders	1	6	oskill	Battle Cry	1	4	regen		12	12	0
+Runeword14	Chains of Honor	1					110	tors	gcha								DolUmBerIst	r14	r22	r30	r24			res-all		50	50	ac%		70	70	dmg-demon		200	200	dmg-undead		100	100	lifesteal		8	8	allskills		2	2	str		20	20	0
+Runeword15	Chance																																																			0
+Runeword16	Chaos	1					110	h2h									FalOhmUm	r19	r27	r22				demon-heal		15	15	dmg%		240	290	dmg-mag		216	471	oskill	Whirlwind	1	1	swing2		35	35	hit-skill	tFrozen Orb	9	11	hit-skill	Charged Bolt	11	9	0
+Runeword17	Crescent Moon	1					110	axe	swor	sppl	thro	ajav	glov				ShaelUmTir	r13	r22	r03				pierce-ltng		35	35	ignore-ac		1	1	dmg%		180	220	abs-mag		9	11	charged	Summon Spirit Wolf	30	18	hit-skill	Static Field	7	13	hit-skill	Chain Lightning	10	17	0
+Runeword18	Darkness																																																			0
+Runeword19	Daylight																																																			0
+Runeword20	Death	1					Previously Ladder Only	swor	axe								HelElVexOrtGul	r15	r01	r26	r09	r25		dmg%		300	385	deadly/lvl	4			charged	BloodGolem	15	22	att-skill	Glacial Spike	25	18	death-skill	Chain Lightning	100	44	crush		50	50	indestruct		1	1	0
+Runeword21	Deception																																																			0
+Runeword22	Delirium	1					110	helm	lcha								LemIstIo	r20	r24	r16				hit-skill	Confuse	11	18	charged	Attract	60	17	gethit-skill	Terror	14	13	ac		261	261	gethit-skill	Mind Blast	6	14	gethit-skill	Delerium Change	1	50	allskills		2	2	0
+Runeword23	Desire																																																			0
+Runeword24	Despair																																																			0
+Runeword25	Destruction	1					Previously Ladder Only	sppl	swor								VexLoBerJahKo	r26	r28	r30	r31	r18		dmg%		350	350	dmg-mag		100	180	hit-skill	Molten Boulder	5	23	death-skill	Meteor	100	45	att-skill	Nova	15	22	hit-skill	Volcano	23	12	noheal		1	1	0
+Runeword26	Doom	1					110	axe	sppl	hamm	lob						HelOhmUmLoCham	r15	r27	r22	r28	r32		dmg%		280	320	aura	Holy Freeze	12	12	swing2		45	45	noheal		1	1	pierce-cold		40	60	allskills		2	2	hit-skill	Volcano	5	18	0
+Runeword27	Dragon	1					Previously Ladder Only	tors	shld	boot	bowq	xboq	lcha				SurLoSol	r29	r28	r12				ac		360	360	ac-miss		230	230	str/lvl	3			hit-skill	Hydra	12	15	gethit-skill	Venom	20	18	aura	Holy Fire	14	14	all-stats		3	5	0
+Runeword28	Dread																																																			0
+Runeword29	Dream	1					Previously Ladder Only	helm	shld	boot	bowq	xboq					IoJahPul	r16	r31	r21				ac		150	220	gethit-skill	Confuse	10	15	mana/lvl	5			res-all		5	20	balance3		20	30	aura	Holy Shock	15	15	mag%		12	25	0
+Runeword30	Duress	1					110	tors	lcha								ShaelUmThul	r13	r22	r10				dmg-cold	50	37	133	dmg%		10	20	ac%		150	200	balance2		20	20	openwounds		33	33	crush		15	15	stamdrain		-20	-20	0
+Runeword31	Edge	1					Previously Ladder Only	miss									TirTalAmn	r03	r07	r11				dmg-demon		320	380	dmg-undead		280	280	swing2		35	35	noheal		1	1	aura	Thorns	15	15	all-stats		5	10	cheap		15	15	0
+Runeword32	Elation																																																			0
+Runeword33	Enigma	1					110	tors									JahIthBer	r31	r06	r30				ac		750	775	heal-kill		14	14	move2		45	45	str/lvl	6			allskills		2	2	mag%/lvl	8			oskill	Teleport	1	1	0
+Runeword34	Enlightenment	1					111	tors	lcha								PulRalSur	r21	r08	r12				hit-skill	Fire Ball	5	15	gethit-skill	Blaze	5	15	sor		2	2	oskill	Warmth	1	1													0
+Runeword35	Envy																																																			0
+Runeword36	Eternity	1					110	mele									AmnBerIstSolSur	r11	r30	r24	r12	r29		dmg%		260	310	indestruct		1	1	slow		33	33	charged	Revive	88	8	regen		16	16	regen-mana		16	16	nofreeze		1	1	0
+Runeword37	Exile	1					110	pala	gcha								VexOhmIstDol	r26	r27	r24	r14			block2		30	30	freeze		1	1	ac%		220	260	aura	Defiance	13	16	skilltab	10	2	2	hit-skill	Life Tap	15	5	rep-dur	25			0
+Runeword38	Faith	1					"110, Previously Ladder Only"	miss	glov	thro							OhmJahLemEld	r27	r31	r20	r02			dmg%		280	280	att%		300	300	dmg-fire		120	120	res-all		15	15	aura	Fanaticism	12	15	reanimate	1	10	10	allskills		1	2	0
+Runeword39	Famine	1						axe	hamm	glov	thro	gcha					FalOhmOrtJah	r19	r27	r09	r31			dmg%		270	320	lifesteal		12	12	swing2		30	30	noheal		1	1	dmg-mag		180	200	dmg-elem		50	200	ethereal		1	1	0
+Runeword40	Flickering Flame	1			1	2	D2R Ladder 1	helm									NefPulVex	r04	r21	r26				fireskill		3	3	aura	Resist Fire	4	8	pierce-fire		10	15	mana		50	75	half-freeze		1	1	res-pois-len		50	50					0
+Runeword41	Fortitude	1					Previously Ladder Only	weap	tors	glov	thro	gcha					ElSolDolLo	r01	r12	r14	r28			ac%		200	200	dmg%		300	300	cast3		25	25	gethit-skill	Chilling Armor	20	15	dmg-to-mana		12	12	hp/lvl		8	12	res-all		25	30	0
+Runeword42	Fortune																																																			0
+Runeword43	Amity																																																			0
+Runeword44	Fury	1					109	mele	glov	thro	ajav	lcha					JahGulEth	r31	r25	r05				dmg%		209	209	swing2		40	40	noheal		1	1	openwounds		66	66	lifesteal		6	6	deadly		33	33	skill	147	5	5	0
+Runeword45	Gloom	1					110	tors	lcha								FalUmPul	r19	r22	r21				ac%		170	230	res-all		30	30	gethit-skill	Dim Vision	15	3	balance2		10	10	dmg-to-mana		5	5	light		-3	-3	half-freeze		1	1	0
+Runeword46	Glory																																																			0
+Runeword47	Grief	1					Previously Ladder Only	weap									EthTirLoMalRal	r05	r03	r28	r23	r08		dmg-dem/lvl	15			dmg		340	400	swing3		30	40	hit-skill	Venom	3	15	pierce-pois		20	25	ignore-ac		1	1	heal-kill		10	15	0
+Runeword48	Hand of Justice	1					110	weap	glov								SurChamAmnLo	r29	r32	r11	r28			swing2		33	33	dmg%		280	330	aura	Holy Fire	16	16	levelup-skill	Blaze	100	36	death-skill	Meteor	100	48	ignore-ac		1	1	pierce-fire		20	20	0
+Runeword49	Harmony	1					Previously Ladder Only	miss	glov	gcha							TirIthSolKo	r03	r06	r12	r18			dmg%		200	275	dmg-elem		55	160	charged	Revive	25	20	aura	Vigor	10	10	oskill	Valkyrie	2	6	regen-mana		20	20	light		2	2	0
+Runeword50	Hatred																																																			0
+Runeword51	Heart of the Oak	1					110	staf	mace	glov	thro						KoVexPulThul	r18	r26	r21	r10			cast2		40	40	charged	Oak Sage	25	4	mana%		15	15	allskills		3	3	regen		20	20	res-all		30	40	charged	Raven	60	14	0
+Runeword52	Heaven's Will																																																			0
+Runeword53	Holy Tears																																																			0
+Runeword54	Holy Thunder	1					109	scep	glov	thro	gcha						EthRalOrtTal	r05	r08	r09	r07			dmg%		60	60	dmg-ltng		20	60	dmg-max		10	10	res-ltng		60	60	res-ltng-max		5	5	skill	118	3	3	charged	53	60	7	0
+Runeword55	Honor	1					109	weap									AmnElIthTirSol	r11	r01	r06	r03	r12		dmg%		160	160	regen		10	10	allskills		1	1	att		200	200	deadly		25	25	str		10	10					0
+Runeword56	Revenge																																																			0
+Runeword57	Humility																																																			0
+Runeword58	Hunger																																																			0
+Runeword59	Ice	1					Previously Ladder Only	miss	glov	thro							AmnShaelJahLo	r11	r13	r31	r28			dmg%		140	210	aura	Holy Freeze	18	18	extra-cold		25	30	hit-skill	Frost Nova	2	22	levelup-skill	Blizzard	100	40	pierce-cold		20	20	gold%/lvl	25			0
+Runeword60	Infinity	1					Previously Ladder Only	sppl	lob								BerMalBerIst	r30	r23	r30	r24			dmg%		255	325	move3		35	35	vit/lvl	4			aura	Conviction	12	12	kill-skill	Chain Lightning	50	20	pierce-ltng		45	55	charged	Cyclone Armor	30	21	0
+Runeword61	Innocence																																																			0
+Runeword62	Insight	1					Previously Ladder Only	sppl	staf	miss	glov	thro	boot				RalTirTalSol	r08	r03	r07	r12			dmg%		200	260	att%		180	250	mag%		23	23	oskill	Critical Strike	1	6	cast2		35	35	aura	Meditation	12	17	all-stats		5	5	0
+Runeword63	Jealousy																																																			0
+Runeword64	Judgment																																																			0
+Runeword65	King's Grace	1					109	swor	scep	thro	ajav						AmnRalThul	r11	r08	r10				dmg%		100	100	att		150	150	dmg-demon		100	100	dmg-undead		50	50	att-demon		100	100	att-undead		100	100					0
+Runeword66	Kingslayer	1					110	swor	axe	glov	thro	gcha					MalUmGulFal	r23	r22	r25	r19			swing2		30	30	dmg%		230	270	reduce-ac		25	25	crush		33	33	openwounds		25	25	oskill	Vengeance	1	1	gold%		40	40	0
+Runeword67	Knight's Vigil																																																			0
+Runeword68	Knowledge																																																			0
+Runeword69	Last Wish	1					Previously Ladder Only	swor	hamm	axe	dols						JahMalJahSurJahBer	r31	r23	r31	r29	r31	r30	dmg%		330	375	att-skill	Charged Bolt	20	20	hit-skill	Life Tap	10	18	gethit-skill	Fade	6	11	crush		40	50	mag%/lvl	4			aura	Might	17	17	0
+Runeword70	Law																																																			0
+Runeword71	Lawbringer	1					Previously Ladder Only	weap	misl	glov							AmnLemKo	r11	r20	r18				dmg-cold		130	180	dmg-fire		150	210	aura	Sanctuary	16	18	hit-skill	Decrepify	20	15	ac-miss		200	250	rip		1	1	reduce-ac		50	50	0
+Runeword72	Leaf	1					109	staf	glov	orb	wand	lob	lwd				TirRal	r03	r08					fireskill		3	3	ac/lvl		16	16	res-cold		33	33	skill	41	3	3	skill	36	3	3	skill	37	3	3					0
+Runeword73	Lightning																																																			0
+Runeword74	Lionheart	1					109	tors	lcha								HelLumFal	r15	r17	r19				str		15	15	vit		20	20	dex		15	15	dmg%		20	20	hp		50	50	res-all		30	30					0
+Runeword75	Lore	1					109	helm	belt								OrtSol	r09	r12					enr		10	10	allskills		1	1	light		2	2	mana-kill		2	2													0
+Runeword76	Love																																																			0
+Runeword77	Loyalty																																																			0
+Runeword78	Lust																																																			0
+Runeword79	Madness																																																			0
+Runeword81	Malice	1					109	mele	glov	thro	ajav	misl					IthElEth	r06	r01	r05				openwounds		100	100	dmg-ac		-100	-100	noheal		1	1	dmg%		33	33	light		-1	-1	regen		-5	-5					0
+Runeword82	Melody	1					109	miss	glov	thro	ajav						ShaelKoNef	r13	r18	r04				dmg%		50	50	skilltab	0	3	3	skill	9	3	3	skill	13	3	3	skill	17	3	3	dmg-undead		300	300					0
+Runeword83	Memory	1					109	staf	glov								LumIoSolEth	r17	r16	r12	r05			mana%		20	20	red-mag		7	7	ac%		50	50	cast2		33	33	sor		3	3	skill	58	3	3	skill	42	2	2	0
+Runeword84	Mist	1			1	2	D2R Ladder 1	miss									ChamShaelGulThulIth	r32	r13	r25	r10	r06		allskills		3	3	dmg%		325	375	aura	Concentration	8	12	pierce		100	100	vit		24	24	res-all		40	40					0
+Runeword85	Morning																																																			0
+Runeword86	Mystery																																																			0
+Runeword87	Myth	1					111	tors	lcha								HelAmnNef	r15	r11	r04				hit-skill	Taunt	10	1	gethit-skill	Howl	3	1	bar		2	2	regen		10	10													0
+Runeword88	Nadir	1					109	helm	belt	mcha	boot						NefTir	r04	r03					ac%		50	50	ac		10	10	light		-3	-3	charged	264	9	13	gold%		-33	-33	str		5	5					0
+Runeword89	Nature's Kingdom																																																			0
+Runeword90	Night																																																			0
+Runeword91	Oath	1					Previously Ladder Only	swor	axe	mace	glov	thro	gcha				ShaelPulMalLum	r13	r21	r23	r17			dmg%		210	340	swing1		30	30	hit-skill	Bone Spirit	30	20	charged	IronGolem	14	17	charged	Heart of Wolverine	20	16	abs-mag		10	15	indestruct		1	1	0
+Runeword92	Obedience	1					Previously Ladder Only	sppl	lob								HelKoThulEthFal	r15	r18	r10	r05	r19		dmg%		370	370	crush		40	40	kill-skill	enchant	30	21	pierce-fire		25	25	ac		200	300	balance3		40	40	res-all		20	30	0
+Runeword93	Oblivion																																																			0
+Runeword94	Obsession	1			1	2	D2R Ladder 1	com2	lob	dols	tors						ZodIstLemLumIoNef	r33	r24	r20	r17	r16	r04	allskills		1	4	gethit-skill	Weaken	24	10	cast3		65	65	balance3		60	60	res-all		60	70	hp%		15	25	regen-mana		15	30	0
+Runeword95	Passion	1					110	weap	glov	thro	lcha						DolOrtEldLem	r14	r09	r02	r20			dmg%		160	210	oskill	Zeal	1	1	att%		50	80	oskill	Berserk	1	1	swing2		25	25	charged	Heart of Wolverine	12	3	stupidity		10	10	0
+Runeword96	Patience																																																			0
+Runeword97	Pattern	1			1	2	D2R Ladder 1	weap	glov	lcha	misl						TalOrtThul	r07	r09	r10				att%		10	10	dmg%		40	80	dmg-fire		12	32	res-all		15	15	str		6	6	dex		6	6	block2		30	30	0
+Runeword98	Peace	1					111	tors	lcha	misl							ShaelThulAmn	r13	r10	r11				hit-skill	Valkyrie	2	15	gethit-skill	Slow Missiles	4	5	ama		2	2	oskill	Critical Strike	2	2													0
+Runeword99	Voice of Reason	1					Previously Ladder Only	swor	mace	glov	thro						LemKoElEld	r20	r18	r01	r02			dmg-demon		220	350	dmg-undead		280	300	dmg-cold		100	220	pierce-cold		24	24	hit-skill	Ice Blast	18	20	hit-skill	tFrozen Orb	15	13	nofreeze		1	1	0
+Runeword100	Penitence																																																			0
+Runeword101	Peril																																																			0
+Runeword102	Pestilence																																																			0
+Runeword103	Phoenix	1					Previously Ladder Only	weap	shld	thro							VexVexLoJah	r26	r26	r28	r31			dmg%		350	400	ac-miss		350	400	levelup-skill	Blaze	100	40	pierce-fire		28	28	aura	Redemption	10	15	abs-fire		15	21					0
+Runeword104	Piety																																																			0
+Runeword105	Pillar of Faith																																																			0
+Runeword106	Plague	1			1	2	D2R Ladder 1	blde	glov	thro	ajav	h2h	lwd				ChamShaelUm	r32	r13	r22				dmg%		220	320	gethit-skill	Lower Resist	20	12	hit-skill	Poison Nova	25	15	pierce-pois		23	23	deadly/lvl	3			aura	Cleansing	13	17	allskills		1	2	0
+Runeword107	Praise																																																			0
+Runeword108	Prayer																																																			0
+Runeword109	Pride	1					Previously Ladder Only	sppl	glov	thro	gcha						ChamSurIoLo	r32	r29	r16	r28			dmg-dem/lvl	8			dmg-ltng		50	280	att%		260	300	aura	Concentration	16	20	gethit-skill	Fire Wall	25	17	regen		8	8	gold%/lvl	15			0
+Runeword110	Principle	1					111	tors	lcha								RalGulEld	r08	r25	r02				hit-skill	Holy Bolt	100	5	pal		2	2	hp		100	150	dmg-undead		50	50													0
+Runeword111	Prowess in Battle																																																			0
+Runeword112	Prudence	1					110	tors	belt	mcha							MalTir	r23	r03					ac%		140	170	red-mag		10	10	red-dmg		3	3	res-all		25	35	balance2		25	25	rep-dur	25			light		1	1	0
+Runeword113	Punishment																																																			0
+Runeword114	Purity																																																			0
+Runeword115	Question																																																			0
+Runeword116	Radiance	1					109	helm	lcha								NefSolIth	r04	r12	r06				light		5	5	enr		10	10	vit		10	10	red-mag		3	3	mana		33	33	ac%		75	75					0
+Runeword117	Rain	1					111	tors	lcha								OrtMalIth	r09	r23	r06				hit-skill	Twister	5	15	gethit-skill	Cyclone Armor	5	15	dru		2	2	mana		100	150													0
+Runeword118	Reason																																																			0
+Runeword119	Red																																																			0
+Runeword120	Rhyme	1					109	shld	boot	mcha	bowq	xboq	ajav				ShaelEth	r13	r05					block2		20	20	block		20	20	res-all		25	25	nofreeze		1	1	gold%		50	50	mag%		25	25					0
+Runeword121	Rift	1					Previously Ladder Only	sppl	scep	glov	gcha						HelKoLemGul	r15	r18	r20	r25			dmg-mag		160	250	dmg-fire		60	180	dmg-to-mana		38	38	hit-skill	Tornado	20	16	att-skill	tFrozen Orb	16	21	charged	Iron Maiden	40	15	all-stats		5	10	0
+Runeword122	Sanctuary	1					110	shld	boot	char	bowq	xboq	ajav				KoKoMal	r18	r18	r23				block		20	20	block2		20	20	ac%		130	160	ac-miss		250	250	res-all		50	70	balance2		20	20	charged	Slow Missiles	60	12	0
+Runeword123	Serendipity																																																			0
+Runeword124	Shadow																																																			0
+Runeword125	Shadow of Doubt																																																			0
+Runeword126	Silence	1					109	weap	thro	dols							DolEldHelIstTirVex	r14	r02	r15	r24	r03	r26	manasteal		4	4	stupidity		33	33	dmg%		200	200	swing2		20	20	res-all		75	75	allskills		2	2	balance2		20	20	0
+Runeword127	Siren's Song																																																			0
+Runeword128	Smoke	1					109	tors	belt	mcha	gcha						NefLum	r04	r17					ac-miss		250	250	ac%		75	75	res-all		50	50	balance2		20	20	light		-1	-1	charged	72	18	6					0
+Runeword129	Sorrow																																																			0
+Runeword130	Spirit	1					Previously Ladder Only	swor	shld	boot							TalThulOrtAmn	r07	r10	r09	r11			balance3		55	55	mana		89	112	ac-miss		250	250	vit		22	22	cast3		25	35	abs-mag		3	8	allskills		2	2	0
+Runeword131	Splendor	1					110	shld	boot	bowq	xboq	belt	gcha				EthLum	r05	r17					light		3	3	gold%		50	50	mag%		20	20	ac%		60	100	block2		20	20	cast2		10	10	allskills		0	1	0
+Runeword132	Starlight																																																			0
+Runeword133	Stealth	1					109	tors	belt	mcha							TalEth	r07	r05					red-mag		3	3	dex		6	6	stam		15	15	move2		25	25	cast2		25	25	balance2		25	25					0
+Runeword134	Steel	1					109	weap	glov	belt	mcha						TirEl	r03	r01					swing2		25	25	dmg-min		3	3	dmg-max		3	3	openwounds		50	50	dmg%		20	20									0
+Runeword135	Still Water																																																			0
+Runeword136	Sting																																																			0
+Runeword137	Stone	1					110	tors	gcha								ShaelUmPulLum	r13	r22	r21	r17			ac%		220	260	charged	Clay Golem	16	16	ac-miss		300	300	charged	Molten Boulder	80	16	str		16	16	vit		16	16	balance2		40	40	0
+Runeword138	Storm																																																			0
+Runeword139	Strength	1					109	mele	glov	thro	ajav	belt	blun				AmnTir	r11	r03					str		20	20	dmg%		35	35	vit		10	10	crush		25	25													0
+Runeword140	Tempest																																																			0
+Runeword141	Temptation																																																			0
+Runeword142	Terror																																																			0
+Runeword143	Thirst																																																			0
+Runeword144	Thought																																																			0
+Runeword145	Thunder																																																			0
+Runeword146	Time																																																			0
+Runeword147	Tradition																																																			0
+Runeword148	Treachery	1					111	tors	lcha								ShaelThulLem	r13	r10	r20				hit-skill	Venom	25	15	gethit-skill	Fade	5	15	ass		2	2	swing2		45	45													0
+Runeword149	Trust																																																			0
+Runeword150	Truth																																																			0
+Runeword151	Unbending Will	1			1	2	D2R Ladder 1	swor	thro	dols							FalIoIthEldElHel	r19	r16	r06	r02	r01	r15	skilltab	12	3	3	hit-skill	Taunt	18	18	swing2		20	30	dmg%		300	350	red-dmg		8	8	noheal		1	1	lifesteal		8	10	0
+Runeword152	Valor																																																			0
+Runeword153	Vengeance																																																			0
+Runeword154	Venom	1					109	weap	glov	thro	ajav						TalDolMal	r07	r14	r23				dmg-pois	175	312	312	ignore-ac		1	1	charged	83	27	15	charged	92	11	13	manasteal		7	7									0
+Runeword155	Victory																																																			0
+Runeword156	Voice																																																			0
+Runeword157	Void	1						knif									ThulZodIst	r10	r33	r24				allskills		2	2	cast2		40	40	extra-mag		10	15	oskill	Abyss	1	3	all-stats		8	12	charged	Decrepify	35	4					0
+Runeword158	War																																																			0
+Runeword159	Water																																																			0
+Runeword160	Wealth	1					109	tors									LmKoTir	r20	r18	r03				gold%		250	250	mag%		100	100																					0
+Runeword161	Whisper																																																			0
+Runeword162	White	1					109	wand	glov								DolIo	r14	r16					skilltab	7	3	3	red-mag		4	4	cast2		20	20	mana		13	13	skill	68	3	3	skill	84	2	2	skill	69	4	4	0
+Runeword163	Wind	1					110	mele	glov	thro	ajav	belt	misl				SurEl	r29	r01					dmg%		120	160	swing2		40	40	move2		20	20	reduce-ac		50	50	hit-skill	Tornado	10	9	charged	240	127	13	balance2		15	15	0
+Runeword164	Wings of Hope																																																			0
+Runeword165	Wisdom	1			1	2	D2R Ladder 1	helm	lcha								PulIthEld	r21	r06	r02				pierce		33	33	manasteal		4	8	att%		15	25	mana-kill		5	5	nofreeze		1	1	enr		10	10					0
+Runeword166	Woe																																																			0
+Runeword167	Wonder																																																			0
+Runeword168	Wrath	1					Previously Ladder Only	miss	glov	thro	gcha						PulLumBerMal	r21	r17	r30	r23			dmg-demon		300	300	dmg-undead		250	300	dmg-ltng		41	240	dmg-mag		85	120	hit-skill	Life Tap	5	10	hit-skill	Decrepify	30	1	nofreeze		1	1	0
+Runeword169	Youth																																																			0
+Runeword170	Zephyr	1					109	miss	glov	thro	ajav	boot	misl				OrtEth	r09	r05					move2		25	25	swing2		25	25	dmg%		33	33	att		66	66	gethit-skill	240	7	1	ac		25	25					0
+Runeword171	Hustle (armor)	1			3		D2R Ladder 3	tors	boot	lcha	misl						ShaelKoEld	r13	r18	r02				move2		65	65	stamdrain		35	35	swing2		40	40	res-all		10	10	oskill	Evade	6	6									0
+Runeword172	Hustle (weapon)	1			3		D2R Ladder 3	weap	glov								ShaelKoEld	r13	r18	r02				hit-skill	Quickness	5	1	swing2		10	10	dmg%		180	200	aura	Fanaticism	1	1													0
+Runeword173	Mosaic	1	1		3	12	D2R Ladder 3	h2h									MalGulAmn	r23	r25	r11				skilltab	20	2	2	charge-noconsume		50	50	swing2		20	20	dmg%		200	250	extra-fire		8	15	extra-cold		8	15	extra-ltng		8	15	0
+Runeword174	Metamorphosis	1			3		D2R Ladder 3	helm	boot								IoChamFal	r16	r32	r19				hit-skill	Mark of the Bear	100	1	hit-skill	Mark of the Wolf	100	1	skilltab	16	5	5	ac%		50	80	res-all		10	10	crush		25	25	charge-noconsume		25	25	0
+Runeword175	Ground	1			3		D2R Ladder 3	helm	glov	boot	lcha						ShaelIoOrt	r13	r16	r09				hp%		5	5	ac%		75	100	res-ltng		10	30	abs-ltng%		10	15													0
+Runeword176	Temper	1			3		D2R Ladder 3	helm	glov	boot	lcha						ShaelIoRal	r13	r16	r08				hp%		5	5	ac%		75	100	res-fire		10	30	abs-fire%		10	15													0
+Runeword177	Hearth	1			3		D2R Ladder 3	helm	glov	boot	lcha						ShaelIoThul	r13	r16	r10				hp%		5	5	ac%		75	100	res-cold		10	30	abs-cold%		10	15	nofreeze		1	1									0
+Runeword178	Cure	1			3		D2R Ladder 3	helm	glov	boot							ShaelIoTal	r13	r16	r07				hp%		5	5	ac%		75	100	res-pois		10	30	res-pois-len		50	50	aura	Cleansing	1	1									0
+Runeword179	Bulwark	1			3		D2R Ladder 3	helm	glov	boot	lcha						ShaelIoSol	r13	r16	r12				hp%		5	5	ac%		75	100	red-dmg%		10	15	regen		30	30	lifesteal		4	6									0
+Runeword180	Coven	1						helm	lcha								IstRalIo	r24	r08	r16				gethit-skill	Sigil Lethargy	5	10	allskills		1	1	cast1		20	20	ac%		30	50	mag%		1	15	heal-kill		1	5					0
+Runeword181	Vigilance	1						grim	shld	head	ashd	mcha					DolGul	r14	r25					gethit-skill	Ring of Fire	5	10	move2		10	10	block2		30	30	hp		20	40	mana		20	40	res-all		25	35	ac%		75	100	0
+Runeword182	Ritual	1						knif	lcha								AmnShaelOhm	r11	r13	r27				gethit-skill	Sigil Death	13	1	swing1		20	20	dmg%		200	270	dmg-demon		150	250	att%		200	260	heal-kill		3	5	rip		1	1	0
+xGemwordViolet	Violet	1						weap	glov								2 of the same gem	gcv	gcv					att		50	50	dmg%		10	10																					0
+xGemwordViolet	Violet	1						weap	glov								2 of the same gem	gfv	gfv					att		80	80	dmg%		13	13																					0
+xGemwordViolet	Violet	1						weap	glov								2 of the same gem	gsv	gsv					att		120	120	dmg%		16	16																					0
+xGemwordViolet	Violet	1						weap	glov								2 of the same gem	gzv	gzv					att		160	160	dmg%		20	20																					0
+xGemwordViolet	Violet	1						weap	glov								2 of the same gem	gpv	gpv					att		225	225	dmg%		25	25																					0
+xGemwordViolet	Violet	1						tors	helm	boot							2 of the same gem	gcv	gcv					ac%		10	10	ac		8	8	move2		5	5																	0
+xGemwordViolet	Violet	1						tors	helm	boot							2 of the same gem	gfv	gfv					ac%		13	13	ac		18	18	move2		10	10																	0
+xGemwordViolet	Violet	1						tors	helm	boot							2 of the same gem	gsv	gsv					ac%		16	16	ac		24	24	move2		15	15																	0
+xGemwordViolet	Violet	1						tors	helm	boot							2 of the same gem	gzv	gzv					ac%		20	20	ac		30	30	move2		20	20																	0
+xGemwordViolet	Violet	1						tors	helm	boot							2 of the same gem	gpv	gpv					ac%		25	25	ac		45	45	move2		25	25																	0
+xGemwordViolet	Violet	1						shld	belt								2 of the same gem	gcv	gcv					block2		5	5	ac%		10	10																					0
+xGemwordViolet	Violet	1						shld	belt								2 of the same gem	gfv	gfv					block2		8	8	ac%		13	13																					0
+xGemwordViolet	Violet	1						shld	belt								2 of the same gem	gsv	gsv					block2		12	12	ac%		16	16																					0
+xGemwordViolet	Violet	1						shld	belt								2 of the same gem	gzv	gzv					block2		15	15	ac%		20	20																					0
+xGemwordViolet	Violet	1						shld	belt								2 of the same gem	gpv	gpv					block2		17	17	ac%		25	25																					0
+xGemwordGolden	Golden	1						weap	glov								2 of the same gem	gcy	gcy					dmg-ltng		1	11	swing2		5	5																					0
+xGemwordGolden	Golden	1						weap	glov								2 of the same gem	gfy	gfy					dmg-ltng		1	21	swing2		8	8																					0
+xGemwordGolden	Golden	1						weap	glov								2 of the same gem	gsy	gsy					dmg-ltng		1	37	swing2		12	12																					0
+xGemwordGolden	Golden	1						weap	glov								2 of the same gem	gly	gly					dmg-ltng		1	58	swing2		15	15																					0
+xGemwordGolden	Golden	1						weap	glov								2 of the same gem	gpy	gpy					dmg-ltng		1	85	swing2		17	17																					0
+xGemwordGolden	Golden	1						tors	helm	boot							2 of the same gem	gcy	gcy					mag%		9	9	gold%		20	20	ac%		3	3	move2		5	5													0
+xGemwordGolden	Golden	1						tors	helm	boot							2 of the same gem	gfy	gfy					mag%		16	16	gold%		30	30	ac%		6	6	move2		10	10													0
+xGemwordGolden	Golden	1						tors	helm	boot							2 of the same gem	gsy	gsy					mag%		22	22	gold%		40	40	ac%		10	10	move2		15	15													0
+xGemwordGolden	Golden	1						tors	helm	boot							2 of the same gem	gly	gly					mag%		26	26	gold%		50	50	ac%		13	13	move2		20	20													0
+xGemwordGolden	Golden	1						tors	helm	boot							2 of the same gem	gpy	gpy					mag%		30	30	gold%		60	60	ac%		16	16	move2		25	25													0
+xGemwordGolden	Golden	1						shld	belt								2 of the same gem	gcy	gcy					res-ltng		8	8	abs-ltng%		1	1	ac%		3	3																	0
+xGemwordGolden	Golden	1						shld	belt								2 of the same gem	gfy	gfy					res-ltng		13	13	abs-ltng%		2	2	ac%		6	6																	0
+xGemwordGolden	Golden	1						shld	belt								2 of the same gem	gsy	gsy					res-ltng		18	18	abs-ltng%		3	3	ac%		10	10																	0
+xGemwordGolden	Golden	1						shld	belt								2 of the same gem	gly	gly					res-ltng		25	25	abs-ltng%		4	4	ac%		13	13																	0
+xGemwordGolden	Golden	1						shld	belt								2 of the same gem	gpy	gpy					res-ltng		30	30	abs-ltng%		5	5	ac%		16	16																	0
+xGemwordWinter	Winter	1						weap	glov								2 of the same gem	gcb	gcb					dmg-cold	15	3	5	dmg%		5	5																					0
+xGemwordWinter	Winter	1						weap	glov								2 of the same gem	gfb	gfb					dmg-cold	20	7	12	dmg%		7	7																					0
+xGemwordWinter	Winter	1						weap	glov								2 of the same gem	gsb	gsb					dmg-cold	25	14	19	dmg%		10	10																					0
+xGemwordWinter	Winter	1						weap	glov								2 of the same gem	glb	glb					dmg-cold	30	20	25	dmg%		13	13																					0
+xGemwordWinter	Winter	1						weap	glov								2 of the same gem	gpb	gpb					dmg-cold	35	25	30	dmg%		16	16																					0
+xGemwordWinter	Winter	1						tors	helm	boot							2 of the same gem	gcb	gcb					mana		15	15	half-freeze		1	1	ac%		3	3	move2		5	5													0
+xGemwordWinter	Winter	1						tors	helm	boot							2 of the same gem	gfb	gfb					mana		20	20	half-freeze		1	1	ac%		6	6	move2		10	10													0
+xGemwordWinter	Winter	1						tors	helm	boot							2 of the same gem	gsb	gsb					mana		28	28	half-freeze		1	1	ac%		10	10	move2		15	15													0
+xGemwordWinter	Winter	1						tors	helm	boot							2 of the same gem	glb	glb					mana		37	37	half-freeze		1	1	ac%		13	13	move2		20	20													0
+xGemwordWinter	Winter	1						tors	helm	boot							2 of the same gem	gpb	gpb					mana		45	45	nofreeze		1	1	ac%		16	16	move2		25	25													0
+xGemwordWinter	Winter	1						shld	belt								2 of the same gem	gcb	gcb					res-cold		8	8	abs-cold%		1	1	ac%		3	3																	0
+xGemwordWinter	Winter	1						shld	belt								2 of the same gem	gfb	gfb					res-cold		13	13	abs-cold%		2	2	ac%		6	6																	0
+xGemwordWinter	Winter	1						shld	belt								2 of the same gem	gsb	gsb					res-cold		18	18	abs-cold%		3	3	ac%		10	10																	0
+xGemwordWinter	Winter	1						shld	belt								2 of the same gem	glb	glb					res-cold		25	25	abs-cold%		4	4	ac%		13	13																	0
+xGemwordWinter	Winter	1						shld	belt								2 of the same gem	gpb	gpb					res-cold		30	30	abs-cold%		5	5	ac%		16	16																	0
+xGemwordSlime	Slime	1						weap	glov								2 of the same gem	gcg	gcg					dmg-pois	25	66	82	dmg%		5	5																					0
+xGemwordSlime	Slime	1						weap	glov								2 of the same gem	gfg	gfg					dmg-pois	50	78	101	dmg%		7	7																					0
+xGemwordSlime	Slime	1						weap	glov								2 of the same gem	gsg	gsg					dmg-pois	75	101	143	dmg%		10	10																					0
+xGemwordSlime	Slime	1						weap	glov								2 of the same gem	glg	glg					dmg-pois	100	143	188	dmg%		13	13																					0
+xGemwordSlime	Slime	1						weap	glov								2 of the same gem	gpg	gpg					dmg-pois	125	188	242	dmg%		16	16																					0
+xGemwordSlime	Slime	1						tors	helm	boot							2 of the same gem	gcg	gcg					dex		3	3	ac		5	5	ac%		3	3	move2		5	5													0
+xGemwordSlime	Slime	1						tors	helm	boot							2 of the same gem	gfg	gfg					dex		5	5	ac		8	8	ac%		6	6	move2		10	10													0
+xGemwordSlime	Slime	1						tors	helm	boot							2 of the same gem	gsg	gsg					dex		7	7	ac		12	12	ac%		10	10	move2		15	15													0
+xGemwordSlime	Slime	1						tors	helm	boot							2 of the same gem	glg	glg					dex		9	9	ac		16	16	ac%		13	13	move2		20	20													0
+xGemwordSlime	Slime	1						tors	helm	boot							2 of the same gem	gpg	gpg					dex		11	11	ac		20	20	ac%		16	16	move2		25	25													0
+xGemwordSlime	Slime	1						shld	belt								2 of the same gem	gcg	gcg					res-pois		12	12	res-pois-len		3	3	ac%		3	3																	0
+xGemwordSlime	Slime	1						shld	belt								2 of the same gem	gfg	gfg					res-pois		18	18	res-pois-len		6	6	ac%		6	6																	0
+xGemwordSlime	Slime	1						shld	belt								2 of the same gem	gsg	gsg					res-pois		24	24	res-pois-len		9	9	ac%		10	10																	0
+xGemwordSlime	Slime	1						shld	belt								2 of the same gem	glg	glg					res-pois		30	30	res-pois-len		12	12	ac%		13	13																	0
+xGemwordSlime	Slime	1						shld	belt								2 of the same gem	gpg	gpg					res-pois		36	36	res-pois-len		15	15	ac%		16	16																	0
+xGemwordFlame	Flame	1						weap	glov								2 of the same gem	gcr	gcr					dmg-fire		2	6	dmg%		5	5																					0
+xGemwordFlame	Flame	1						weap	glov								2 of the same gem	gfr	gfr					dmg-fire		5	12	dmg%		7	7																					0
+xGemwordFlame	Flame	1						weap	glov								2 of the same gem	gsr	gsr					dmg-fire		10	22	dmg%		10	10																					0
+xGemwordFlame	Flame	1						weap	glov								2 of the same gem	glr	glr					dmg-fire		15	34	dmg%		13	13																					0
+xGemwordFlame	Flame	1						weap	glov								2 of the same gem	gpr	gpr					dmg-fire		20	50	dmg%		16	16																					0
+xGemwordFlame	Flame	1						tors	helm	boot							2 of the same gem	gcr	gcr					hp		15	15	red-dmg		1	1	ac%		3	3	move2		5	5													0
+xGemwordFlame	Flame	1						tors	helm	boot							2 of the same gem	gfr	gfr					hp		19	19	red-dmg		2	2	ac%		6	6	move2		10	10													0
+xGemwordFlame	Flame	1						tors	helm	boot							2 of the same gem	gsr	gsr					hp		27	27	red-dmg		3	3	ac%		10	10	move2		15	15													0
+xGemwordFlame	Flame	1						tors	helm	boot							2 of the same gem	glr	glr					hp		35	35	red-dmg		4	4	ac%		13	13	move2		20	20													0
+xGemwordFlame	Flame	1						tors	helm	boot							2 of the same gem	gpr	gpr					hp		45	45	red-dmg		5	5	ac%		16	16	move2		25	25													0
+xGemwordFlame	Flame	1						shld	belt								2 of the same gem	gcr	gcr					res-fire		8	8	abs-fire%		1	1	ac%		3	3																	0
+xGemwordFlame	Flame	1						shld	belt								2 of the same gem	gfr	gfr					res-fire		13	13	abs-fire%		2	2	ac%		6	6																	0
+xGemwordFlame	Flame	1						shld	belt								2 of the same gem	gsr	gsr					res-fire		18	18	abs-fire%		3	3	ac%		10	10																	0
+xGemwordFlame	Flame	1						shld	belt								2 of the same gem	glr	glr					res-fire		25	25	abs-fire%		4	4	ac%		13	13																	0
+xGemwordFlame	Flame	1						shld	belt								2 of the same gem	gpr	gpr					res-fire		30	30	abs-fire%		5	5	ac%		16	16																	0
+xGemwordMirror	Mirror	1						weap	glov								2 of the same gem	gcw	gcw					dmg-undead		28	28	deadly		5	5																					0
+xGemwordMirror	Mirror	1						weap	glov								2 of the same gem	gfw	gfw					dmg-undead		35	35	deadly		8	8																					0
+xGemwordMirror	Mirror	1						weap	glov								2 of the same gem	gsw	gsw					dmg-undead		42	42	deadly		11	11																					0
+xGemwordMirror	Mirror	1						weap	glov								2 of the same gem	glw	glw					dmg-undead		50	50	deadly		14	14																					0
+xGemwordMirror	Mirror	1						weap	glov								2 of the same gem	gpw	gpw					dmg-undead		60	60	deadly		17	17																					0
+xGemwordMirror	Mirror	1						tors	helm	boot							2 of the same gem	gcw	gcw					att		30	30	red-mag		1	1	ac%		10	10	move2		5	5													0
+xGemwordMirror	Mirror	1						tors	helm	boot							2 of the same gem	gfw	gfw					att		60	60	red-mag		2	2	ac%		13	13	move2		10	10													0
+xGemwordMirror	Mirror	1						tors	helm	boot							2 of the same gem	gsw	gsw					att		80	80	red-mag		3	3	ac%		16	16	move2		15	15													0
+xGemwordMirror	Mirror	1						tors	helm	boot							2 of the same gem	glw	glw					att		100	100	red-mag		4	4	ac%		20	20	move2		20	20													0
+xGemwordMirror	Mirror	1						tors	helm	boot							2 of the same gem	gpw	gpw					att		125	125	red-mag		5	5	ac%		25	25	move2		25	25													0
+xGemwordMirror	Mirror	1						shld	belt								2 of the same gem	gcw	gcw					res-all		2	2	red-dmg%		1	1	ac%		10	10																	0
+xGemwordMirror	Mirror	1						shld	belt								2 of the same gem	gfw	gfw					res-all		4	4	red-dmg%		2	2	ac%		13	13																	0
+xGemwordMirror	Mirror	1						shld	belt								2 of the same gem	gsw	gsw					res-all		6	6	red-dmg%		3	3	ac%		16	16																	0
+xGemwordMirror	Mirror	1						shld	belt								2 of the same gem	glw	glw					res-all		9	9	red-dmg%		4	4	ac%		20	20																	0
+xGemwordMirror	Mirror	1						shld	belt								2 of the same gem	gpw	gpw					res-all		12	12	red-dmg%		5	5	ac%		25	25																	0
+xGemwordMarrow	Marrow	1						weap	glov								2 of the same gem	skc	skc					manasteal		1	1	lifesteal		2	2	reduce-ac		2	2																	0
+xGemwordMarrow	Marrow	1						weap	glov								2 of the same gem	skf	skf					manasteal		2	2	lifesteal		2	2	reduce-ac		4	4																	0
+xGemwordMarrow	Marrow	1						weap	glov								2 of the same gem	sku	sku					manasteal		3	3	lifesteal		3	3	reduce-ac		6	6																	0
+xGemwordMarrow	Marrow	1						weap	glov								2 of the same gem	skl	skl					manasteal		3	3	lifesteal		4	4	reduce-ac		8	8																	0
+xGemwordMarrow	Marrow	1						weap	glov								2 of the same gem	skz	skz					manasteal		4	4	lifesteal		4	4	reduce-ac		10	10																	0
+xGemwordMarrow	Marrow	1						tors	helm	boot							2 of the same gem	skc	skc					regen		2	2	regen-mana		8	8	ac%		3	3	move2		5	5													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							2 of the same gem	skf	skf					regen		3	3	regen-mana		12	12	ac%		6	6	move2		10	10													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							2 of the same gem	sku	sku					regen		4	4	regen-mana		15	15	ac%		10	10	move2		15	15													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							2 of the same gem	skl	skl					regen		5	5	regen-mana		18	18	ac%		13	13	move2		20	20													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							2 of the same gem	skz	skz					regen		6	6	regen-mana		22	22	ac%		16	16	move2		25	25													0
+xGemwordMarrow	Marrow	1						shld	belt								2 of the same gem	skc	skc					thorns		10	10	rep-dur	4			ac%		6	6																	0
+xGemwordMarrow	Marrow	1						shld	belt								2 of the same gem	skf	skf					thorns		25	25	rep-dur	5			ac%		10	10																	0
+xGemwordMarrow	Marrow	1						shld	belt								2 of the same gem	sku	sku					thorns/lvl	8			rep-dur	6			ac%		13	13																	0
+xGemwordMarrow	Marrow	1						shld	belt								2 of the same gem	skl	skl					thorns/lvl	12			rep-dur	7			ac%		16	16																	0
+xGemwordMarrow	Marrow	1						shld	belt								2 of the same gem	skz	skz					thorns/lvl	16			rep-dur	8			ac%		20	20																	0
+xGemwordViolet	Violet	1						weap	glov								3 of the same gem	gcv	gcv	gcv				att		80	80	dmg%		13	13																					0
+xGemwordViolet	Violet	1						weap	glov								3 of the same gem	gfv	gfv	gfv				att		120	120	dmg%		16	16																					0
+xGemwordViolet	Violet	1						weap	glov								3 of the same gem	gsv	gsv	gsv				att		160	160	dmg%		20	20																					0
+xGemwordViolet	Violet	1						weap	glov								3 of the same gem	gzv	gzv	gzv				att		225	225	dmg%		25	25																					0
+xGemwordViolet	Violet	1						weap	glov								3 of the same gem	gpv	gpv	gpv				att		260	260	dmg%		30	30																					0
+xGemwordViolet	Violet	1						tors	helm	boot							3 of the same gem	gcv	gcv	gcv				ac%		13	13	ac		18	18	move2		10	10																	0
+xGemwordViolet	Violet	1						tors	helm	boot							3 of the same gem	gfv	gfv	gfv				ac%		16	16	ac		24	24	move2		15	15																	0
+xGemwordViolet	Violet	1						tors	helm	boot							3 of the same gem	gsv	gsv	gsv				ac%		20	20	ac		30	30	move2		20	20																	0
+xGemwordViolet	Violet	1						tors	helm	boot							3 of the same gem	gzv	gzv	gzv				ac%		25	25	ac		45	45	move2		25	25																	0
+xGemwordViolet	Violet	1						tors	helm	boot							3 of the same gem	gpv	gpv	gpv				ac%		30	30	ac		50	50	move2		30	30																	0
+xGemwordViolet	Violet	1						shld	belt								3 of the same gem	gcv	gcv	gcv				block2		8	8	ac%		13	13																					0
+xGemwordViolet	Violet	1						shld	belt								3 of the same gem	gfv	gfv	gfv				block2		12	12	ac%		16	16																					0
+xGemwordViolet	Violet	1						shld	belt								3 of the same gem	gsv	gsv	gsv				block2		15	15	ac%		20	20																					0
+xGemwordViolet	Violet	1						shld	belt								3 of the same gem	gzv	gzv	gzv				block2		17	17	ac%		25	25																					0
+xGemwordViolet	Violet	1						shld	belt								3 of the same gem	gpv	gpv	gpv				block2		20	20	ac%		30	30																					0
+xGemwordGolden	Golden	1						weap	glov								3 of the same gem	gcy	gcy	gcy				dmg-ltng		1	21	swing2		8	8																					0
+xGemwordGolden	Golden	1						weap	glov								3 of the same gem	gfy	gfy	gfy				dmg-ltng		1	37	swing2		12	12																					0
+xGemwordGolden	Golden	1						weap	glov								3 of the same gem	gsy	gsy	gsy				dmg-ltng		1	58	swing2		15	15																					0
+xGemwordGolden	Golden	1						weap	glov								3 of the same gem	gly	gly	gly				dmg-ltng		1	85	swing2		17	17																					0
+xGemwordGolden	Golden	1						weap	glov								3 of the same gem	gpy	gpy	gpy				dmg-ltng		1	100	swing2		20	20																					0
+xGemwordGolden	Golden	1						tors	helm	boot							3 of the same gem	gcy	gcy	gcy				mag%		16	16	gold%		30	30	ac%		6	6	move2		10	10													0
+xGemwordGolden	Golden	1						tors	helm	boot							3 of the same gem	gfy	gfy	gfy				mag%		22	22	gold%		40	40	ac%		10	10	move2		15	15													0
+xGemwordGolden	Golden	1						tors	helm	boot							3 of the same gem	gsy	gsy	gsy				mag%		26	26	gold%		50	50	ac%		13	13	move2		20	20													0
+xGemwordGolden	Golden	1						tors	helm	boot							3 of the same gem	gly	gly	gly				mag%		30	30	gold%		60	60	ac%		16	16	move2		25	25													0
+xGemwordGolden	Golden	1						tors	helm	boot							3 of the same gem	gpy	gpy	gpy				mag%		35	35	gold%		70	70	ac%		18	18	move2		30	30													0
+xGemwordGolden	Golden	1						shld	belt								3 of the same gem	gcy	gcy	gcy				res-ltng		13	13	abs-ltng%		2	2	ac%		6	6																	0
+xGemwordGolden	Golden	1						shld	belt								3 of the same gem	gfy	gfy	gfy				res-ltng		18	18	abs-ltng%		3	3	ac%		10	10																	0
+xGemwordGolden	Golden	1						shld	belt								3 of the same gem	gsy	gsy	gsy				res-ltng		25	25	abs-ltng%		4	4	ac%		13	13																	0
+xGemwordGolden	Golden	1						shld	belt								3 of the same gem	gly	gly	gly				res-ltng		30	30	abs-ltng%		5	5	ac%		16	16																	0
+xGemwordGolden	Golden	1						shld	belt								3 of the same gem	gpy	gpy	gpy				res-ltng		35	35	abs-ltng%		6	6	ac%		18	18																	0
+xGemwordWinter	Winter	1						weap	glov								3 of the same gem	gcb	gcb	gcb				dmg-cold	15	7	12	dmg%		7	7																					0
+xGemwordWinter	Winter	1						weap	glov								3 of the same gem	gfb	gfb	gfb				dmg-cold	20	14	19	dmg%		10	10																					0
+xGemwordWinter	Winter	1						weap	glov								3 of the same gem	gsb	gsb	gsb				dmg-cold	25	20	25	dmg%		13	13																					0
+xGemwordWinter	Winter	1						weap	glov								3 of the same gem	glb	glb	glb				dmg-cold	30	25	30	dmg%		16	16																					0
+xGemwordWinter	Winter	1						weap	glov								3 of the same gem	gpb	gpb	gpb				dmg-cold	35	30	35	dmg%		20	20																					0
+xGemwordWinter	Winter	1						tors	helm	boot							3 of the same gem	gcb	gcb	gcb				mana		20	20	half-freeze		1	1	ac%		6	6	move2		10	10													0
+xGemwordWinter	Winter	1						tors	helm	boot							3 of the same gem	gfb	gfb	gfb				mana		28	28	half-freeze		1	1	ac%		10	10	move2		15	15													0
+xGemwordWinter	Winter	1						tors	helm	boot							3 of the same gem	gsb	gsb	gsb				mana		37	37	half-freeze		1	1	ac%		13	13	move2		20	20													0
+xGemwordWinter	Winter	1						tors	helm	boot							3 of the same gem	glb	glb	glb				mana		45	45	nofreeze		1	1	ac%		16	16	move2		25	25													0
+xGemwordWinter	Winter	1						tors	helm	boot							3 of the same gem	gpb	gpb	gpb				mana		53	53	nofreeze		1	1	ac%		18	18	move2		30	30													0
+xGemwordWinter	Winter	1						shld	belt								3 of the same gem	gcb	gcb	gcb				res-cold		13	13	abs-cold%		2	2	ac%		6	6																	0
+xGemwordWinter	Winter	1						shld	belt								3 of the same gem	gfb	gfb	gfb				res-cold		18	18	abs-cold%		3	3	ac%		10	10																	0
+xGemwordWinter	Winter	1						shld	belt								3 of the same gem	gsb	gsb	gsb				res-cold		25	25	abs-cold%		4	4	ac%		13	13																	0
+xGemwordWinter	Winter	1						shld	belt								3 of the same gem	glb	glb	glb				res-cold		30	30	abs-cold%		5	5	ac%		16	16																	0
+xGemwordWinter	Winter	1						shld	belt								3 of the same gem	gpb	gpb	gpb				res-cold		35	35	abs-cold%		6	6	ac%		18	18																	0
+xGemwordSlime	Slime	1						weap	glov								3 of the same gem	gcg	gcg	gcg				dmg-pois	25	78	101	dmg%		7	7																					0
+xGemwordSlime	Slime	1						weap	glov								3 of the same gem	gfg	gfg	gfg				dmg-pois	50	101	143	dmg%		10	10																					0
+xGemwordSlime	Slime	1						weap	glov								3 of the same gem	gsg	gsg	gsg				dmg-pois	75	143	188	dmg%		13	13																					0
+xGemwordSlime	Slime	1						weap	glov								3 of the same gem	glg	glg	glg				dmg-pois	100	188	242	dmg%		16	16																					0
+xGemwordSlime	Slime	1						weap	glov								3 of the same gem	gpg	gpg	gpg				dmg-pois	125	242	298	dmg%		20	20																					0
+xGemwordSlime	Slime	1						tors	helm	boot							3 of the same gem	gcg	gcg	gcg				dex		5	5	ac		8	8	ac%		6	6	move2		10	10													0
+xGemwordSlime	Slime	1						tors	helm	boot							3 of the same gem	gfg	gfg	gfg				dex		7	7	ac		12	12	ac%		10	10	move2		15	15													0
+xGemwordSlime	Slime	1						tors	helm	boot							3 of the same gem	gsg	gsg	gsg				dex		9	9	ac		16	16	ac%		13	13	move2		20	20													0
+xGemwordSlime	Slime	1						tors	helm	boot							3 of the same gem	glg	glg	glg				dex		11	11	ac		20	20	ac%		16	16	move2		25	25													0
+xGemwordSlime	Slime	1						tors	helm	boot							3 of the same gem	gpg	gpg	gpg				dex		13	13	ac		25	25	ac%		20	20	move2		30	30													0
+xGemwordSlime	Slime	1						shld	belt								3 of the same gem	gcg	gcg	gcg				res-pois		18	18	res-pois-len		6	6	ac%		6	6																	0
+xGemwordSlime	Slime	1						shld	belt								3 of the same gem	gfg	gfg	gfg				res-pois		24	24	res-pois-len		9	9	ac%		10	10																	0
+xGemwordSlime	Slime	1						shld	belt								3 of the same gem	gsg	gsg	gsg				res-pois		30	30	res-pois-len		12	12	ac%		13	13																	0
+xGemwordSlime	Slime	1						shld	belt								3 of the same gem	glg	glg	glg				res-pois		36	36	res-pois-len		15	15	ac%		16	16																	0
+xGemwordSlime	Slime	1						shld	belt								3 of the same gem	gpg	gpg	gpg				res-pois		40	40	res-pois-len		18	18	ac%		20	20																	0
+xGemwordFlame	Flame	1						weap	glov								3 of the same gem	gcr	gcr	gcr				dmg-fire		5	12	dmg%		7	7																					0
+xGemwordFlame	Flame	1						weap	glov								3 of the same gem	gfr	gfr	gfr				dmg-fire		10	22	dmg%		10	10																					0
+xGemwordFlame	Flame	1						weap	glov								3 of the same gem	gsr	gsr	gsr				dmg-fire		15	34	dmg%		13	13																					0
+xGemwordFlame	Flame	1						weap	glov								3 of the same gem	glr	glr	glr				dmg-fire		20	50	dmg%		16	16																					0
+xGemwordFlame	Flame	1						weap	glov								3 of the same gem	gpr	gpr	gpr				dmg-fire		25	63	dmg%		20	20																					0
+xGemwordFlame	Flame	1						tors	helm	boot							3 of the same gem	gcr	gcr	gcr				hp		19	19	red-dmg		2	2	ac%		6	6	move2		10	10													0
+xGemwordFlame	Flame	1						tors	helm	boot							3 of the same gem	gfr	gfr	gfr				hp		27	27	red-dmg		3	3	ac%		10	10	move2		15	15													0
+xGemwordFlame	Flame	1						tors	helm	boot							3 of the same gem	gsr	gsr	gsr				hp		35	35	red-dmg		4	4	ac%		13	13	move2		20	20													0
+xGemwordFlame	Flame	1						tors	helm	boot							3 of the same gem	glr	glr	glr				hp		45	45	red-dmg		5	5	ac%		16	16	move2		25	25													0
+xGemwordFlame	Flame	1						tors	helm	boot							3 of the same gem	gpr	gpr	gpr				hp		54	54	red-dmg		6	6	ac%		20	20	move2		30	30													0
+xGemwordFlame	Flame	1						shld	belt								3 of the same gem	gcr	gcr	gcr				res-fire		13	13	abs-fire%		2	2	ac%		6	6																	0
+xGemwordFlame	Flame	1						shld	belt								3 of the same gem	gfr	gfr	gfr				res-fire		18	18	abs-fire%		3	3	ac%		10	10																	0
+xGemwordFlame	Flame	1						shld	belt								3 of the same gem	gsr	gsr	gsr				res-fire		25	25	abs-fire%		4	4	ac%		13	13																	0
+xGemwordFlame	Flame	1						shld	belt								3 of the same gem	glr	glr	glr				res-fire		30	30	abs-fire%		5	5	ac%		16	16																	0
+xGemwordFlame	Flame	1						shld	belt								3 of the same gem	gpr	gpr	gpr				res-fire		35	35	abs-fire%		6	6	ac%		20	20																	0
+xGemwordMirror	Mirror	1						weap	glov								3 of the same gem	gcw	gcw	gcw				dmg-undead		35	35	deadly		8	8																					0
+xGemwordMirror	Mirror	1						weap	glov								3 of the same gem	gfw	gfw	gfw				dmg-undead		42	42	deadly		11	11																					0
+xGemwordMirror	Mirror	1						weap	glov								3 of the same gem	gsw	gsw	gsw				dmg-undead		50	50	deadly		14	14																					0
+xGemwordMirror	Mirror	1						weap	glov								3 of the same gem	glw	glw	glw				dmg-undead		60	60	deadly		17	17																					0
+xGemwordMirror	Mirror	1						weap	glov								3 of the same gem	gpw	gpw	gpw				dmg-undead		70	70	deadly		20	20																					0
+xGemwordMirror	Mirror	1						tors	helm	boot							3 of the same gem	gcw	gcw	gcw				att		60	60	red-mag		2	2	ac%		13	13	move2		10	10													0
+xGemwordMirror	Mirror	1						tors	helm	boot							3 of the same gem	gfw	gfw	gfw				att		80	80	red-mag		3	3	ac%		16	16	move2		15	15													0
+xGemwordMirror	Mirror	1						tors	helm	boot							3 of the same gem	gsw	gsw	gsw				att		100	100	red-mag		4	4	ac%		20	20	move2		20	20													0
+xGemwordMirror	Mirror	1						tors	helm	boot							3 of the same gem	glw	glw	glw				att		125	125	red-mag		5	5	ac%		25	25	move2		25	25													0
+xGemwordMirror	Mirror	1						tors	helm	boot							3 of the same gem	gpw	gpw	gpw				att		140	140	red-mag		6	6	ac%		30	30	move2		30	30													0
+xGemwordMirror	Mirror	1						shld	belt								3 of the same gem	gcw	gcw	gcw				res-all		4	4	red-dmg%		2	2	ac%		13	13																	0
+xGemwordMirror	Mirror	1						shld	belt								3 of the same gem	gfw	gfw	gfw				res-all		6	6	red-dmg%		3	3	ac%		16	16																	0
+xGemwordMirror	Mirror	1						shld	belt								3 of the same gem	gsw	gsw	gsw				res-all		9	9	red-dmg%		4	4	ac%		20	20																	0
+xGemwordMirror	Mirror	1						shld	belt								3 of the same gem	glw	glw	glw				res-all		12	12	red-dmg%		5	5	ac%		25	25																	0
+xGemwordMirror	Mirror	1						shld	belt								3 of the same gem	gpw	gpw	gpw				res-all		15	15	red-dmg%		6	6	ac%		30	30																	0
+xGemwordMarrow	Marrow	1						weap	glov								3 of the same gem	skc	skc	skc				manasteal		2	2	lifesteal		2	2	reduce-ac		4	4																	0
+xGemwordMarrow	Marrow	1						weap	glov								3 of the same gem	skf	skf	skf				manasteal		3	3	lifesteal		3	3	reduce-ac		6	6																	0
+xGemwordMarrow	Marrow	1						weap	glov								3 of the same gem	sku	sku	sku				manasteal		4	4	lifesteal		4	4	reduce-ac		8	8																	0
+xGemwordMarrow	Marrow	1						weap	glov								3 of the same gem	skl	skl	skl				manasteal		5	5	lifesteal		5	5	reduce-ac		10	10																	0
+xGemwordMarrow	Marrow	1						weap	glov								3 of the same gem	skz	skz	skz				manasteal		6	6	lifesteal		6	6	reduce-ac		12	12																	0
+xGemwordMarrow	Marrow	1						tors	helm	boot							3 of the same gem	skc	skc	skc				regen		3	3	lifesteal		3	3	reduce-ac		6	6	move2		10	10													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							3 of the same gem	skf	skf	skf				regen		3	3	lifesteal		4	4	reduce-ac		8	8	move2		15	15													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							3 of the same gem	sku	sku	sku				regen		4	4	lifesteal		4	4	reduce-ac		10	10	move2		20	20													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							3 of the same gem	skl	skl	skl				regen		6	6	regen-mana		22	22	ac%		16	16	move2		25	25													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							3 of the same gem	skz	skz	skz				regen		8	8	regen-mana		33	33	ac%		20	20	move2		30	30													0
+xGemwordMarrow	Marrow	1						shld	belt								3 of the same gem	skc	skc	skc				thorns		25	25	rep-dur	5			ac%		10	10																	0
+xGemwordMarrow	Marrow	1						shld	belt								3 of the same gem	skf	skf	skf				thorns		40	40	rep-dur	6			ac%		13	13																	0
+xGemwordMarrow	Marrow	1						shld	belt								3 of the same gem	sku	sku	sku				thorns/lvl	10			rep-dur	7			ac%		16	16																	0
+xGemwordMarrow	Marrow	1						shld	belt								3 of the same gem	skl	skl	skl				thorns/lvl	14			rep-dur	8			ac%		20	20																	0
+xGemwordMarrow	Marrow	1						shld	belt								3 of the same gem	skz	skz	skz				thorns/lvl	18			rep-dur	9			ac%		25	25																	0
+xGemwordViolet	Violet	1						weap	glov								4 of the same gem	gcv	gcv	gcv	gcv			att		120	120	dmg%		16	16																					0
+xGemwordViolet	Violet	1						weap	glov								4 of the same gem	gfv	gfv	gfv	gfv			att		160	160	dmg%		20	20																					0
+xGemwordViolet	Violet	1						weap	glov								4 of the same gem	gsv	gsv	gsv	gsv			att		225	225	dmg%		25	25																					0
+xGemwordViolet	Violet	1						weap	glov								4 of the same gem	gzv	gzv	gzv	gzv			att		260	260	dmg%		30	30																					0
+xGemwordViolet	Violet	1						weap	glov								4 of the same gem	gpv	gpv	gpv	gpv			att		300	300	dmg%		35	35																					0
+xGemwordViolet	Violet	1						tors	helm	boot							4 of the same gem	gcv	gcv	gcv	gcv			ac%		16	16	ac		24	24	move2		15	15																	0
+xGemwordViolet	Violet	1						tors	helm	boot							4 of the same gem	gfv	gfv	gfv	gfv			ac%		20	20	ac		30	30	move2		20	20																	0
+xGemwordViolet	Violet	1						tors	helm	boot							4 of the same gem	gsv	gsv	gsv	gsv			ac%		25	25	ac		45	45	move2		25	25																	0
+xGemwordViolet	Violet	1						tors	helm	boot							4 of the same gem	gzv	gzv	gzv	gzv			ac%		30	30	ac		50	50	move2		30	30																	0
+xGemwordViolet	Violet	1						tors	helm	boot							4 of the same gem	gpv	gpv	gpv	gpv			ac%		35	35	ac		60	60	move2		35	35																	0
+xGemwordViolet	Violet	1						shld	belt								4 of the same gem	gcv	gcv	gcv	gcv			block2		12	12	ac%		16	16																					0
+xGemwordViolet	Violet	1						shld	belt								4 of the same gem	gfv	gfv	gfv	gfv			block2		15	15	ac%		20	20																					0
+xGemwordViolet	Violet	1						shld	belt								4 of the same gem	gsv	gsv	gsv	gsv			block2		17	17	ac%		25	25																					0
+xGemwordViolet	Violet	1						shld	belt								4 of the same gem	gzv	gzv	gzv	gzv			block2		20	20	ac%		30	30																					0
+xGemwordViolet	Violet	1						shld	belt								4 of the same gem	gpv	gpv	gpv	gpv			block2		25	25	ac%		35	35																					0
+xGemwordGolden	Golden	1						weap	glov								4 of the same gem	gcy	gcy	gcy	gcy			dmg-ltng		1	37	swing2		12	12																					0
+xGemwordGolden	Golden	1						weap	glov								4 of the same gem	gfy	gfy	gfy	gfy			dmg-ltng		1	58	swing2		15	15																					0
+xGemwordGolden	Golden	1						weap	glov								4 of the same gem	gsy	gsy	gsy	gsy			dmg-ltng		1	85	swing2		17	17																					0
+xGemwordGolden	Golden	1						weap	glov								4 of the same gem	gly	gly	gly	gly			dmg-ltng		1	100	swing2		20	20																					0
+xGemwordGolden	Golden	1						weap	glov								4 of the same gem	gpy	gpy	gpy	gpy			dmg-ltng		1	120	swing2		25	25																					0
+xGemwordGolden	Golden	1						tors	helm	boot							4 of the same gem	gcy	gcy	gcy	gcy			mag%		22	22	gold%		40	40	ac%		10	10	move2		15	15													0
+xGemwordGolden	Golden	1						tors	helm	boot							4 of the same gem	gfy	gfy	gfy	gfy			mag%		26	26	gold%		50	50	ac%		13	13	move2		20	20													0
+xGemwordGolden	Golden	1						tors	helm	boot							4 of the same gem	gsy	gsy	gsy	gsy			mag%		30	30	gold%		60	60	ac%		16	16	move2		25	25													0
+xGemwordGolden	Golden	1						tors	helm	boot							4 of the same gem	gly	gly	gly	gly			mag%		35	35	gold%		70	70	ac%		18	18	move2		30	30													0
+xGemwordGolden	Golden	1						tors	helm	boot							4 of the same gem	gpy	gpy	gpy	gpy			mag%		40	40	gold%		80	80	ac%		20	20	move2		35	35													0
+xGemwordGolden	Golden	1						shld	belt								4 of the same gem	gcy	gcy	gcy	gcy			res-ltng		18	18	abs-ltng%		3	3	ac%		10	10																	0
+xGemwordGolden	Golden	1						shld	belt								4 of the same gem	gfy	gfy	gfy	gfy			res-ltng		25	25	abs-ltng%		4	4	ac%		13	13																	0
+xGemwordGolden	Golden	1						shld	belt								4 of the same gem	gsy	gsy	gsy	gsy			res-ltng		30	30	abs-ltng%		5	5	ac%		16	16																	0
+xGemwordGolden	Golden	1						shld	belt								4 of the same gem	gly	gly	gly	gly			res-ltng		35	35	abs-ltng%		6	6	ac%		18	18																	0
+xGemwordGolden	Golden	1						shld	belt								4 of the same gem	gpy	gpy	gpy	gpy			res-ltng		40	40	abs-ltng%		7	7	ac%		20	20																	0
+xGemwordWinter	Winter	1						weap	glov								4 of the same gem	gcb	gcb	gcb	gcb			dmg-cold	15	14	19	dmg%		10	10																					0
+xGemwordWinter	Winter	1						weap	glov								4 of the same gem	gfb	gfb	gfb	gfb			dmg-cold	20	20	25	dmg%		13	13																					0
+xGemwordWinter	Winter	1						weap	glov								4 of the same gem	gsb	gsb	gsb	gsb			dmg-cold	25	25	30	dmg%		16	16																					0
+xGemwordWinter	Winter	1						weap	glov								4 of the same gem	glb	glb	glb	glb			dmg-cold	30	30	35	dmg%		20	20																					0
+xGemwordWinter	Winter	1						weap	glov								4 of the same gem	gpb	gpb	gpb	gpb			dmg-cold	35	35	40	dmg%		24	24																					0
+xGemwordWinter	Winter	1						tors	helm	boot							4 of the same gem	gcb	gcb	gcb	gcb			mana		28	28	half-freeze		1	1	ac%		10	10	move2		15	15													0
+xGemwordWinter	Winter	1						tors	helm	boot							4 of the same gem	gfb	gfb	gfb	gfb			mana		37	37	half-freeze		1	1	ac%		13	13	move2		20	20													0
+xGemwordWinter	Winter	1						tors	helm	boot							4 of the same gem	gsb	gsb	gsb	gsb			mana		45	45	nofreeze		1	1	ac%		16	16	move2		25	25													0
+xGemwordWinter	Winter	1						tors	helm	boot							4 of the same gem	glb	glb	glb	glb			mana		53	53	nofreeze		1	1	ac%		18	18	move2		30	30													0
+xGemwordWinter	Winter	1						tors	helm	boot							4 of the same gem	gpb	gpb	gpb	gpb			mana		60	60	nofreeze		1	1	ac%		20	20	move2		35	35													0
+xGemwordWinter	Winter	1						shld	belt								4 of the same gem	gcb	gcb	gcb	gcb			res-cold		18	18	abs-cold%		3	3	ac%		10	10																	0
+xGemwordWinter	Winter	1						shld	belt								4 of the same gem	gfb	gfb	gfb	gfb			res-cold		25	25	abs-cold%		4	4	ac%		13	13																	0
+xGemwordWinter	Winter	1						shld	belt								4 of the same gem	gsb	gsb	gsb	gsb			res-cold		30	30	abs-cold%		5	5	ac%		16	16																	0
+xGemwordWinter	Winter	1						shld	belt								4 of the same gem	glb	glb	glb	glb			res-cold		35	35	abs-cold%		6	6	ac%		18	18																	0
+xGemwordWinter	Winter	1						shld	belt								4 of the same gem	gpb	gpb	gpb	gpb			res-cold		40	40	abs-cold%		7	7	ac%		20	20																	0
+xGemwordSlime	Slime	1						weap	glov								4 of the same gem	gcg	gcg	gcg	gcg			dmg-pois	25	101	143	dmg%		10	10																					0
+xGemwordSlime	Slime	1						weap	glov								4 of the same gem	gfg	gfg	gfg	gfg			dmg-pois	50	143	188	dmg%		13	13																					0
+xGemwordSlime	Slime	1						weap	glov								4 of the same gem	gsg	gsg	gsg	gsg			dmg-pois	75	188	242	dmg%		16	16																					0
+xGemwordSlime	Slime	1						weap	glov								4 of the same gem	glg	glg	glg	glg			dmg-pois	100	242	298	dmg%		20	20																					0
+xGemwordSlime	Slime	1						weap	glov								4 of the same gem	gpg	gpg	gpg	gpg			dmg-pois	125	298	350	dmg%		24	24																					0
+xGemwordSlime	Slime	1						tors	helm	boot							4 of the same gem	gcg	gcg	gcg	gcg			dex		7	7	ac		12	12	ac%		10	10	move2		15	15													0
+xGemwordSlime	Slime	1						tors	helm	boot							4 of the same gem	gfg	gfg	gfg	gfg			dex		9	9	ac		16	16	ac%		13	13	move2		20	20													0
+xGemwordSlime	Slime	1						tors	helm	boot							4 of the same gem	gsg	gsg	gsg	gsg			dex		11	11	ac		20	20	ac%		16	16	move2		25	25													0
+xGemwordSlime	Slime	1						tors	helm	boot							4 of the same gem	glg	glg	glg	glg			dex		13	13	ac		25	25	ac%		20	20	move2		30	30													0
+xGemwordSlime	Slime	1						tors	helm	boot							4 of the same gem	gpg	gpg	gpg	gpg			dex		15	15	ac		30	30	ac%		25	25	move2		35	35													0
+xGemwordSlime	Slime	1						shld	belt								4 of the same gem	gcg	gcg	gcg	gcg			res-pois		24	24	res-pois-len		9	9	ac%		10	10																	0
+xGemwordSlime	Slime	1						shld	belt								4 of the same gem	gfg	gfg	gfg	gfg			res-pois		30	30	res-pois-len		12	12	ac%		13	13																	0
+xGemwordSlime	Slime	1						shld	belt								4 of the same gem	gsg	gsg	gsg	gsg			res-pois		36	36	res-pois-len		15	15	ac%		16	16																	0
+xGemwordSlime	Slime	1						shld	belt								4 of the same gem	glg	glg	glg	glg			res-pois		40	40	res-pois-len		18	18	ac%		20	20																	0
+xGemwordSlime	Slime	1						shld	belt								4 of the same gem	gpg	gpg	gpg	gpg			res-pois		45	45	res-pois-len		20	20	ac%		25	25																	0
+xGemwordFlame	Flame	1						weap	glov								4 of the same gem	gcr	gcr	gcr	gcr			dmg-fire		10	22	dmg%		10	10																					0
+xGemwordFlame	Flame	1						weap	glov								4 of the same gem	gfr	gfr	gfr	gfr			dmg-fire		15	34	dmg%		13	13																					0
+xGemwordFlame	Flame	1						weap	glov								4 of the same gem	gsr	gsr	gsr	gsr			dmg-fire		20	50	dmg%		16	16																					0
+xGemwordFlame	Flame	1						weap	glov								4 of the same gem	glr	glr	glr	glr			dmg-fire		25	63	dmg%		20	20																					0
+xGemwordFlame	Flame	1						weap	glov								4 of the same gem	gpr	gpr	gpr	gpr			dmg-fire		30	70	dmg%		25	25																					0
+xGemwordFlame	Flame	1						tors	helm	boot							4 of the same gem	gcr	gcr	gcr	gcr			hp		27	27	red-dmg		3	3	ac%		10	10	move2		15	15													0
+xGemwordFlame	Flame	1						tors	helm	boot							4 of the same gem	gfr	gfr	gfr	gfr			hp		35	35	red-dmg		4	4	ac%		13	13	move2		20	20													0
+xGemwordFlame	Flame	1						tors	helm	boot							4 of the same gem	gsr	gsr	gsr	gsr			hp		45	45	red-dmg		5	5	ac%		16	16	move2		25	25													0
+xGemwordFlame	Flame	1						tors	helm	boot							4 of the same gem	glr	glr	glr	glr			hp		54	54	red-dmg		6	6	ac%		20	20	move2		30	30													0
+xGemwordFlame	Flame	1						tors	helm	boot							4 of the same gem	gpr	gpr	gpr	gpr			hp		65	65	red-dmg		7	7	ac%		25	25	move2		35	35													0
+xGemwordFlame	Flame	1						shld	belt								4 of the same gem	gcr	gcr	gcr	gcr			res-fire		18	18	abs-fire%		3	3	ac%		10	10																	0
+xGemwordFlame	Flame	1						shld	belt								4 of the same gem	gfr	gfr	gfr	gfr			res-fire		25	25	abs-fire%		4	4	ac%		13	13																	0
+xGemwordFlame	Flame	1						shld	belt								4 of the same gem	gsr	gsr	gsr	gsr			res-fire		30	30	abs-fire%		5	5	ac%		16	16																	0
+xGemwordFlame	Flame	1						shld	belt								4 of the same gem	glr	glr	glr	glr			res-fire		35	35	abs-fire%		6	6	ac%		20	20																	0
+xGemwordFlame	Flame	1						shld	belt								4 of the same gem	gpr	gpr	gpr	gpr			res-fire		40	40	abs-fire%		7	7	ac%		25	25																	0
+xGemwordMirror	Mirror	1						weap	glov								4 of the same gem	gcw	gcw	gcw	gcw			dmg-undead		42	42	deadly		11	11																					0
+xGemwordMirror	Mirror	1						weap	glov								4 of the same gem	gfw	gfw	gfw	gfw			dmg-undead		50	50	deadly		14	14																					0
+xGemwordMirror	Mirror	1						weap	glov								4 of the same gem	gsw	gsw	gsw	gsw			dmg-undead		60	60	deadly		17	17																					0
+xGemwordMirror	Mirror	1						weap	glov								4 of the same gem	glw	glw	glw	glw			dmg-undead		70	70	deadly		20	20																					0
+xGemwordMirror	Mirror	1						weap	glov								4 of the same gem	gpw	gpw	gpw	gpw			dmg-undead		80	80	deadly		25	25																					0
+xGemwordMirror	Mirror	1						tors	helm	boot							4 of the same gem	gcw	gcw	gcw	gcw			att		80	80	red-mag		3	3	ac%		16	16	move2		15	15													0
+xGemwordMirror	Mirror	1						tors	helm	boot							4 of the same gem	gfw	gfw	gfw	gfw			att		100	100	red-mag		4	4	ac%		20	20	move2		20	20													0
+xGemwordMirror	Mirror	1						tors	helm	boot							4 of the same gem	gsw	gsw	gsw	gsw			att		125	125	red-mag		5	5	ac%		25	25	move2		25	25													0
+xGemwordMirror	Mirror	1						tors	helm	boot							4 of the same gem	glw	glw	glw	glw			att		140	140	red-mag		6	6	ac%		30	30	move2		30	30													0
+xGemwordMirror	Mirror	1						tors	helm	boot							4 of the same gem	gpw	gpw	gpw	gpw			att		160	160	red-mag		7	7	ac%		35	35	move2		35	35													0
+xGemwordMirror	Mirror	1						shld	belt								4 of the same gem	gcw	gcw	gcw	gcw			res-all		6	6	red-dmg%		3	3	ac%		16	16																	0
+xGemwordMirror	Mirror	1						shld	belt								4 of the same gem	gfw	gfw	gfw	gfw			res-all		9	9	red-dmg%		4	4	ac%		20	20																	0
+xGemwordMirror	Mirror	1						shld	belt								4 of the same gem	gsw	gsw	gsw	gsw			res-all		12	12	red-dmg%		5	5	ac%		25	25																	0
+xGemwordMirror	Mirror	1						shld	belt								4 of the same gem	glw	glw	glw	glw			res-all		15	15	red-dmg%		6	6	ac%		30	30																	0
+xGemwordMirror	Mirror	1						shld	belt								4 of the same gem	gpw	gpw	gpw	gpw			res-all		20	20	red-dmg%		7	7	ac%		35	35																	0
+xGemwordMarrow	Marrow	1						weap	glov								4 of the same gem	skc	skc	skc	skc			manasteal		3	3	lifesteal		3	3	reduce-ac		6	6																	0
+xGemwordMarrow	Marrow	1						weap	glov								4 of the same gem	skf	skf	skf	skf			manasteal		4	4	lifesteal		4	4	reduce-ac		8	8																	0
+xGemwordMarrow	Marrow	1						weap	glov								4 of the same gem	sku	sku	sku	sku			manasteal		5	5	lifesteal		5	5	reduce-ac		10	10																	0
+xGemwordMarrow	Marrow	1						weap	glov								4 of the same gem	skl	skl	skl	skl			manasteal		6	6	lifesteal		6	6	reduce-ac		12	12																	0
+xGemwordMarrow	Marrow	1						weap	glov								4 of the same gem	skz	skz	skz	skz			manasteal		7	7	lifesteal		7	7	reduce-ac		15	15																	0
+xGemwordMarrow	Marrow	1						tors	helm	boot							4 of the same gem	skc	skc	skc	skc			regen		3	3	lifesteal		4	4	reduce-ac		8	8	move2		15	15													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							4 of the same gem	skf	skf	skf	skf			regen		4	4	lifesteal		4	4	reduce-ac		10	10	move2		20	20													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							4 of the same gem	sku	sku	sku	sku			regen		6	6	regen-mana		22	22	ac%		16	16	move2		25	25													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							4 of the same gem	skl	skl	skl	skl			regen		8	8	regen-mana		33	33	ac%		20	20	move2		30	30													0
+xGemwordMarrow	Marrow	1						tors	helm	boot							4 of the same gem	skz	skz	skz	skz			regen		9	9	regen-mana		44	44	ac%		25	25	move2		35	35													0
+xGemwordMarrow	Marrow	1						shld	belt								4 of the same gem	skc	skc	skc	skc			thorns		30	30	rep-dur	6			ac%		10	10																	0
+xGemwordMarrow	Marrow	1						shld	belt								4 of the same gem	skf	skf	skf	skf			thorns		45	45	rep-dur	7			ac%		13	13																	0
+xGemwordMarrow	Marrow	1						shld	belt								4 of the same gem	sku	sku	sku	sku			thorns/lvl	14			rep-dur	8			ac%		20	20																	0
+xGemwordMarrow	Marrow	1						shld	belt								4 of the same gem	skl	skl	skl	skl			thorns/lvl	18			rep-dur	9			ac%		25	25																	0
+xGemwordMarrow	Marrow	1						shld	belt								4 of the same gem	skz	skz	skz	skz			thorns/lvl	20			rep-dur	10			ac%		30	30																	0
+RunewordInitiate	Initiate	1						belt	dols								GaeSi	r34	r44					cast2		30	30	allskills		1	3	ac%		150	200	mana-kill		20	20	red-dmg%		10	15									0
+Runewordcrazy	crazy	1						staf	orb	lob	dols						DolIth	r14	r06					sor		1	1	cast2		10	20	res-all		10	10	mana-kill		10	10	skill-rand	2	36	60									0
+RunewordJahcaliel	Jahcaliel	1						glov	dols								JahCaLiEl	r31	r37	r41	r01			allskills		1	3	aura	Concentration	15	20	hit-skill	Enchant	1	60	dmg		50	100	ac%		150	150	ac-miss		350	350	att%		25	25	0
+Runewordcallme	callme	1						boot	dols								DuckThunA	r42	r46	r39				allskills		1	3	aura	Vigor	10	10	oskill	Find Item	1	1	ac%		200	200	kick		50	100	red-dmg%		10	20	gold%		100	100	0
+Runewordtearorsol	TearOfSol	1						shld	dols								SolUiLumMal	r12	r35	r17	r23			block2		30	30	block		20	20	ac%		300	450	res-all-max		10	15	oskill	Telekinesis	1	1	balance3		25	25	allskills		1	3	0
+RunewordFollow	FalLoGoolgDuck	1						tors	dols								FalLoGoolgDuck	r19	r28	r50	r42			allskills		1	3	aura	Redemption	5	10	gold%/lvl	30			red-dmg%		15	15	rep-dur	25			light		100	100	oskill	Holy Shield	1	5	0
+RunewordChamjah	chamjahchama	1						tors	dols								ChamJahChamA	r32	r31	r32	r39			allskills		1	3	aura	Salvation	10	10	ac%		150	250	red-dmg		50	100	oskill	Oak Sage	1	3	balance3		25	25	ac-miss		400	500	0
+RunewordYupderak	Yupderak	1						helm	dols								YupDerAk	r49	r47	r43				allskills		1	3	oskill	Penetrate	1	1	ac%		200	300	addxp		1	9	gethit-skill	Shiver Armor	10	20	hit-skill	Glacial Spike	3	45	dex/lvl	8			0
+RunewordDicaprio	Dicaprio	1						axe	xbow	dols							DiCaPulIo	r38	r37	r21	r16			dmg%/lvl	8			dmg		200	300	dmg/lvl	13			hit-skill	Quickness	5	3	hit-skill	Amplify Damage	5	8	pierce-dmg		5	15	lifesteal		8	12	0
+RunewordMctheMax	MctheMax	1						thro	ajav	dols							AmmSiDerVex	r11	r44	r47	r26			allskills		1	3	dmg/lvl	10			extra-ltng		10	20	pierce-ltng		30	40	noconsume		1	60	noheal		1	1	rep-quant	30			0
+Runewordfrog	frog	1						boot	dols								GaeGulGaeGul	r34	r25	r34	r25			allskills		1	2	oskill	Leap	0	10	oskill	Leap Attack	1	1	move2		40	40	red-dmg		10	40	hp/lvl	8			skill-rand	3	6	402	0
+Runewordtheglory	the Glory	1						helm	dols								DerGulLoLi	r47	r25	r28	r41			allskills		1	3	aura	Cleansing	3	3	red-dmg%		10	30	ac%		200	400	red-dmg		10	50	vit/lvl	8			reduce-ac		30	30	0
+Runeworddarknight	Dark Night	1						glov	dols								DaKeuNaIst	r53	r45	r52	r24			aura	Might	10	20	ac%		200	300	red-dmg		20	50	hit-skill	Quickness	2	10	gethit-skill	Shock Wave	15	10	str/lvl	5			knock		1	1	0
+Runeworddragonball	Dragon Ball	1						weap	dols								ChaJahRa	r58	r31	r54				allskills		0	2	dmg		200	300	dmg/lvl	11			hit-skill	Fade	3	15	hp%		10	20	hit-skill	Blessed Hammer	10	50	oskill	Find Item	1	30	0
+Runewordwho	Who	1						belt	dols								NaDa	r52	r53					hit-skill	bone armor	3	50	ac%		200	250	reduce-ac		25	25	nofreeze		1	1	red-dmg		20	100	hp%		10	25	mana%		10	25	0
+Runewordakbali	Akbali	1						staf	orb	lob	dols						AkBaLi	r43	r56	r41				allskills		1	3	skill-rand	2	36	60	skill-rand	2	36	60	skill-rand	2	36	60	skill-rand	2	36	60	skill-rand	2	36	60	oskill	Lower Resist	0	1	0
+Runeworldcoindrop	CoinDrop	1						weap	dols								KoInDuckRaAk	r18	r40	r42	r54	r43		dmg%		-500	500	allskills		-5	5	indestruct		1	1	dmg		-200	500	ilvlx		21	21	hp%		-30	30	all-pierce		-50	50	0
+Runeword601	Infinity	1					Previously Ladder Only	glov									BerMalBerIst	r30	r23	r30	r24			dmg%		255	325	move3		35	35	vit/lvl	4			kill-skill	Chain Lightning	50	20	pierce-ltng		45	55	charged	Cyclone Armor	30	21					0
+Runewordmadicasol	Madicasol	1						shld	dols								MaDiCaSol	r55	r38	r37	r12			aura	Disease	10	25	allskills		1	3	block		20	30	ac%		450	500	dmg%		350	400	oskill	Blade Shield	1	10	oskill	Poison Mastery	1	1	0
+Runewordnomo	Nomomoum	1						helm	dols								LoMoMoUm	r28	r36	r36	r22			allskills		1	3	ac/lvl	5			red-dmg%		10	15	aura	Pet Aura Life	10	25	rip		1	1	light		-3	-3	regen		-30	-30	0
+Runewordiffy	Iffy	1						tors	dols								ThulLemMalLem	r10	r20	r23	r20			allskills		0	2	gethit-skill	Thunder Storm	15	20	mana-kill		5	5	hp%		5	10	res-all		20	20	addxp		1	3	half-freeze		1	1	0
+Runewordmidnight	Midnight	1						club	hamm	mace	dols						EthLiAInJah	r05	r41	r39	r40	r31		allskills		1	3	oskill	Mace Mastery	1	1	hit-skill	Enchant	2	30	dmg		100	200	pierce-immunity-fire		1	5	pierce-immunity-damage		1	5	indestruct		1	1	0
+Runewordkimbap	Kimbap	1						weap	dols								DolDolMalLiIn	r14	r14	r23	r41	r40		allskills		1	3	hit-skill	Amplify Damage	3	8	dmg/lvl	13			mana%		10	10	deadly		5	10	all-pierce		10	15	howl		-62	-62	0
+Runewordkoreana	Koreana	1						glov	dols								KoLiANa	r18	r41	r39	r52			allskills		1	3	red-dmg		30	80	ac%		150	200	hit-skill	Blade Shield	1	15	rep-dur	25			light		50	50	pierce-immunity-all		1	5	0
+Runeworddoctor	What the	1						h2h	dols								UiSaThunSiAmn	r35	r57	r46	r44	r11		skilltab	20	1	4	charge-noconsume		75	100	hit-skill	Lower Resist	1	12	crush		20	20	res-all		25	25	noheal		1	1	pierce-immunity-all		1	5	0
+Runewordeunuch	Eunuch	1						shld	dols								GulJahRaKo	r25	r31	r54	r18			skilltab	20	1	3	charge-noconsume		25	50	oskill	Iron Skin	1	1	ac-miss		300	500	dex/lvl	8			block		30	30	balance3		20	20	0
+RunewordPB	parisbaguette	1						weap	dols								PalEBaGaeEth	r19	r60	r56	r34	r05		allskills		1	4	aura	Concentration	8	12	mindmg/lvl	10			hp%		10	20	mana%		10	20	ac/lvl	30			all-pierce		10	20	0
+RunewordBR	Baskin-Robbins	1						weap	dols								BerSurKingRaBerSur	r30	r29	r48	r54	r30	r29	dmg%		300	400	pierce-immunity-all		3	8	dmg/lvl	10			rep-dur	25			skill-rand2	1	6	155	skill-rand2	1	221	290	ilvlx		21	21	0
+Runewordedelweiss	Edelweiss	1						helm	dols								ethel	r05	r01					ac/lvl	1			res-all		10	10	mana		50	50	addxp		0	1	balance3		10	10	half-freeze		1	1					0
+Runewordenjoy	enjoy	1						boot									ethral	r05	r08					allskills		1	1	move2		20	20	half-freeze		1	1	res-all		10	10	addxp		0	1	manasteal		2	2					0
+Runewordgrandmother	Grand Mother	1						mcha	dols								maljah	r23	r31					allskills		0	1	res-all		10	20	red-dmg%		5	8	dmg-norm		20	35													0
+Runewordcrying	crying	1						gcha	dols								chammalloum	r32	r23	r28	r22			allskills		0	2	res-all		13	28	red-dmg%		10	15	ac/lvl	4			hp/lvl	6			pierce-immunity-all		1	5	regen		-10	-10	0
+Runewordmommy	Hey Mom	1						boot	dols								GoolgEJahDa	r50	r60	r31	r53			allskills		1	3	kick		30	80	move3		50	50	all-stats/lvl	2			ac/lvl	6			extra-skill-dmg%-rand		5	10	ignore-ac		1	1	0
+Runewordtender	tender	1						glov	dols								KingKeuLem	r48	r45	r20				allskills		1	3	res-all		40	50	red-dmg%		15	30	red-dmg		50	100	hit-skill	Lower Resist	1	6	deadly		50	50	noheal		1	1	0
+Runewordhandsome	handsome	1						belt	dols								KingCa	r48	r37					allskills		1	3	addxp		1	5	red-dmg%		15	20	red-dmg		20	60	pierce		100	100	ac/lvl	4			str/lvl	6			0
+RunewordFarewellking	Farewell King	1						helm	dols								BaEKing	r56	r60	r48				allskills		1	4	hp/lvl	8			ac-miss		300	500	hp%		15	30	ac/lvl	5			ac%		150	200	mana%		15	30	0
+Runewordteamrocket	Team Rocket	1						weap	dols								NaLoSaNaLoE	r52	r28	r57	r52	r28	r60	allskills		1	5	charge-noconsume		75	100	mindmg/lvl	13			dmg		300	400	pierce-immunity-all		5	10	all-pierce		15	20	slow		75	75	0
+Runewordpms	Park Myung Su	1						shld	dols								TalRalRa	r07	r08	r54				allskills		1	3	ac-miss		250	480	red-dmg%		35	35	red-dmg		50	100	ac/lvl	5			block2		30	30	all-absorb		5	10	0
+Re runeword	---------																																																			0
+ReRuneword1	Ancients' Pledge	1					109	shld	boot	lcha	gcha						reversal	r07	r09	r08				reversalrune		1	1																									0
+ReRuneword3	Authority	1						tors	lcha								reversal	r08	r13	r15				reversalrune		1	1																									0
+ReRuneword4	Beast	1					110	axe	scep	hamm							reversal	r17	r23	r22	r30	r30		reversalrune		1	1																									0
+ReRuneword6	Black	1					109	club	hamm	mace	thro	ajav					reversal	r04	r16	r10				reversalrune		1	1																									0
+ReRuneword8	Bone	1					111	tors	lcha								reversal	r22	r22	r12				reversalrune		1	1																									0
+ReRuneword9	Bramble	1					110	tors									reversal	r05	r29	r27	r08			reversalrune		1	1																									0
+ReRuneword10	Brand	1					Previously Ladder Only	miss	glov	thro	gcha						reversal	r25	r23	r28	r31			reversalrune		1	1																									0
+ReRuneword11	Breath of the Dying	1					110	weap	thro	dols							reversal	r05	r33	r02	r01	r15	r26	reversalrune		1	1																									0
+ReRuneword13	Call to Arms	1					110	weap	thro								reversal	r27	r24	r23	r08	r11		reversalrune		1	1																									0
+ReRuneword14	Chains of Honor	1					110	tors	gcha								reversal	r24	r30	r22	r14			reversalrune		1	1																									0
+ReRuneword16	Chaos	1					110	h2h									reversal	r22	r27	r19				reversalrune		1	1																									0
+ReRuneword17	Crescent Moon	1					110	axe	swor	sppl	thro	ajav	glov				reversal	r03	r22	r13				reversalrune		1	1																									0
+ReRuneword20	Death	1					Previously Ladder Only	swor	axe								reversal	r25	r09	r26	r01	r15		reversalrune		1	1																									0
+ReRuneword22	Delirium	1					110	helm	lcha								reversal	r16	r24	r20				reversalrune		1	1																									0
+ReRuneword25	Destruction	1					Previously Ladder Only	sppl	swor								reversal	r18	r31	r30	r28	r26		reversalrune		1	1																									0
+ReRuneword26	Doom	1					110	axe	sppl	hamm	lob						reversal	r32	r28	r22	r27	r15		reversalrune		1	1																									0
+ReRuneword27	Dragon	1					Previously Ladder Only	tors	shld	boot	bowq	xboq					reversal	r12	r28	r29				reversalrune		1	1																									0
+ReRuneword29	Dream	1					Previously Ladder Only	helm	shld	boot	bowq	xboq					reversal	r21	r31	r16				reversalrune		1	1																									0
+ReRuneword30	Duress	1					110	tors	lcha								reversal	r10	r22	r13				reversalrune		1	1																									0
+ReRuneword31	Edge	1					Previously Ladder Only	miss									reversal	r11	r07	r03				reversalrune		1	1																									0
+ReRuneword33	Enigma	1					110	tors									reversal	r30	r06	r31				reversalrune		1	1																									0
+ReRuneword34	Enlightenment	1					111	tors	lcha								reversal	r12	r08	r21				reversalrune		1	1																									0
+ReRuneword36	Eternity	1					110	mele									reversal	r29	r12	r24	r30	r11		reversalrune		1	1																									0
+ReRuneword37	Exile	1					110	pala	gcha								reversal	r14	r24	r27	r26			reversalrune		1	1																									0
+ReRuneword38	Faith	1					"110, Previously Ladder Only"	miss	glov	thro							reversal	r02	r20	r31	r27			reversalrune		1	1																									0
+ReRuneword39	Famine	1						axe	hamm	glov	thro	gcha					reversal	r31	r09	r27	r19			reversalrune		1	1																									0
+ReRuneword40	Flickering Flame	1			1	2	D2R Ladder 1	helm									reversal	r26	r21	r04				reversalrune		1	1																									0
+ReRuneword41	Fortitude	1					Previously Ladder Only	weap	tors	glov	thro	gcha					reversal	r23	r14	r12	r01			reversalrune		1	1																									0
+ReRuneword44	Fury	1					109	mele	glov	thro	ajav						reversal	r05	r25	r31				reversalrune		1	1																									0
+ReRuneword45	Gloom	1					110	tors	lcha								reversal	r21	r22	r19				reversalrune		1	1																									0
+ReRuneword47	Grief	1					Previously Ladder Only	swor	axe								reversal	r08	r23	r28	r03	r05		reversalrune		1	1																									0
+ReRuneword48	Hand of Justice	1					110	weap	glov								reversal	r28	r11	r32	r29			reversalrune		1	1																									0
+ReRuneword49	Harmony	1					Previously Ladder Only	miss	glov	gcha							reversal	r18	r12	r06	r03			reversalrune		1	1																									0
+ReRuneword51	Heart of the Oak	1					110	staf	mace	glov	thro						reversal	r10	r21	r26	r18			reversalrune		1	1																									0
+ReRuneword54	Holy Thunder	1					109	scep	glov	thro	gcha						reversal	r07	r09	r08	r05			reversalrune		1	1																									0
+ReRuneword55	Honor	1					109	weap									reversal	r12	r03	r06	r01	r11		reversalrune		1	1																									0
+ReRuneword59	Ice	1					Previously Ladder Only	miss	glov	thro							reversal	r28	r31	r13	r11			reversalrune		1	1																									0
+ReRuneword60	Infinity	1					Previously Ladder Only	sppl	lob								reversal	r24	r30	r23	r30			reversalrune		1	1																									0
+ReRuneword62	Insight	1					Previously Ladder Only	sppl	staf	miss	glov	thro	boot				reversal	r12	r07	r03	r08			reversalrune		1	1																									0
+ReRuneword65	King's Grace	1					109	swor	scep	thro	ajav						reversal	r10	r08	r11				reversalrune		1	1																									0
+ReRuneword66	Kingslayer	1					110	swor	axe	glov	thro	gcha					reversal	r19	r25	r22	r23			reversalrune		1	1																									0
+ReRuneword69	Last Wish	1					Previously Ladder Only	swor	hamm	axe	dols						reversal	r30	r31	r29	r31	r23	r31	reversalrune		1	1																									0
+ReRuneword71	Lawbringer	1					Previously Ladder Only	weap	misl	glov							reversal	r18	r20	r11				reversalrune		1	1																									0
+ReRuneword72	Leaf	1					109	staf	glov	orb	wand	lob	lwd				reversal	r08	r03					reversalrune		1	1																									0
+ReRuneword74	Lionheart	1					109	tors	lcha								reversal	r19	r17	r15				reversalrune		1	1																									0
+ReRuneword75	Lore	1					109	helm	belt								reversal	r12	r09					reversalrune		1	1																									0
+ReRuneword81	Malice	1					109	mele	glov	thro	ajav	misl					reversal	r05	r01	r06				reversalrune		1	1																									0
+ReRuneword82	Melody	1					109	miss	glov	thro	ajav						reversal	r04	r18	r13				reversalrune		1	1																									0
+ReRuneword83	Memory	1					109	staf	glov								reversal	r05	r12	r16	r17			reversalrune		1	1																									0
+ReRuneword84	Mist	1			1	2	D2R Ladder 1	miss									reversal	r06	r10	r25	r13	r32		reversalrune		1	1																									0
+ReRuneword87	Myth	1					111	tors	lcha								reversal	r04	r11	r15				reversalrune		1	1																									0
+ReRuneword88	Nadir	1					109	helm	belt	mcha	boot						reversal	r03	r04					reversalrune		1	1																									0
+ReRuneword91	Oath	1					Previously Ladder Only	swor	axe	mace	glov	thro	gcha				reversal	r17	r23	r21	r13			reversalrune		1	1																									0
+ReRuneword92	Obedience	1					Previously Ladder Only	sppl	lob								reversal	r19	r05	r10	r18	r15		reversalrune		1	1																									0
+ReRuneword94	Obsession	1			1	2	D2R Ladder 1	com2	lob	dols	tors						reversal	r04	r16	r17	r20	r24	r33	reversalrune		1	1																									0
+ReRuneword95	Passion	1					110	weap	glov	thro	gcha						reversal	r20	r02	r09	r14			reversalrune		1	1																									0
+ReRuneword97	Pattern	1			1	2	D2R Ladder 1	weap	glov	lcha	misl						reversal	r10	r09	r07				reversalrune		1	1																									0
+ReRuneword98	Peace	1					111	tors	lcha	misl							reversal	r11	r10	r13				reversalrune		1	1																									0
+ReRuneword99	Voice of Reason	1					Previously Ladder Only	swor	mace	glov	thro						reversal	r02	r01	r18	r20			reversalrune		1	1																									0
+ReRuneword103	Phoenix	1					Previously Ladder Only	weap	shld	thro							reversal	r31	r28	r26	r26			reversalrune		1	1																									0
+ReRuneword106	Plague	1			1	2	D2R Ladder 1	blde	glov	thro	ajav	h2h	lwd				reversal	r22	r13	r32				reversalrune		1	1																									0
+ReRuneword109	Pride	1					Previously Ladder Only	sppl	glov	thro	gcha						reversal	r28	r16	r29	r32			reversalrune		1	1																									0
+ReRuneword110	Principle	1					111	tors	lcha								reversal	r02	r25	r08				reversalrune		1	1																									0
+ReRuneword112	Prudence	1					110	tors	belt	mcha							reversal	r03	r23					reversalrune		1	1																									0
+ReRuneword116	Radiance	1					109	helm	lcha								reversal	r06	r12	r04				reversalrune		1	1																									0
+ReRuneword117	Rain	1					111	tors	lcha								reversal	r06	r23	r09				reversalrune		1	1																									0
+ReRuneword120	Rhyme	1					109	shld	boot	mcha	bowq	xboq	ajav				reversal	r05	r13					reversalrune		1	1																									0
+ReRuneword121	Rift	1					Previously Ladder Only	sppl	scep	glov	gcha						reversal	r25	r20	r18	r15			reversalrune		1	1																									0
+ReRuneword122	Sanctuary	1					110	shld	boot	char	bowq	xboq	ajav				reversal	r23	r18	r18				reversalrune		1	1																									0
+ReRuneword126	Silence	1					109	weap	thro	dols							reversal	r26	r03	r24	r15	r02	r14	reversalrune		1	1																									0
+ReRuneword128	Smoke	1					109	tors	belt	mcha	gcha						reversal	r17	r04					reversalrune		1	1																									0
+ReRuneword130	Spirit	1					Previously Ladder Only	swor	shld	boot							reversal	r11	r09	r10	r07			reversalrune		1	1																									0
+ReRuneword131	Splendor	1					110	shld	boot	bowq	xboq	belt	gcha				reversal	r17	r05					reversalrune		1	1																									0
+ReRuneword133	Stealth	1					109	tors	belt	mcha							reversal	r05	r07					reversalrune		1	1																									0
+ReRuneword134	Steel	1					109	weap	glov	belt	mcha						reversal	r01	r03					reversalrune		1	1																									0
+ReRuneword137	Stone	1					110	tors	gcha								reversal	r17	r21	r22	r13			reversalrune		1	1																									0
+ReRuneword139	Strength	1					109	mele	glov	thro	ajav	belt	blun				reversal	r03	r11					reversalrune		1	1																									0
+ReRuneword148	Treachery	1					111	tors	lcha								reversal	r20	r10	r13				reversalrune		1	1																									0
+ReRuneword151	Unbending Will	1			1	2	D2R Ladder 1	swor	thro	dols							reversal	r15	r01	r02	r06	r16	r19	reversalrune		1	1																									0
+ReRuneword154	Venom	1					109	weap	glov	thro	ajav						reversal	r23	r14	r07				reversalrune		1	1																									0
+ReRuneword157	Void	1						knif									reversal	r24	r33	r10				reversalrune		1	1																									0
+ReRuneword160	Wealth	1					109	tors									reversal	r03	r18	r20				reversalrune		1	1																									0
+ReRuneword162	White	1					109	wand	glov								reversal	r16	r14					reversalrune		1	1																									0
+ReRuneword163	Wind	1					110	mele	glov	thro	ajav	belt	misl				reversal	r01	r29					reversalrune		1	1																									0
+ReRuneword165	Wisdom	1			1	2	D2R Ladder 1	helm	lcha								reversal	r02	r06	r21				reversalrune		1	1																									0
+ReRuneword168	Wrath	1					Previously Ladder Only	miss	glov	thro	gcha						reversal	r23	r30	r17	r21			reversalrune		1	1																									0
+ReRuneword170	Zephyr	1					109	miss	glov	thro	ajav	boot	misl				reversal	r05	r09					reversalrune		1	1																									0
+ReRuneword171	Hustle (armor)	1			3		D2R Ladder 3	tors	boot	lcha	misl						reversal	r02	r18	r13				reversalrune		1	1																									0
+ReRuneword172	Hustle (weapon)	1			3		D2R Ladder 3	weap	glov								reversal	r02	r18	r13				reversalrune		1	1																									0
+ReRuneword173	Mosaic	1			3		D2R Ladder 3	h2h									reversal	r11	r25	r23				reversalrune		1	1																									0
+ReRuneword174	Metamorphosis	1			3		D2R Ladder 3	helm	boot								reversal	r19	r32	r16				reversalrune		1	1																									0
+ReRuneword175	Ground	1			3		D2R Ladder 3	helm	boot	lcha							reversal	r09	r16	r13				reversalrune		1	1																									0
+ReRuneword176	Temper	1			3		D2R Ladder 3	helm	boot	lcha							reversal	r08	r16	r13				reversalrune		1	1																									0
+ReRuneword177	Hearth	1			3		D2R Ladder 3	helm	boot	lcha							reversal	r10	r16	r13				reversalrune		1	1																									0
+ReRuneword178	Cure	1			3		D2R Ladder 3	helm									reversal	r07	r16	r13				reversalrune		1	1																									0
+ReRuneword179	Bulwark	1			3		D2R Ladder 3	helm	boot	lcha							reversal	r12	r16	r13				reversalrune		1	1																									0
+ReRuneword180	Coven	1						helm	lcha								reversal	r16	r08	r24				reversalrune		1	1																									0
+ReRuneword181	Vigilance	1						grim	shld	head	ashd	mcha					reversal	r25	r14					reversalrune		1	1																									0
+ReRuneword182	Ritual	1						knif	lcha								reversal	r27	r13	r11				reversalrune		1	1																									0
+ReRunewordcrazy	crazy	1						staf	orb	lob	dols						reversal	r06	r14					reversalrune		1	1																									0
+ReRunewordJahcaliel	Jahcaliel	1						glov	dols								reversal	r01	r41	r37	r31			reversalrune		1	1																									0
+ReRunewordcallme	callme	1						boot	dols								reversal	r39	r46	r42				reversalrune		1	1																									0
+ReRunewordtearorsol	TearOfSol	1						shld	dols								reversal	r23	r17	r35	r12			reversalrune		1	1																									0
+ReRunewordFollow	FalLoGoolgDuck	1						tors	dols								reversal	r42	r50	r28	r19			reversalrune		1	1																									0
+ReRunewordChamjah	chamjahchama	1						tors	dols								reversal	r39	r32	r31	r32			reversalrune		1	1																									0
+ReRunewordYupderak	Yupderak	1						helm	dols								reversal	r43	r47	r49				reversalrune		1	1																									0
+ReRunewordDicaprio	Dicaprio	1						axe	xbow		dols						reversal	r16	r21	r37	r38			reversalrune		1	1																									0
+ReRunewordMctheMax	MctheMax	1						thro	ajav		dols						reversal	r26	r47	r44	r11			reversalrune		1	1																									0
+ReRunewordfrog	frog	1						boot	dols								reversal	r25	r34	r25	r34			reversalrune		1	1																									0
+ReRunewordtheglory	the Glory	1						helm	dols								reversal	r41	r28	r25	r47			reversalrune		1	1																									0
+ReRuneworddarknight	Dark Night	1						glov	dols								reversal	r24	r52	r45	r53			reversalrune		1	1																									0
+ReRuneworddragonball	Dragon Ball	1						weap	dols								reversal	r54	r31	r58				reversalrune		1	1																									0
+ReRunewordwho	Who	1						belt	dols								reversal	r53	r52					reversalrune		1	1																									0
+ReRunewordakbali	Akbali	1						staf	orb	lob	dols						reversal	r41	r56	r43				reversalrune		1	1																									0
+ReRuneworldcoindrop	CoinDrop	1						weap	dols								reversal	r43	r54	r42	r40	r18		reversalrune		1	1																									0
+ReRuneword601	Infinity	1					Previously Ladder Only	glov									reversal	r24	r30	r23	r30			reversalrune		1	1																									0
+Reunewordmadicasol	Madicasol	1						shld	dols								reversal	r12	r37	r38	r55			reversalrune		1	1																									0
+ReRunewordnomo	Umomoum	1						helm	dols								reversal	r22	r36	r36	r28			reversalrune		1	1																									0
+ReRunewordiffy	Rain Check	1						tors	dols								reversal	r20	r23	r20	r10			reversalrune		1	1																									0
+ReRunewordmidnight	parenting	1						club	hamm	mace	dols						reversal	r31	r40	r39	r41	r05		reversalrune		1	1																									0
+ReRunewordkimbap	Kimbap with burst sides	1						weap	dols								reversal	r40	r41	r23	r14	r14		reversalrune		1	1																									0
+ReRunewordkoreana	Beyond the wall	1						glov	dols								reversal	r52	r39	r41	r18			reversalrune		1	1																									0
+ReRuneworddoctor	Fuxxxxxxxxx	1						h2h	dols								reversal	r11	r44	r46	r57	r35		reversalrune		1	1																									0
+ReRunewordeunuch	Nonsense	1						shld	dols								reversal	r18	r54	r31	r25			reversalrune		1	1																									0
+ReRunewordPB	parisbaguette	1						weap	dols								reversal	r05	r34	r56	r60	r19		reversalrune		1	1																									0
+ReRunewordBR	Baskin-Robbins	1						weap	dols								reversal	r29	r30	r54	r48	r29	r30	reversalrune		1	1																									0
+ReRunewordedelweiss	Edelweiss	1						helm	dols								ethel	r01	r05					reversalrune		1	1																									0
+ReRunewordenjoy	enjoy	1						boot									ethral	r08	r05					reversalrune		1	1																									0
+ReRunewordgrandmother	Grand Mother	1						mcha	dols								reversal	r31	r23					reversalrune		1	1																									0
+ReRunewordcrying	crying	1						gcha	dols								reversal	r22	r28	r23	r32			reversalrune		1	1																									0
+ReRunewordmommy	Hey Mom	1						boot	dols								GoolgEJahDa	r53	r31	r60	r50			reversalrune		1	1																									0
+ReRunewordtender	tender	1						glov	dols								KingKeuLem	r20	r45	r48				reversalrune		1	1																									0
+ReRunewordhandsome	handsome	1						belt	dols								KingCa	r37	r48					reversalrune		1	1																									0
+ReRunewordFarewellking	Farewell King	1						helm	dols								BaEKing	r48	r60	r56				reversalrune		1	1																									0
+ReRunewordteamrocket	Team Rocket	1						weap	dols								NaLoSaNaLoE	r60	r28	r52	r57	r28	r52	reversalrune		1	1																									0
+Runewordpms	Park Myung Su	1						shld	dols								TalRalRa	r54	r08	r07				reversalrune		1	1																									0
+Ultra runeword	---------																																																			0
+URuneword1	Ancients' Pledge	1						shld	boot	lcha	gcha						RalOrtTal	c08	c09	c07				res-cold		45	45	res-all		26	26	ac%		75	75	dmg-to-mana		15	15													0
+URuneword3	Authority	1						tors	lcha								HelShaelRal	c15	c13	c08				gethit-skill	Psychic Ward	2	15	hit-skill	Miasma Chains	10	20	war		3	3	dmg%		60	90													0
+URuneword4	Beast	1						axe	scep	hamm							BerTirUmMalLum	c30	c03	c22	c23	c17		swing2		60	60	aura	Fanaticism	13	13	dmg%		360	400	str		40	60	charged	Summon Grizzly	5	13	oskill	Wearbear	5	5	oskill	Shape Shifting	5	5	0
+URuneword6	Black	1						club	hamm	mace	thro	ajav					ThulIoNef	c10	c16	c04				crush		60	60	dmg%		180	180	swing2		23	23	red-mag		3	3	att		300	300	charged	74	12	4					0
+URuneword8	Bone	1						tors	lcha								SolUmUm	c12	c22	c22				hit-skill	tBone Spear	15	15	gethit-skill	Bone Armor	15	15	nec		3	3	mana		150	225													0
+URuneword9	Bramble	1						tors									RalOhmSurEth	c08	c27	c29	c05			balance2		75	75	ac		450	450	aura	Thorns	23	32	heal-kill		20	20	extra-pois		38	75	res-pois		150	150	charged	Spirit of Barbs	33	13	0
+URuneword10	Brand	1						miss	glov	thro	gcha						JahLoMalGul	c31	c28	c23	c25			dmg%		390	510	dmg-demon		280	495	hit-skill	tBone Spear	100	27	gethit-skill	Amplify Damage	35	21	knock		1	1	noheal		1	1	explosivearrow		23	23	0
+URuneword11	Breath of the Dying	1						weap	thro	dols							VexHelElEldZodEth	c26	c15	c01	c02	c33	c05	swing2		90	90	dmg-undead		185	185	lifesteal		18	23	noheal		1	1	dmg%		525	600	all-stats		45	45					0
+URuneword13	Call to Arms	1						weap	thro								AmnRalMalIstOhm	c11	c08	c23	c24	c27		swing2		60	60	dmg%		300	360	allskills		2	2	oskill	Battle Command	3	9	oskill	Battle Orders	2	9	oskill	Battle Cry	2	6	regen		18	18	0
+URuneword14	Chains of Honor	1						tors	gcha								DolUmBerIst	c14	c22	c30	c24			res-all		75	75	ac%		105	105	dmg-demon		300	300	dmg-undead		150	150	lifesteal		12	12	allskills		3	3	str		30	30	0
+URuneword16	Chaos	1						h2h									FalOhmUm	c19	c27	c22				demon-heal		23	23	dmg%		360	435	dmg-mag		325	700	oskill	Whirlwind	2	2	swing2		50	50	hit-skill	tFrozen Orb	9	17	hit-skill	Charged Bolt	11	9	0
+URuneword17	Crescent Moon	1						axe	swor	sppl	thro	ajav	glov				ShaelUmTir	c13	c22	c03				pierce-ltng		50	50	ignore-ac		1	1	dmg%		270	330	abs-mag		14	17	charged	Summon Spirit Wolf	30	18	hit-skill	Static Field	7	20	hit-skill	Chain Lightning	10	26	0
+URuneword20	Death	1						swor	axe								HelElVexOrtGul	c15	c01	c26	c09	c25		dmg%		450	580	deadly/lvl	8			charged	BloodGolem	15	22	att-skill	Glacial Spike	38	27	death-skill	Chain Lightning	150	66	crush		75	75	indestruct		1	1	0
+URuneword22	Delirium	1						helm	lcha								LemIstIo	c20	c24	c16				hit-skill	Confuse	11	27	charged	Attract	60	17	gethit-skill	Terror	14	20	ac		392	392	gethit-skill	Mind Blast	6	21	gethit-skill	Delerium Change	1	75	allskills		3	3	0
+URuneword25	Destruction	1						sppl	swor								VexLoBerJahKo	c26	c28	c30	c31	c18		dmg%		525	525	dmg-mag		150	270	hit-skill	Molten Boulder	5	35	death-skill	Meteor	150	68	att-skill	Nova	23	33	hit-skill	Volcano	23	18	noheal		1	1	0
+URuneword26	Doom	1						axe	sppl	hamm	lob						HelOhmUmLoCham	c15	c27	c22	c28	c32		dmg%		420	480	aura	Holy Freeze	12	18	swing2		70	70	noheal		1	1	pierce-cold		60	90	allskills		3	3	hit-skill	Volcano	5	27	0
+URuneword27	Dragon	1						tors	shld	boot	bowq	xboq	lcha				SurLoSol	c29	c28	c12				ac		540	540	ac-miss		345	345	str/lvl	5			hit-skill	Hydra	12	23	gethit-skill	Venom	20	27	aura	Holy Fire	21	21	all-stats		5	8	0
+URuneword29	Dream	1						helm	shld	boot	bowq	xboq					IoJahPul	c16	c31	c21				ac		225	330	gethit-skill	Confuse	10	23	mana/lvl	8			res-all		8	30	balance3		30	45	aura	Holy Shock	23	23	mag%		18	38	0
+URuneword30	Duress	1						tors	lcha								ShaelUmThul	c13	c22	c10				dmg-cold	50	56	200	dmg%		15	35	ac%		225	300	balance2		30	30	openwounds		50	50	crush		23	23	stamdrain		-20	-20	0
+URuneword31	Edge	1						miss									TirTalAmn	c03	c07	c11				dmg-demon		480	570	dmg-undead		420	420	swing2		53	53	noheal		1	1	aura	Thorns	23	23	all-stats		8	15	cheap		23	23	0
+URuneword33	Enigma	1						tors									JahIthBer	c31	c06	c30				ac		1125	1165	heal-kill		21	21	move2		68	68	str/lvl	9			allskills		3	3	mag%/lvl	8			oskill	Teleport	2	2	0
+URuneword34	Enlightenment	1						tors	lcha								PulRalSur	c21	c08	c12				hit-skill	Fire Ball	5	23	gethit-skill	Blaze	5	23	sor		3	3	oskill	Warmth	2	2													0
+URuneword36	Eternity	1						mele									AmnBerIstSolSur	c11	c30	c24	c12	c29		dmg%		390	465	indestruct		1	1	slow		50	50	charged	Revive	88	8	regen		24	24	regen-mana		24	24	nofreeze		1	1	0
+URuneword37	Exile	1						pala	gcha								VexOhmIstDol	c26	c27	c24	c14			block2		45	45	freeze		3	3	ac%		330	390	aura	Defiance	20	24	skilltab	10	3	3	hit-skill	Life Tap	15	8	rep-dur	25			0
+URuneword38	Faith	1						miss	glov	thro							OhmJahLemEld	c27	c31	c20	c02			dmg%		420	420	att%		450	450	dmg-fire		180	180	res-all		23	23	aura	Fanaticism	18	23	reanimate	1	15	15	allskills		2	3	0
+URuneword39	Famine	1						axe	hamm	glov	thro	gcha					FalOhmOrtJah	c19	c27	c09	c31			dmg%		400	480	lifesteal		18	18	swing2		45	45	noheal		1	1	dmg-mag		270	300	dmg-elem		75	300	ethereal		2	2	0
+URuneword40	Flickering Flame	1						helm									NefPulVex	c04	c21	c26				fireskill		5	5	aura	Resist Fire	6	12	pierce-fire		15	23	mana		75	115	half-freeze		1	1	res-pois-len		75	75					0
+URuneword41	Fortitude	1						weap	tors	glov	thro	gcha					ElSolDolLo	c01	c12	c14	c28			ac%		300	300	dmg%		450	450	cast3		38	38	gethit-skill	Chilling Armor	20	23	dmg-to-mana		18	18	hp/lvl		12	18	res-all		35	45	0
+URuneword44	Fury	1						mele	glov	thro	ajav	lcha					JahGulEth	c31	c25	c05				dmg%		314	314	swing2		60	60	noheal		1	1	openwounds		99	99	lifesteal		9	9	deadly		50	50	skill	147	8	8	0
+URuneword45	Gloom	1						tors	lcha								FalUmPul	c19	c22	c21				ac%		300	345	res-all		45	45	gethit-skill	Dim Vision	15	5	balance2		15	15	dmg-to-mana		8	8	light		-5	-5	half-freeze		1	1	0
+URuneword47	Grief	1						weap									EthTirLoMalRal	c05	c03	c28	c23	c08		dmg-dem/lvl	20			dmg		510	600	swing3		45	60	hit-skill	Venom	3	23	pierce-pois		30	38	ignore-ac		1	1	heal-kill		15	23	0
+URuneword48	Hand of Justice	1						weap	glov								SurChamAmnLo	c29	c32	c11	c28			swing2		50	50	dmg%		300	410	aura	Holy Fire	24	24	levelup-skill	Blaze	150	54	death-skill	Meteor	150	72	ignore-ac		1	1	pierce-fire		30	30	0
+URuneword49	Harmony	1						miss	glov	gcha							TirIthSolKo	c03	c06	c12	c18			dmg%		300	413	dmg-elem		80	240	charged	Revive	25	20	aura	Vigor	15	15	oskill	Valkyrie	3	9	regen-mana		30	30	light		3	3	0
+URuneword51	Heart of the Oak	1						staf	mace	glov	thro						KoVexPulThul	c18	c26	c21	c10			cast2		60	60	charged	Oak Sage	25	6	mana%		23	23	allskills		5	5	regen		30	30	res-all		45	60	charged	Raven	60	14	0
+URuneword54	Holy Thunder	1						scep	glov	thro	gcha						EthRalOrtTal	c05	c08	c09	c07			dmg%		90	90	dmg-ltng		30	80	dmg-max		15	15	res-ltng		90	90	res-ltng-max		8	8	skill	118	5	5	charged	53	60	7	0
+URuneword55	Honor	1						weap									AmnElIthTirSol	c11	c01	c06	c03	c12		dmg%		240	240	regen		15	15	allskills		2	2	att		300	300	deadly		38	38	str		15	15					0
+URuneword59	Ice	1						miss	glov	thro							AmnShaelJahLo	c11	c13	c31	c28			dmg%		210	315	aura	Holy Freeze	27	27	extra-cold		35	45	hit-skill	Frost Nova	2	33	levelup-skill	Blizzard	150	60	pierce-cold		30	30	gold%/lvl	25			0
+URuneword60	Infinity	1						sppl	lob								BerMalBerIst	c30	c23	c30	c24			dmg%		385	485	move3		80	80	vit/lvl	6			aura	Conviction	18	18	kill-skill	Chain Lightning	50	30	pierce-ltng		60	85	charged	Cyclone Armor	30	21	0
+URuneword62	Insight	1						sppl	staf	miss	glov	thro	boot				RalTirTalSol	c08	c03	c07	c12			dmg%		300	390	att%		270	375	mag%		35	35	oskill	Critical Strike	2	9	cast2		53	53	aura	Meditation	18	26	all-stats		8	8	0
+URuneword65	King's Grace	1						swor	scep	thro	ajav						AmnRalThul	c11	c08	c10				dmg%		150	150	att		338	338	dmg-demon		150	150	dmg-undead		75	75	att-demon		150	150	att-undead		150	150					0
+URuneword66	Kingslayer	1						swor	axe	glov	thro	gcha					MalUmGulFal	c23	c22	c25	c19			swing2		45	45	dmg%		345	405	reduce-ac		35	35	crush		50	50	openwounds		35	35	oskill	Vengeance	2	2	gold%		60	60	0
+URuneword69	Last Wish	1						swor	hamm	axe	dols						JahMalJahSurJahBer	c31	c23	c31	c29	c31	c30	dmg%		495	560	att-skill	Charged Bolt	30	30	hit-skill	Life Tap	10	27	gethit-skill	Fade	6	17	crush		60	70	mag%/lvl	6			aura	Might	26	26	0
+URuneword71	Lawbringer	1						weap	misl	glov							AmnLemKo	c11	c20	c18				dmg-cold		195	270	dmg-fire		225	315	aura	Sanctuary	24	27	hit-skill	Decrepify	20	23	ac-miss		300	375	rip		2	2	reduce-ac		75	75	0
+URuneword72	Leaf	1						staf	glov	orb	wand	lob	lwd				TirRal	c03	c08					fireskill		5	5	ac/lvl		24	24	res-cold		50	50	skill	41	5	5	skill	36	5	5	skill	37	5	5					0
+URuneword74	Lionheart	1						tors	lcha								HelLumFal	c15	c17	c19				str		23	23	vit		35	35	dex		23	23	dmg%		30	30	hp		75	75	res-all		45	45					0
+URuneword75	Lore	1						helm	belt								OrtSol	c09	c12					enr		15	15	allskills		2	2	light		3	3	mana-kill		3	3													0
+URuneword81	Malice	1						mele	glov	thro	ajav	misl					IthElEth	c06	c01	c05				openwounds		150	150	dmg-ac		-150	-150	noheal		1	1	dmg%		50	50	light		-2	-2	regen		-8	-8					0
+URuneword82	Melody	1						miss	glov	thro	ajav						ShaelKoNef	c13	c18	c04				dmg%		75	75	skilltab	0	5	5	skill	9	5	5	skill	13	5	5	skill	17	5	5	dmg-undead		450	450					0
+URuneword83	Memory	1						staf	glov								LumIoSolEth	c17	c16	c12	c05			mana%		30	30	red-mag		17	17	ac%		75	75	cast2		50	50	sor		5	5	skill	58	5	5	skill	42	3	3	0
+URuneword84	Mist	1						miss									ChamShaelGulThulIth	c32	c13	c25	c10	c06		allskills		5	5	dmg%		485	560	aura	Concentration	12	18	pierce		150	150	vit		36	36	res-all		60	60					0
+URuneword87	Myth	1						tors	lcha								HelAmnNef	c15	c11	c04				hit-skill	Taunt	10	2	gethit-skill	Howl	3	2	bar		3	3	regen		15	15													0
+URuneword88	Nadir	1						helm	belt	mcha	boot						NefTir	c04	c03					ac%		75	75	ac		23	23	light		-5	-5	charged	264	9	13	gold%		-50	-50	str		8	8					0
+URuneword91	Oath	1						swor	axe	mace	glov	thro	gcha				ShaelPulMalLum	c13	c21	c23	c17			dmg%		315	510	swing1		65	65	hit-skill	Bone Spirit	30	30	charged	IronGolem	14	17	charged	Heart of Wolverine	20	16	abs-mag		15	23	indestruct		1	1	0
+URuneword92	Obedience	1						sppl	lob								HelKoThulEthFal	c15	c18	c10	c05	c19		dmg%		555	555	crush		90	90	kill-skill	enchant	30	32	pierce-fire		38	38	ac		300	450	balance3		60	60	res-all		30	45	0
+URuneword94	Obsession	1						com2	lob	dols	tors						ZodIstLemLumIoNef	c33	c24	c20	c17	c16	c04	allskills		6	6	gethit-skill	Weaken	24	20	cast3		95	95	balance3		90	90	res-all		90	100	hp%		40	40	regen-mana		20	45	0
+URuneword95	Passion	1						weap	glov	thro	lcha						DolOrtEldLem	c14	c09	c02	c20			dmg%		240	315	oskill	Zeal	2	2	att%		75	120	oskill	Berserk	2	2	swing2		38	38	charged	Heart of Wolverine	12	3	stupidity		15	15	0
+URuneword97	Pattern	1						weap	glov	lcha	misl						TalOrtThul	c07	c09	c10				att%		15	15	dmg%		60	120	dmg-fire		18	48	res-all		23	23	str		9	9	dex		9	9	block2		45	45	0
+URuneword98	Peace	1						tors	lcha	misl							ShaelThulAmn	c13	c10	c11				hit-skill	Valkyrie	2	23	gethit-skill	Slow Missiles	4	12	ama		3	3	oskill	Critical Strike	3	3													0
+URuneword99	Voice of Reason	1						swor	mace	glov	thro						LemKoElEld	c20	c18	c01	c02			dmg-demon		330	525	dmg-undead		530	560	dmg-cold		150	330	pierce-cold		36	36	hit-skill	Ice Blast	18	30	hit-skill	tFrozen Orb	15	20	nofreeze		1	1	0
+URuneword103	Phoenix	1						weap	shld	thro							VexVexLoJah	c26	c26	c28	c31			dmg%		525	600	ac-miss		525	600	levelup-skill	Blaze	150	60	pierce-fire		40	40	aura	Redemption	15	23	abs-fire		23	32					0
+URuneword106	Plague	1						blde	glov	thro	ajav	h2h	lwd				ChamShaelUm	c32	c13	c22				dmg%		330	480	gethit-skill	Lower Resist	20	24	hit-skill	Poison Nova	25	23	pierce-pois		35	35	deadly/lvl	5			aura	Cleansing	20	26	allskills		2	3	0
+URuneword109	Pride	1						sppl	glov	thro	gcha						ChamSurIoLo	c32	c29	c16	c28			dmg-dem/lvl	12			dmg-ltng		75	420	att%		390	450	aura	Concentration	24	30	gethit-skill	Fire Wall	25	26	regen		12	12	gold%/lvl	15			0
+URuneword110	Principle	1						tors	lcha								RalGulEld	c08	c25	c02				hit-skill	Holy Bolt	100	8	pal		3	3	hp		150	225	dmg-undead		75	75													0
+URuneword112	Prudence	1						tors	belt	mcha							MalTir	c23	c03					ac%		210	255	red-mag		15	15	red-dmg		5	5	res-all		40	55	balance2		40	40	rep-dur	25			light		2	2	0
+URuneword116	Radiance	1						helm	lcha								NefSolIth	c04	c12	c06				light		8	8	enr		15	15	vit		15	15	red-mag		5	5	mana		50	50	ac%		115	115					0
+URuneword117	Rain	1						tors	lcha								OrtMalIth	c09	c23	c06				hit-skill	Twister	5	23	gethit-skill	Cyclone Armor	5	23	dru		3	3	mana		150	225													0
+URuneword120	Rhyme	1						shld	boot	mcha	bowq	xboq	ajav				ShaelEth	c13	c05					block2		30	30	block		15	15	res-all		40	40	nofreeze		1	1	gold%		75	75	mag%		40	40					0
+URuneword121	Rift	1						sppl	scep	glov	gcha						HelKoLemGul	c15	c18	c20	c25			dmg-mag		240	375	dmg-fire		90	270	dmg-to-mana		57	57	hit-skill	Tornado	20	24	att-skill	tFrozen Orb	24	32	charged	Iron Maiden	40	15	all-stats		8	15	0
+URuneword122	Sanctuary	1						shld	boot	char	bowq	xboq	ajav				KoKoMal	c18	c18	c23				block		30	30	block2		35	35	ac%		195	240	ac-miss		375	375	res-all		75	105	balance2		30	30	charged	Slow Missiles	60	12	0
+URuneword126	Silence	1						weap	thro	dols							DolEldHelIstTirVex	c14	c02	c15	c24	c03	c26	manasteal		6	6	stupidity		50	50	dmg%		300	300	swing2		30	30	res-all		110	110	allskills		3	3	balance2		30	30	0
+URuneword128	Smoke	1						tors	belt	mcha	gcha						NefLum	c04	c17					ac-miss		375	375	ac%		110	110	res-all		75	75	balance2		30	30	light		-2	-2	charged	72	18	6					0
+URuneword130	Spirit	1						swor	shld	boot							TalThulOrtAmn	c07	c10	c09	c11			balance3		80	80	mana		135	170	ac-miss		375	375	vit		33	33	cast3		40	55	abs-mag		5	12	allskills		1	3	0
+URuneword131	Splendor	1						shld	boot	bowq	xboq	belt	gcha				EthLum	c05	c17					light		5	5	gold%		75	75	mag%		30	30	ac%		90	150	block2		30	30	cast2		15	15	allskills		1	2	0
+URuneword133	Stealth	1						tors	belt	mcha							TalEth	c07	c05					red-mag		5	5	dex		9	9	stam		25	25	move2		40	40	cast2		40	40	balance2		40	40					0
+URuneword134	Steel	1						weap	glov	belt	mcha						TirEl	c03	c01					swing2		40	40	dmg-min		5	5	dmg-max		5	5	openwounds		75	75	dmg%		30	30									0
+URuneword137	Stone	1						tors	gcha								ShaelUmPulLum	c13	c22	c21	c17			ac%		330	390	charged	Clay Golem	16	24	ac-miss		450	450	charged	Molten Boulder	80	16	str		24	24	vit		24	24	balance2		60	60	0
+URuneword139	Strength	1						mele	glov	thro	ajav	belt	blun				AmnTir	c11	c03					str		30	30	dmg%		50	50	vit		15	15	crush		35	35													0
+URuneword148	Treachery	1						tors	lcha								ShaelThulLem	c13	c10	c20				hit-skill	Venom	25	23	gethit-skill	Fade	5	23	ass		3	3	swing2		65	65													0
+URuneword151	Unbending Will	1						swor	thro	dols							FalIoIthEldElHel	c19	c16	c06	c02	c01	c15	skilltab	12	5	5	hit-skill	Taunt	18	27	swing2		30	45	dmg%		450	525	red-dmg		12	12	noheal		1	1	lifesteal		12	15	0
+URuneword154	Venom	1						weap	glov	thro	ajav						TalDolMal	c07	c14	c23				dmg-pois	175	468	468	ignore-ac		1	1	charged	83	27	15	charged	92	11	13	manasteal		11	11									0
+URuneword157	Void	1						knif									ThulZodIst	c10	c33	c24				allskills		3	3	cast2		60	60	extra-mag		15	20	oskill	Abyss	1	5	all-stats		12	18	charged	Decrepify	35	4					0
+URuneword160	Wealth	1						tors									LmKoTir	c20	c18	c03				gold%		375	375	mag%		150	150																					0
+URuneword162	White	1						wand	glov								DolIo	c14	c16					skilltab	7	5	5	red-mag		6	6	cast2		30	30	mana		20	20	skill	68	5	5	skill	84	3	3	skill	69	6	6	0
+URuneword163	Wind	1						mele	glov	thro	ajav	belt	misl				SurEl	c29	c01					dmg%		180	240	swing2		60	60	move2		30	30	reduce-ac		75	75	hit-skill	Tornado	10	14	charged	240	127	13	balance2		20	20	0
+URuneword165	Wisdom	1						helm	lcha								PulIthEld	c21	c06	c02				pierce		50	50	manasteal		6	12	att%		23	38	mana-kill		8	8	nofreeze		1	1	enr		15	15					0
+URuneword168	Wrath	1						miss	glov	thro	gcha						PulLumBerMal	c21	c17	c30	c23			dmg-demon		450	450	dmg-undead		375	450	dmg-ltng		62	360	dmg-mag		128	180	hit-skill	Life Tap	5	15	hit-skill	Decrepify	30	2	nofreeze		1	1	0
+URuneword170	Zephyr	1						miss	glov	thro	ajav	boot	misl				OrtEth	c09	c05					move2		35	35	swing2		35	35	dmg%		50	50	att		100	100	gethit-skill	240	7	2	ac		35	35					0
+URuneword171	Hustle (armor)	1						tors	boot	lcha	misl						ShaelKoEld	c13	c18	c02				move2		95	95	stamdrain		50	50	swing2		60	60	res-all		15	15	oskill	Evade	9	9									0
+URuneword172	Hustle (weapon)	1						weap	glov								ShaelKoEld	c13	c18	c02				hit-skill	Quickness	5	2	swing2		15	15	dmg%		270	300	aura	Fanaticism	2	2													0
+URuneword173	Mosaic	1						h2h									MalGulAmn	c23	c25	c11				skilltab	20	3	3	charge-noconsume		75	75	swing2		30	30	dmg%		300	375	extra-fire		12	23	extra-cold		12	23	extra-ltng		12	23	0
+URuneword174	Metamorphosis	1						helm	boot								IoChamFal	c16	c32	c19				hit-skill	Mark of the Bear	100	2	hit-skill	Mark of the Wolf	100	1	skilltab	16	8	8	ac%		75	120	res-all		15	15	crush		35	35	charge-noconsume		50	50	0
+URuneword175	Ground	1						helm	glov	boot	lcha						ShaelIoOrt	c13	c16	c09				hp%		8	8	ac%		115	150	res-ltng		15	45	abs-ltng%		15	23													0
+URuneword176	Temper	1						helm	glov	boot	lcha						ShaelIoRal	c13	c16	c08				hp%		8	8	ac%		115	150	res-fire		15	45	abs-fire%		15	23													0
+URuneword177	Hearth	1						helm	glov	boot	lcha						ShaelIoThul	c13	c16	c10				hp%		8	8	ac%		115	150	res-cold		15	45	abs-cold%		15	23	nofreeze		1	1									0
+URuneword178	Cure	1						helm	glov	boot							ShaelIoTal	c13	c16	c07				hp%		8	8	ac%		115	150	res-pois		15	45	res-pois-len		75	75	aura	Cleansing	2	2									0
+URuneword179	Bulwark	1						helm	glov	boot	lcha						ShaelIoSol	c13	c16	c12				hp%		8	8	ac%		115	150	red-dmg%		15	23	regen		45	45	lifesteal		6	9									0
+URuneword180	Coven	1						helm	lcha								IstRalIo	c24	c08	c16				gethit-skill	Sigil Lethargy	5	15	allskills		2	2	cast1		30	30	ac%		45	75	mag%		2	22	heal-kill		2	7					0
+URuneword181	Vigilance	1						grim	shld	head	ashd	mcha					DolGul	c14	c25					gethit-skill	Ring of Fire	5	15	move2		15	15	block2		45	45	hp		30	60	mana		30	60	res-all		37	52	ac%		110	150	0
+URuneword182	Ritual	1						knif	lcha								AmnShaelOhm	c11	c13	c27				gethit-skill	Sigil Death	13	2	swing1		30	30	dmg%		300	405	dmg-demon		225	360	att%		300	400	heal-kill		5	8	rip		1	1	0
+URunewordInitiate	Initiate	1						belt	dols								GaeSi	c34	c44					cast2		45	45	allskills		2	5	ac%		225	300	mana-kill		30	30	red-dmg%		15	23									0
+URunewordcrazy	crazy	1						staf	orb	lob	dols						DolIth	c14	c06					sor		2	2	cast2		15	30	res-all		15	15	mana-kill		15	15	skill-rand	3	36	60									0
+URunewordJahcaliel	Jahcaliel	1						glov	dols								JahCaLiEl	c31	c37	c41	c01			allskills		2	5	aura	Concentration	20	30	hit-skill	Enchant	2	60	dmg		75	150	ac%		225	225	ac-miss		525	525	att%		35	35	0
+URunewordcallme	callme	1						boot	dols								DuckThunA	c42	c46	c39				allskills		2	5	aura	Vigor	15	30	oskill	Find Item	2	2	ac%		300	300	kick		75	150	red-dmg%		15	30	gold%		150	150	0
+URunewordtearorsol	TearOfSol	1						shld	dols								SolUiLumMal	c12	c35	c17	c23			block2		45	45	block		35	35	ac%		450	675	res-all-max		15	23	oskill	Telekinesis	2	2	balance3		35	35	allskills		2	4	0
+URunewordFollow	FalLoGoolgDuck	1						tors	dols								FalLoGoolgDuck	c19	c28	c50	c42			allskills		2	5	aura	Redemption	7	15	gold%/lvl	45			red-dmg%		23	23	rep-dur	25			light		150	150	oskill	Holy Shield	2	7	0
+URunewordChamjah	chamjahchama	1						tors	dols								ChamJahChamA	c32	c31	c32	c39			allskills		2	5	aura	Salvation	15	15	ac%		225	375	red-dmg		75	150	oskill	Oak Sage	2	5	balance3		35	35	ac-miss		600	750	0
+URunewordYupderak	Yupderak	1						helm	dols								YupDerAk	c49	c47	c43				allskills		2	5	oskill	Penetrate	2	2	ac%		300	450	addxp		3	15	gethit-skill	Shiver Armor	10	30	hit-skill	Glacial Spike	3	65	dex/lvl	12			0
+URunewordDicaprio	Dicaprio	1						axe	xbow	dols							DiCaPulIo	c38	c37	c21	c16			dmg%/lvl	8			dmg		300	450	dmg/lvl	18			hit-skill	Quickness	5	5	hit-skill	Amplify Damage	5	12	pierce-dmg		8	23	lifesteal		12	18	0
+URunewordMctheMax	MctheMax	1						thro	ajav	dols							AmmSiDerVex	c11	c44	c47	c26			allskills		2	5	dmg/lvl	12			extra-ltng		15	30	pierce-ltng		45	60	noconsume		1	90	noheal		1	1	rep-quant	30			0
+URunewordfrog	frog	1						boot	dols								GaeGulGaeGul	c34	c25	c34	c25			allskills		2	3	oskill	Leap	0	15	oskill	Leap Attack	2	2	move2		60	60	red-dmg		15	60	hp/lvl	12			skill-rand	5	6	402	0
+URunewordtheglory	the Glory	1						helm	dols								DerGulLoLi	c47	c25	c28	c41			allskills		2	5	aura	Cleansing	5	5	red-dmg%		15	45	ac%		300	600	red-dmg		15	75	vit/lvl	12			reduce-ac		45	45	0
+URuneworddarknight	Dark Night	1						glov	dols								DaKeuNaIst	c53	c45	c52	c24			aura	Might	15	30	ac%		300	450	red-dmg		35	75	hit-skill	Quickness	2	15	gethit-skill	Shock Wave	15	15	str/lvl	7			knock		1	1	0
+URuneworddragonball	Dragon Ball	1						weap	dols								ChaJahRa	c58	c31	c54				allskills		1	3	dmg		300	450	dmg/lvl	16			hit-skill	Fade	3	23	hp%		15	30	hit-skill	Blessed Hammer	10	75	oskill	Find Item	2	45	0
+URunewordwho	Who	1						belt	dols								NaDa	c52	c53					hit-skill	bone armor	3	75	ac%		300	450	reduce-ac		38	38	nofreeze		1	1	red-dmg		30	150	hp%		15	35	mana%		15	35	0
+URunewordakbali	Akbali	1						staf	orb	lob	dols						AkBaLi	c43	c56	c41				allskills		2	5	skill-rand	5	36	60	skill-rand	5	36	60	skill-rand	5	36	60	skill-rand	5	36	60	skill-rand	5	36	60	oskill	Lower Resist	1	2	0
+URuneworldcoindrop	CoinDrop	1						weap	dols								KoInDuckRaAk	c18	c40	c42	c54	c43		dmg%		-750	750	allskills		-8	8	indestruct		1	1	dmg		-300	750	ilvlx		21	21	hp%		-45	45	all-pierce		-75	75	0
+URuneword601	Infinity	1						glov									BerMalBerIst	c30	c23	c30	c24			dmg%		383	488	move3		80	80	vit/lvl	6			kill-skill	Chain Lightning	75	30	pierce-ltng		65	80	charged	Cyclone Armor	30	21					0
+URunewordmadicasol	Madicasol	1						shld	dols								MaDiCaSol	c55	c38	c37	c12			aura	Disease	15	35	allskills		2	5	block		30	45	ac%		675	750	dmg%		525	600	oskill	Blade Shield	2	15	oskill	Poison Mastery	2	2	0
+URunewordnomo	Nomomoum	1						helm	dols								LoMoMoUm	c28	c36	c36	c22			allskills		2	5	ac/lvl	7			red-dmg%		15	23	aura	Pet Aura Life	15	35	rip		1	1	light		-5	-5	regen		-45	-45	0
+URunewordiffy	Iffy	1						tors	dols								ThulLemMalLem	c10	c20	c23	c20			allskills		1	3	gethit-skill	Thunder Storm	15	35	mana-kill		8	8	hp%		8	15	res-all		30	30	addxp		2	5	half-freeze		1	1	0
+URunewordmidnight	Midnight	1						club	hamm	mace	dols						EthLiAInJah	c05	c41	c39	c40	c31		allskills		2	5	oskill	Mace Mastery	2	2	hit-skill	Enchant	2	45	dmg		150	300	pierce-immunity-fire		2	8	pierce-immunity-damage		2	8	indestruct		1	1	0
+URunewordkimbap	Kimbap	1						weap	dols								DolDolMalLiIn	c14	c14	c23	c41	c40		allskills		2	5	hit-skill	Amplify Damage	3	12	dmg/lvl	18			mana%		15	15	deadly		8	15	all-pierce		15	23	howl		-90	-90	0
+URunewordkoreana	Koreana	1						glov	dols								KoLiANa	c18	c41	c39	c52			allskills		2	5	red-dmg		45	120	ac%		225	300	hit-skill	Blade Shield	2	23	rep-dur	25			light		75	75	pierce-immunity-all		2	8	0
+URuneworddoctor	What the	1						h2h	dols								UiSaThunSiAmn	c35	c57	c46	c44	c11		skilltab	20	2	6	charge-noconsume		100	100	hit-skill	Lower Resist	2	18	crush		30	30	res-all		38	38	noheal		1	1	pierce-immunity-all		2	8	0
+URunewordeunuch	Eunuch	1						shld	dols								GulJahRaKo	c25	c31	c54	c18			skilltab	20	2	5	charge-noconsume		75	75	oskill	Iron Skin	2	2	ac-miss		450	750	dex/lvl	12			block		45	45	balance3		30	30	0
+URunewordPB	parisbaguette	1						weap	dols								PalEBaGaeEth	c19	c60	c56	c34	c05		allskills		2	6	aura	Concentration	12	18	mindmg/lvl	15			hp%		15	30	mana%		15	30	ac/lvl	45			all-pierce		15	30	0
+URunewordBR	Baskin-Robbins	1						weap	dols								BerSurKingRaBerSur	c30	c29	c48	c54	c30	c29	dmg%		450	600	pierce-immunity-all		5	12	dmg/lvl	15			skill-rand2	1	6	155	skill-rand2	1	6	155	skill-rand2	1	221	290	ilvlx		21	21	0
+URunewordedelweiss	Edelweiss	1						helm	dols								ethel	c05	c01					ac/lvl	2			res-all		15	15	mana		75	75	addxp		1	2	balance3		15	15	half-freeze		1	1					0
+URunewordenjoy	enjoy	1						boot									ethral	c05	c08					allskills		2	2	move2		30	30	half-freeze		1	1	res-all		15	15	addxp		1	2	manasteal		3	3					0
+URunewordgrandmother	Grand Mother	1						mcha	dols								maljah	c23	c31					allskills		1	2	res-all		15	30	red-dmg%		8	15	dmg-norm		30	50													0
+URunewordcrying	crying	1						gcha	dols								chammalloum	c32	c23	c28	c22			allskills		1	3	res-all		38	58	red-dmg%		15	20	ac/lvl	6			hp/lvl	9			pierce-immunity-all		2	8	regen		-15	-15	0
+URunewordmommy	Hey Mom	1						boot	dols								GoolgEJahDa	c50	c60	c31	c53			allskills		2	4	kick		45	120	move3		75	75	all-stats/lvl	3			ac/lvl	9			extra-skill-dmg%-rand		8	15	ignore-ac		1	1	0
+URunewordtender	tender	1						glov	dols								KingKeuLem	c48	c45	c20				allskills		2	5	res-all		60	75	red-dmg%		20	45	red-dmg		75	150	hit-skill	Lower Resist	1	9	deadly		75	75	noheal		1	1	0
+URunewordhandsome	handsome	1						belt	dols								KingCa	c48	c37					allskills		2	5	addxp		2	8	red-dmg%		20	30	red-dmg		30	90	pierce		100	100	ac/lvl	6			str/lvl	9			0
+URunewordFarewellking	Farewell King	1						helm	dols								BaEKing	c56	c60	c48				allskills		2	5	hp/lvl	12			ac-miss		450	750	hp%		20	45	ac/lvl	7			ac%		200	300	mana%		20	45	0
+URunewordteamrocket	Team Rocket	1						weap	dols								NaLoSaNaLoE	c52	c28	c57	c52	c28	c60	allskills		2	8	charge-noconsume		100	100	mindmg/lvl	18			dmg		450	600	pierce-immunity-all		8	15	all-pierce		20	30	slow		90	90	0
+URunewordpms	Park Myung Su	1						shld	dols								TalRalRa	c07	c08	c54				allskills		2	5	ac-miss		375	720	red-dmg%		50	50	red-dmg		75	150	ac/lvl	7			block2		45	45	all-absorb		8	15	0

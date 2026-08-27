@@ -6,7 +6,11 @@ echo Downloading latest from GitHub...
 
 set "URL=https://github.com/kkndyyy/blade-crane-brave-zest/archive/refs/heads/main.zip"
 set "TMPZIP=%TEMP%\hf-update.zip"
+set "TMPDIR=%TEMP%\hf-update-src"
+
 if exist "%TMPZIP%" del /f /q "%TMPZIP%"
+if exist "%TMPDIR%" rmdir /s /q "%TMPDIR%"
+mkdir "%TMPDIR%"
 
 where curl.exe >nul 2>nul
 if not errorlevel 1 (
@@ -17,28 +21,37 @@ if not errorlevel 1 (
 
 if not exist "%TMPZIP%" (
   echo [ERROR] Download failed.
-  echo The GitHub repo must be PUBLIC:
-  echo   github.com/kkndyyy/blade-crane-brave-zest
-  echo Settings - General - Change repository visibility - Public
+  echo Make the repo PUBLIC: github.com/kkndyyy/blade-crane-brave-zest
+  pause
+  exit /b 1
+)
+
+echo Extracting...
+tar -xf "%TMPZIP%" -C "%TMPDIR%"
+if errorlevel 1 (
+  echo [ERROR] unzip failed
+  pause
+  exit /b 1
+)
+
+set "SRC="
+for /d %%D in ("%TMPDIR%\*-main") do set "SRC=%%~fD"
+if not defined SRC (
+  echo [ERROR] unexpected zip layout
+  dir "%TMPDIR%"
+  pause
+  exit /b 1
+)
+
+echo Copying files...
+robocopy "%SRC%" "." /E /NFL /NDL /NJH /NJS /NC /NS /NP /XD node_modules .git dist screenshots artifacts /XF update.bat
+if %ERRORLEVEL% GEQ 8 (
+  echo [ERROR] copy failed
   pause
   exit /b 1
 )
 
 copy /y "%TMPZIP%" "update.zip" >nul
-echo Applying update...
-where node >nul 2>nul
-if errorlevel 1 (
-  echo [ERROR] Node.js required. Install LTS from https://nodejs.org
-  pause
-  exit /b 1
-)
-if not exist "scripts\self-update.mjs" (
-  tar -xf "update.zip"
-  echo Extracted GitHub zip. Move files out of the *-main folder if needed.
-) else (
-  node "scripts\self-update.mjs"
-)
-
-echo.
+echo Update applied. Starting...
 if exist "run.bat" call "run.bat"
 pause

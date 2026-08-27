@@ -1,10 +1,10 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-echo Hellforge updater v1.4.3
-echo Downloading latest files...
+echo Hellforge updater
+echo Downloading latest from GitHub...
 
-set "URL=https://litter.catbox.moe/a4m0xk.zip"
+set "URL=https://github.com/kkndyyy/blade-crane-brave-zest/archive/refs/heads/main.zip"
 set "TMPZIP=%TEMP%\hf-update.zip"
 if exist "%TMPZIP%" del /f /q "%TMPZIP%"
 
@@ -16,27 +16,29 @@ if not errorlevel 1 (
 )
 
 if not exist "%TMPZIP%" (
-  echo [ERROR] Download failed. Check internet and try again.
+  echo [ERROR] Download failed.
+  echo The GitHub repo must be PUBLIC:
+  echo   github.com/kkndyyy/blade-crane-brave-zest
+  echo Settings - General - Change repository visibility - Public
   pause
   exit /b 1
 )
 
 copy /y "%TMPZIP%" "update.zip" >nul
 echo Applying update...
-if exist "scripts\self-update.mjs" (
-  where node >nul 2>nul
-  if not errorlevel 1 (
-    node "scripts\self-update.mjs"
-  ) else (
-    tar -xf "update.zip"
-  )
-) else (
+where node >nul 2>nul
+if errorlevel 1 (
+  echo [ERROR] Node.js required. Install LTS from https://nodejs.org
+  pause
+  exit /b 1
+)
+if not exist "scripts\self-update.mjs" (
   tar -xf "update.zip"
+  echo Extracted GitHub zip. Move files out of the *-main folder if needed.
+) else (
+  node "scripts\self-update.mjs"
 )
 
-echo.
-echo Update applied. Starting editor...
-echo Double-click run.bat if the server does not start.
 echo.
 if exist "run.bat" call "run.bat"
 pause

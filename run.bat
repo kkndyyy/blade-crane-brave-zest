@@ -1,6 +1,27 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 cd /d "%~dp0"
+
+if exist "update.bat.new" (
+  copy /y "update.bat.new" "update.bat" >nul
+  del /q "update.bat.new" >nul 2>nul
+)
+if exist "run.bat.new" (
+  copy /y "run.bat.new" "run.bat" >nul
+  del /q "run.bat.new" >nul 2>nul
+  call "%~f0"
+  exit /b
+)
+
+REM Flatten a leftover GitHub zip folder from older updaters
+for /d %%D in (*-main) do (
+  if exist "%%~fD\public\version.json" (
+    echo Applying nested folder %%D ...
+    robocopy "%%~fD" "." /E /NFL /NDL /NJH /NJS /NC /NS /NP /XD node_modules .git dist screenshots artifacts /XF update.bat run.bat
+    if exist "%%~fD\update.bat" copy /y "%%~fD\update.bat" "update.bat.new" >nul
+    rmdir /s /q "%%~fD"
+  )
+)
 
 if not exist package.json (
   echo [ERROR] package.json not found.
@@ -18,9 +39,20 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo Checking update.zip ...
-if exist scripts\self-update.mjs (
+echo Checking GitHub for latest...
+if exist scripts\pull-latest.mjs (
+  node scripts\pull-latest.mjs
+) else if exist scripts\self-update.mjs (
   node scripts\self-update.mjs
+)
+
+if exist "update.bat.new" (
+  copy /y "update.bat.new" "update.bat" >nul
+  del /q "update.bat.new" >nul 2>nul
+)
+if exist "run.bat.new" (
+  copy /y "run.bat.new" "run.bat" >nul
+  del /q "run.bat.new" >nul 2>nul
 )
 
 echo npm install ...

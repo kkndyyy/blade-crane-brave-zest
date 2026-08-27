@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { useEditor } from "@/lib/store";
 import { FIGURE_TYPES, RUNE_TYPES, UNIQUE_EDITOR_COLS, SET_EDITOR_COLS, MISC_EDITOR_COLS } from "@/lib/d2/labels";
-import { getCell } from "@/lib/d2/tsv";
+import { getCell, isDataRow } from "@/lib/d2/tsv";
 import { figureKorean } from "@/lib/d2/strings";
+import { setBonusAffixSlots, setItemAffixSlots, uniqueAffixSlots, runewordAffixSlots } from "@/lib/d2/itemProps";
 import { DataGrid, SearchField } from "./DataGrid";
+import { ItemAffixEditor } from "./ItemAffixes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -17,11 +20,18 @@ export function UniqueTable() {
   const patchCell = useEditor((s) => s.patchCell);
   const scaleRarity = useEditor((s) => s.scaleRarity);
   const resetTable = useEditor((s) => s.resetTable);
+  const [selected, setSelected] = useState<number | null>(null);
   if (!table) return <NeedFile kind="유니크 아이템" />;
+  const selectedRow = selected != null ? table.rows[selected] : undefined;
+  const selectedName = selectedRow
+    ? strings.tryDisplay(getCell(selectedRow, table, "index")) ||
+      strings.tryDisplay(getCell(selectedRow, table, "*ItemName")) ||
+      getCell(selectedRow, table, "index")
+    : "";
   return (
     <Panel
       title="유니크 아이템"
-      blurb="희귀도가 작을수록 같은 베이스에서 더 자주 나옵니다. 드랍 가능을 0으로 두면 필드에서 나오지 않습니다."
+      blurb="목록에서 아이템을 고르면 옵션(속성·파라미터·최소/최대)을 바꿀 수 있습니다. 희귀도가 작을수록 더 자주 나옵니다."
       search={search}
       setSearch={setSearch}
       placeholder="유니크 이름 · 코드"
@@ -29,10 +39,28 @@ export function UniqueTable() {
       onReset={() => resetTable("uniqueItems")}
       badge={<Badge tone="unique">Unique</Badge>}
     >
+      {selectedRow && isDataRow(selectedRow) ? (
+        <ItemAffixEditor
+          tableKey="uniqueItems"
+          table={table}
+          row={selectedRow}
+          rowIndex={selected!}
+          slots={uniqueAffixSlots()}
+          title={selectedName}
+          subtitle={`${getCell(selectedRow, table, "code")} · 요구 ${getCell(selectedRow, table, "lvl req") || "—"}`}
+          onClose={() => setSelected(null)}
+        />
+      ) : (
+        <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-fg-muted">
+          목록에서 유니크를 선택하면 옵션을 수정할 수 있습니다.
+        </p>
+      )}
       <DataGrid
         table={table}
         columns={UNIQUE_EDITOR_COLS}
         search={search}
+        selectedIndex={selected}
+        onSelectRow={setSelected}
         onChange={(r, c, v) => patchCell("uniqueItems", r, c, v)}
         displayName={(row) =>
           strings.tryDisplay(getCell(row, table, "index")) ||
@@ -53,11 +81,18 @@ export function SetTable() {
   const patchCell = useEditor((s) => s.patchCell);
   const scaleRarity = useEditor((s) => s.scaleRarity);
   const resetTable = useEditor((s) => s.resetTable);
+  const [selected, setSelected] = useState<number | null>(null);
   if (!table) return <NeedFile kind="세트 아이템" />;
+  const selectedRow = selected != null ? table.rows[selected] : undefined;
+  const selectedName = selectedRow
+    ? strings.tryDisplay(getCell(selectedRow, table, "index")) ||
+      strings.tryDisplay(getCell(selectedRow, table, "*ItemName")) ||
+      getCell(selectedRow, table, "index")
+    : "";
   return (
     <Panel
       title="세트 아이템"
-      blurb="세트 피스별 희귀도와 드랍 가능 여부입니다. 세트 이름은 원본 키를 유지합니다."
+      blurb="세트를 고르면 피스 옵션과 부분 세트 보너스를 수정할 수 있습니다."
       search={search}
       setSearch={setSearch}
       placeholder="세트 아이템 검색"
@@ -65,10 +100,40 @@ export function SetTable() {
       onReset={() => resetTable("setItems")}
       badge={<Badge tone="set">Set</Badge>}
     >
+      {selectedRow && isDataRow(selectedRow) ? (
+        <>
+          <ItemAffixEditor
+            tableKey="setItems"
+            table={table}
+            row={selectedRow}
+            rowIndex={selected!}
+            slots={setItemAffixSlots()}
+            title={selectedName}
+            subtitle={`${getCell(selectedRow, table, "set")} · ${getCell(selectedRow, table, "item")}`}
+            onClose={() => setSelected(null)}
+          />
+          <ItemAffixEditor
+            tableKey="setItems"
+            table={table}
+            row={selectedRow}
+            rowIndex={selected!}
+            slots={setBonusAffixSlots()}
+            title="부분 세트 보너스"
+            subtitle="2세트부터 발동하는 aprop 옵션입니다."
+            onClose={() => setSelected(null)}
+          />
+        </>
+      ) : (
+        <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-fg-muted">
+          목록에서 세트 피스를 선택하면 옵션을 수정할 수 있습니다.
+        </p>
+      )}
       <DataGrid
         table={table}
         columns={SET_EDITOR_COLS}
         search={search}
+        selectedIndex={selected}
+        onSelectRow={setSelected}
         onChange={(r, c, v) => patchCell("setItems", r, c, v)}
         displayName={(row) =>
           strings.tryDisplay(getCell(row, table, "index")) ||
@@ -83,6 +148,7 @@ export function SetTable() {
 
 export function RuneTable() {
   const table = useEditor((s) => s.tables.misc);
+  const runes = useEditor((s) => s.tables.runes);
   const cube = useEditor((s) => s.tables.cubemain);
   const strings = useEditor((s) => s.strings);
   const search = useEditor((s) => s.search);
@@ -91,16 +157,26 @@ export function RuneTable() {
   const scaleRarity = useEditor((s) => s.scaleRarity);
   const resetTable = useEditor((s) => s.resetTable);
   const setRuneOpmSplitDouble = useEditor((s) => s.setRuneOpmSplitDouble);
+  const [runeWord, setRuneWord] = useState<number | null>(null);
   if (!table) return <NeedFile kind="룬" />;
+  const rw = runeWord != null && runes ? runes.rows[runeWord] : undefined;
+  const rwName = rw
+    ? strings.tryDisplay(getCell(rw, runes!, "Name")) ||
+      strings.tryDisplay(getCell(rw, runes!, "*Rune Name")) ||
+      getCell(rw, runes!, "Name")
+    : "";
   return (
     <Panel
       title="룬"
-      blurb="엽굵 모드의 확장 룬(가에, 엽, 굵 등)과 바닐라 룬을 함께 보여 줍니다. 유형이 rune / runx / runh 인 아이템만 필터합니다."
+      blurb="아래 룬 아이템은 드랍·희귀도, 그 다음 룬워드는 완성 아이템 옵션입니다."
       search={search}
       setSearch={setSearch}
-      placeholder="룬 이름 · 코드"
+      placeholder="룬 · 룬워드 이름"
       onHalf={() => scaleRarity("rune", 0.5)}
-      onReset={() => resetTable("misc")}
+      onReset={() => {
+        resetTable("misc");
+        resetTable("runes");
+      }}
       badge={<Badge tone="rune">Rune</Badge>}
     >
       {cube ? (
@@ -138,6 +214,41 @@ export function RuneTable() {
         }
         empty="룬 아이템이 없습니다."
       />
+      {runes ? (
+        <div className="mt-2 flex min-h-0 flex-col gap-3">
+          <h3 className="font-display text-lg tracking-tight">룬워드 옵션</h3>
+          {rw && isDataRow(rw) ? (
+            <ItemAffixEditor
+              tableKey="runes"
+              table={runes}
+              row={rw}
+              rowIndex={runeWord!}
+              slots={runewordAffixSlots()}
+              title={rwName}
+              subtitle={getCell(rw, runes, "*RunesUsed") || getCell(rw, runes, "Rune1")}
+              onClose={() => setRuneWord(null)}
+            />
+          ) : (
+            <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-fg-muted">
+              룬워드를 선택하면 완성 옵션을 수정할 수 있습니다.
+            </p>
+          )}
+          <DataGrid
+            table={runes}
+            columns={["Name", "*Rune Name", "complete", "Rune1", "Rune2", "Rune3", "itype1"]}
+            search={search}
+            selectedIndex={runeWord}
+            onSelectRow={setRuneWord}
+            onChange={(r, c, v) => patchCell("runes", r, c, v)}
+            displayName={(row) =>
+              strings.tryDisplay(getCell(row, runes, "Name")) ||
+              strings.tryDisplay(getCell(row, runes, "*Rune Name")) ||
+              getCell(row, runes, "Name")
+            }
+            empty="룬워드가 없습니다."
+          />
+        </div>
+      ) : null}
     </Panel>
   );
 }

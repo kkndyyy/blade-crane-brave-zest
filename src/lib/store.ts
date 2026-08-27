@@ -28,6 +28,7 @@ type Tables = Partial<{
   monstats: TsvTable;
   cubemain: TsvTable;
   hireling: TsvTable;
+  runes: TsvTable;
 }>;
 
 type EditorState = {
@@ -80,6 +81,7 @@ const TABLE_PATH: Record<keyof Tables, string> = {
   monstats: EXCEL.monstats,
   cubemain: EXCEL.cubemain,
   hireling: EXCEL.hireling,
+  runes: EXCEL.runes,
 };
 
 function textDecoderFile(data: Uint8Array) {
@@ -107,6 +109,7 @@ function ingestTexts(texts: Record<string, string>) {
   if (pick(EXCEL.monstats)) tables.monstats = parseTsv(pick(EXCEL.monstats)!);
   if (pick(EXCEL.cubemain)) tables.cubemain = parseTsv(pick(EXCEL.cubemain)!);
   if (pick(EXCEL.hireling)) tables.hireling = parseTsv(pick(EXCEL.hireling)!);
+  if (pick(EXCEL.runes)) tables.runes = parseTsv(pick(EXCEL.runes)!);
 
   const strings = new StringTable();
   for (const p of [STRINGS.itemNames, STRINGS.itemRunes, STRINGS.skills, STRINGS.monsters]) {

@@ -13,7 +13,7 @@ const dest = join(root, "update.zip");
 const listFile = join(root, "update-mirrors.txt");
 
 const FALLBACK = [
-  "https://litter.catbox.moe/q4qsbc.zip",
+  "https://github.com/kkndyyy/blade-crane-brave-zest/archive/refs/heads/main.zip",
 ];
 
 function mirrors() {
@@ -36,7 +36,7 @@ function fetchBuffer(url, redirects = 0) {
       url,
       {
         headers: {
-          "User-Agent": "Mozilla/5.0 HellforgeUpdater/1.4.3",
+          "User-Agent": "Mozilla/5.0 HellforgeUpdater/1.4.6",
           Accept: "*/*",
         },
       },

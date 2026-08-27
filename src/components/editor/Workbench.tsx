@@ -57,7 +57,7 @@ export function Workbench() {
   const [appVersion, setAppVersion] = useState("");
 
   useEffect(() => {
-    fetch("/version.json")
+    fetch("/version.json?t=" + Date.now(), { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((v) => {
         if (v?.version) setAppVersion(String(v.version));

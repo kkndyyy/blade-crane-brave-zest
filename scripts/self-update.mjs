@@ -64,7 +64,7 @@ function stripArchiveRoot(files) {
   if (!keys.length) return files;
   const first = keys[0].split("/")[0];
   const allPrefixed = keys.every((k) => k === first || k.startsWith(first + "/"));
-  const looksLikeGithub = allPrefixed && /^.+-main$/.test(first);
+  const looksLikeGithub = allPrefixed && /^.+-(main|master)$/.test(first);
   if (!looksLikeGithub) return files;
   const next = {};
   for (const [k, v] of Object.entries(files)) {
@@ -87,7 +87,8 @@ try {
 const remoteText = files["public/version.json"] || files["version.json"];
 const remote = remoteText ? readVersion(new TextDecoder().decode(remoteText)) : "0";
 const local = localVersion();
-if (remote === local && existsSync(join(root, "src", "lib", "store.ts"))) {
+const missingAffix = !existsSync(join(root, "src", "components", "editor", "ItemAffixes.tsx"));
+if (remote === local && existsSync(join(root, "src", "lib", "store.ts")) && !missingAffix) {
   console.log(`[update] already ${local}`);
   process.exit(0);
 }
@@ -103,12 +104,14 @@ const skipPart = new Set([
   "hellforge-editor.zip",
   "hellforge-update.zip",
 ]);
-const skipFile = new Set(["update.bat", "run.bat", "update-mirrors.txt"]);
+const rewriteAsNew = new Set(["update.bat", "run.bat", "GET-LATEST.bat"]);
 for (const [name, data] of Object.entries(files)) {
   const parts = name.split("/").filter(Boolean);
   if (parts.some((x) => skipPart.has(x))) continue;
-  if (skipFile.has(parts[parts.length - 1])) continue;
-  const dest = join(root, ...parts);
+  const base = parts[parts.length - 1];
+  if (base === "update-mirrors.txt") continue;
+  const destParts = rewriteAsNew.has(base) ? [...parts.slice(0, -1), base + ".new"] : parts;
+  const dest = join(root, ...destParts);
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, data);
 }

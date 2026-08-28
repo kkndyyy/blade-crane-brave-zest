@@ -85,9 +85,10 @@ export const HIRE_SKILL_FIELDS = ["Skill", "Mode", "Chance", "ChancePerLvl", "Le
 
 export type HireSkillScope = "row" | "levels" | "allDiffs";
 
-export function hireSkillColumns(): string[] {
+export function hireSkillColumns(slots?: readonly number[]): string[] {
+  const use = slots?.length ? slots : HIRE_SKILL_SLOTS;
   const cols: string[] = [];
-  for (const n of HIRE_SKILL_SLOTS) {
+  for (const n of use) {
     for (const f of HIRE_SKILL_FIELDS) cols.push(`${f}${n}`);
   }
   return cols;

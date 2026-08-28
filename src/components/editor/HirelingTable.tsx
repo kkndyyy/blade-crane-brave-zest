@@ -4,6 +4,7 @@ import { useEditor } from "@/lib/store";
 import { getCell, isDataRow } from "@/lib/d2/tsv";
 import {
   DIFF_NUM,
+  HIRE_SKILL_SLOTS,
   STAT_GROUPS,
   hireLabel,
   isHireableIconsEnabled,
@@ -54,6 +55,7 @@ export function HirelingTable() {
   const [diff, setDiff] = useState("1");
   const [band, setBand] = useState(0);
   const [skillScope, setSkillScope] = useState<HireSkillScope>("levels");
+  const [copySlots, setCopySlots] = useState<Set<number>>(() => new Set(HIRE_SKILL_SLOTS));
 
   const group = groups[kind] ?? groups[0];
   const rows = useMemo(() => {
@@ -106,9 +108,25 @@ export function HirelingTable() {
 
   const onCopySkills = () => {
     if (rowIndex == null) return;
-    const n = copyHirelingSkills(rowIndex, skillScope);
-    toast.success(`${n}개 레벨 구간에 지금 보이는 스킬을 넣었습니다`);
+    const slots = [...copySlots].sort((a, b) => a - b);
+    if (!slots.length) {
+      toast.error("복사할 스킬 슬롯을 체크하세요");
+      return;
+    }
+    const n = copyHirelingSkills(rowIndex, skillScope, slots);
+    toast.success(`슬롯 ${slots.join(", ")} 을 ${n}개 레벨 구간에 넣었습니다`);
   };
+
+  const toggleCopySlot = (n: number, on: boolean) => {
+    setCopySlots((prev) => {
+      const next = new Set(prev);
+      if (on) next.add(n);
+      else next.delete(n);
+      return next;
+    });
+  };
+
+  const allSlotsChecked = copySlots.size === HIRE_SKILL_SLOTS.length;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
@@ -236,10 +254,12 @@ export function HirelingTable() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium">스킬</h3>
-                  <p className="mt-1 text-xs text-fg-muted">모드 4=원거리공격, 1=오라, 7=시전, 14=근접, 5=패시브. {scopeMeta.hint}</p>
+                  <p className="mt-1 text-xs text-fg-muted">
+                    모드 4=원거리공격, 1=오라, 7=시전, 14=근접, 5=패시브. 체크한 슬롯만 복사됩니다. {scopeMeta.hint}
+                  </p>
                 </div>
-                <Button variant="secondary" size="sm" onClick={onCopySkills}>
-                  지금 스킬을 {scopeCount}개 구간에 복사
+                <Button variant="secondary" size="sm" onClick={onCopySkills} disabled={copySlots.size === 0}>
+                  체크한 스킬을 {scopeCount}개 구간에 복사
                 </Button>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -258,6 +278,18 @@ export function HirelingTable() {
                 <table className="w-full min-w-[640px] text-left text-sm">
                   <thead>
                     <tr className="text-fg-muted">
+                      <th className="px-2 py-2 font-medium">
+                        <label className="inline-flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            className="size-4 accent-primary"
+                            checked={allSlotsChecked}
+                            onChange={(e) => setCopySlots(e.target.checked ? new Set(HIRE_SKILL_SLOTS) : new Set())}
+                            aria-label="모든 스킬 슬롯 선택"
+                          />
+                          <span>복사</span>
+                        </label>
+                      </th>
                       <th className="px-2 py-2 font-medium">슬롯</th>
                       <th className="px-2 py-2 font-medium">스킬</th>
                       <th className="px-2 py-2 font-medium">한글</th>
@@ -272,6 +304,15 @@ export function HirelingTable() {
                       const skill = getCell(row, table, `Skill${n}`);
                       return (
                         <tr key={n} className="border-t border-border">
+                          <td className="px-2 py-1.5">
+                            <input
+                              type="checkbox"
+                              className="size-4 accent-primary"
+                              checked={copySlots.has(n)}
+                              onChange={(e) => toggleCopySlot(n, e.target.checked)}
+                              aria-label={`슬롯 ${n} 복사`}
+                            />
+                          </td>
                           <td className="px-2 py-1.5 text-fg-muted">{n}</td>
                           <td className="px-2 py-1.5">
                             <input

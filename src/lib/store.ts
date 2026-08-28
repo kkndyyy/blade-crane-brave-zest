@@ -61,7 +61,7 @@ type EditorState = {
   setRuneOpmSplitDouble: (enabled: boolean) => void;
   setHireableSkillIcons: (enabled: boolean) => void;
   patchHirelingSkill: (rowIndex: number, column: string, value: string, scope: HireSkillScope) => void;
-  copyHirelingSkills: (rowIndex: number, scope: HireSkillScope) => number;
+  copyHirelingSkills: (rowIndex: number, scope: HireSkillScope, slots?: readonly number[]) => number;
   applyVanillaD2rDrops: () => void;
   scaleSkillDamage: (factor: number, classFilter: string) => void;
   resetTable: (tableKey: keyof Tables) => void;
@@ -482,14 +482,15 @@ export const useEditor = create<EditorState>((set, get) => ({
     set({ tables: { ...get().tables, hireling: next }, dirty: true });
   },
 
-  copyHirelingSkills: (rowIndex, scope) => {
+  copyHirelingSkills: (rowIndex, scope, slots) => {
     const table = get().tables.hireling;
     if (!table) return 0;
     const next = cloneTable(table);
     const src = next.rows[rowIndex];
     if (!src || !isDataRow(src)) return 0;
+    const cols = hireSkillColumns(slots);
+    if (!cols.length) return 0;
     const indexes = matchingHirelingRows(next, rowIndex, scope);
-    const cols = hireSkillColumns();
     let n = 0;
     for (const i of indexes) {
       const row = next.rows[i];

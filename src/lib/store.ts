@@ -6,7 +6,7 @@ import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, match
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyRuneOpmSplitDouble } from "./d2/cubeRecipes";
-import { applyHireableIcons } from "./d2/hirelings";
+import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyVanillaItemRatio, applyVanillaTcQuality } from "./d2/vanillaDrops";
 import { FIGURE_TYPES, RUNE_TYPES, isSlamtrapMonster, type Difficulty } from "./d2/labels";
 
@@ -60,6 +60,8 @@ type EditorState = {
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
   setHireableSkillIcons: (enabled: boolean) => void;
+  patchHirelingSkill: (rowIndex: number, column: string, value: string, scope: HireSkillScope) => void;
+  copyHirelingSkills: (rowIndex: number, scope: HireSkillScope) => number;
   applyVanillaD2rDrops: () => void;
   scaleSkillDamage: (factor: number, classFilter: string) => void;
   resetTable: (tableKey: keyof Tables) => void;
@@ -464,6 +466,39 @@ export const useEditor = create<EditorState>((set, get) => ({
     const next = cloneTable(skilldesc);
     applyHireableIcons(next, orig, hireling, get().tables.skills, enabled);
     set({ tables: { ...get().tables, skilldesc: next }, dirty: true });
+  },
+
+  patchHirelingSkill: (rowIndex, column, value, scope) => {
+    const table = get().tables.hireling;
+    if (!table) return;
+    const next = cloneTable(table);
+    const indexes = matchingHirelingRows(next, rowIndex, scope);
+    const targets = indexes.length ? indexes : [rowIndex];
+    for (const i of targets) {
+      const row = next.rows[i];
+      if (!row) continue;
+      setCell(row, next, column, value);
+    }
+    set({ tables: { ...get().tables, hireling: next }, dirty: true });
+  },
+
+  copyHirelingSkills: (rowIndex, scope) => {
+    const table = get().tables.hireling;
+    if (!table) return 0;
+    const next = cloneTable(table);
+    const src = next.rows[rowIndex];
+    if (!src || !isDataRow(src)) return 0;
+    const indexes = matchingHirelingRows(next, rowIndex, scope);
+    const cols = hireSkillColumns();
+    let n = 0;
+    for (const i of indexes) {
+      const row = next.rows[i];
+      if (!row) continue;
+      for (const col of cols) setCell(row, next, col, getCell(src, next, col));
+      n += 1;
+    }
+    set({ tables: { ...get().tables, hireling: next }, dirty: true });
+    return n;
   },
 
   applyVanillaD2rDrops: () => {

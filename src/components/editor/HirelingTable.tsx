@@ -7,12 +7,20 @@ import {
   STAT_GROUPS,
   hireLabel,
   isHireableIconsEnabled,
+  matchingHirelingRows,
   parseRole,
   roleLabel,
+  type HireSkillScope,
 } from "@/lib/d2/hirelings";
 import { koreanSkillName } from "@/lib/d2/strings";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const SKILL_SCOPES: { id: HireSkillScope; label: string; hint: string }[] = [
+  { id: "row", label: "이 레벨만", hint: "지금 고른 레벨 구간만 바꿉니다." },
+  { id: "levels", label: "이 난이도 모든 레벨", hint: "같은 난이도의 모든 레벨 구간에 넣습니다." },
+  { id: "allDiffs", label: "모든 난이도 모든 레벨", hint: "노멀·나이트메어·헬의 모든 레벨 구간에 넣습니다." },
+];
 
 export function HirelingTable() {
   const table = useEditor((s) => s.tables.hireling);
@@ -20,6 +28,8 @@ export function HirelingTable() {
   const skilldesc = useEditor((s) => s.tables.skilldesc);
   const strings = useEditor((s) => s.strings);
   const patchCell = useEditor((s) => s.patchCell);
+  const patchHirelingSkill = useEditor((s) => s.patchHirelingSkill);
+  const copyHirelingSkills = useEditor((s) => s.copyHirelingSkills);
   const resetTable = useEditor((s) => s.resetTable);
   const setHireableSkillIcons = useEditor((s) => s.setHireableSkillIcons);
 
@@ -43,23 +53,30 @@ export function HirelingTable() {
   const [kind, setKind] = useState(0);
   const [diff, setDiff] = useState("1");
   const [band, setBand] = useState(0);
+  const [skillScope, setSkillScope] = useState<HireSkillScope>("levels");
 
   const group = groups[kind] ?? groups[0];
   const rows = useMemo(() => {
-    if (!table || !group) return [] as { index: number; level: string }[];
-    const out: { index: number; level: string }[] = [];
+    if (!table || !group) return [] as { index: number; level: string; version: string }[];
+    const out: { index: number; level: string; version: string }[] = [];
     table.rows.forEach((row, index) => {
       if (!isDataRow(row)) return;
       if (getCell(row, table, "Hireling") !== group.hireling) return;
       if (parseRole(getCell(row, table, "*SubType")) !== group.role) return;
       if ((getCell(row, table, "Difficulty") || "1") !== diff) return;
-      out.push({ index, level: getCell(row, table, "Level") || "1" });
+      out.push({
+        index,
+        level: getCell(row, table, "Level") || "1",
+        version: getCell(row, table, "Version") || "0",
+      });
     });
     return out;
   }, [table, group, diff]);
 
   const rowIndex = rows[Math.min(band, Math.max(0, rows.length - 1))]?.index;
   const row = table && rowIndex != null ? table.rows[rowIndex] : undefined;
+  const scopeCount = table && rowIndex != null ? matchingHirelingRows(table, rowIndex, skillScope).length : 0;
+  const showVersion = new Set(rows.map((r) => r.version)).size > 1;
 
   const skillNames = useMemo(() => {
     if (!skills) return [] as string[];
@@ -85,6 +102,13 @@ export function HirelingTable() {
   const currentAct = group?.act ?? acts[0];
   const kindsInAct = groups.map((g, i) => ({ ...g, i })).filter((g) => g.act === currentAct);
   const iconsOn = skilldesc ? isHireableIconsEnabled(table, skills, skilldesc) : false;
+  const scopeMeta = SKILL_SCOPES.find((s) => s.id === skillScope) ?? SKILL_SCOPES[1]!;
+
+  const onCopySkills = () => {
+    if (rowIndex == null) return;
+    const n = copyHirelingSkills(rowIndex, skillScope);
+    toast.success(`${n}개 레벨 구간에 지금 보이는 스킬을 넣었습니다`);
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
@@ -92,7 +116,7 @@ export function HirelingTable() {
         <div>
           <h2 className="font-display text-2xl tracking-tight">용병</h2>
           <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-            막·유형·난이도·레벨 구간을 고른 뒤 생명·저항·스킬을 바꿉니다. 저장하면 hireling.txt 에 들어갑니다.
+            막·유형·난이도·레벨 구간을 고른 뒤 생명·저항·스킬을 바꿉니다. 스킬은 모든 레벨 구간에 한 번에 넣을 수 있습니다.
           </p>
         </div>
         <Button
@@ -186,6 +210,7 @@ export function HirelingTable() {
             {rows.map((r, i) => (
               <Button key={r.index} size="sm" variant={band === i ? "primary" : "secondary"} onClick={() => setBand(i)}>
                 {r.level}
+                {showVersion ? <span className="text-xs opacity-70">{r.version === "100" ? "확장" : "클래식"}</span> : null}
               </Button>
             ))}
           </div>
@@ -208,8 +233,27 @@ export function HirelingTable() {
 
           {row && rowIndex != null ? (
             <section className="rounded-xl border border-border bg-bg-elevated p-4">
-              <h3 className="text-sm font-medium">스킬</h3>
-              <p className="mt-1 text-xs text-fg-muted">모드 4=원거리공격, 1=오라, 7=시전, 14=근접, 5=패시브</p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-medium">스킬</h3>
+                  <p className="mt-1 text-xs text-fg-muted">모드 4=원거리공격, 1=오라, 7=시전, 14=근접, 5=패시브. {scopeMeta.hint}</p>
+                </div>
+                <Button variant="secondary" size="sm" onClick={onCopySkills}>
+                  지금 스킬을 {scopeCount}개 구간에 복사
+                </Button>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {SKILL_SCOPES.map((s) => (
+                  <Button
+                    key={s.id}
+                    size="sm"
+                    variant={skillScope === s.id ? "primary" : "secondary"}
+                    onClick={() => setSkillScope(s.id)}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+              </div>
               <div className="mt-3 overflow-auto">
                 <table className="w-full min-w-[640px] text-left text-sm">
                   <thead>
@@ -234,7 +278,7 @@ export function HirelingTable() {
                               list="hireling-skills"
                               className={inputClass()}
                               value={skill}
-                              onChange={(e) => patchCell("hireling", rowIndex, `Skill${n}`, e.target.value)}
+                              onChange={(e) => patchHirelingSkill(rowIndex, `Skill${n}`, e.target.value, skillScope)}
                             />
                           </td>
                           <td className="px-2 py-1.5 whitespace-nowrap">
@@ -247,16 +291,32 @@ export function HirelingTable() {
                               : "—"}
                           </td>
                           <td className="px-2 py-1.5">
-                            <NumInput value={getCell(row, table, `Mode${n}`)} onChange={(v) => patchCell("hireling", rowIndex, `Mode${n}`, v)} w="w-16" />
+                            <NumInput
+                              value={getCell(row, table, `Mode${n}`)}
+                              onChange={(v) => patchHirelingSkill(rowIndex, `Mode${n}`, v, skillScope)}
+                              w="w-16"
+                            />
                           </td>
                           <td className="px-2 py-1.5">
-                            <NumInput value={getCell(row, table, `Chance${n}`)} onChange={(v) => patchCell("hireling", rowIndex, `Chance${n}`, v)} w="w-16" />
+                            <NumInput
+                              value={getCell(row, table, `Chance${n}`)}
+                              onChange={(v) => patchHirelingSkill(rowIndex, `Chance${n}`, v, skillScope)}
+                              w="w-16"
+                            />
                           </td>
                           <td className="px-2 py-1.5">
-                            <NumInput value={getCell(row, table, `Level${n}`)} onChange={(v) => patchCell("hireling", rowIndex, `Level${n}`, v)} w="w-16" />
+                            <NumInput
+                              value={getCell(row, table, `Level${n}`)}
+                              onChange={(v) => patchHirelingSkill(rowIndex, `Level${n}`, v, skillScope)}
+                              w="w-16"
+                            />
                           </td>
                           <td className="px-2 py-1.5">
-                            <NumInput value={getCell(row, table, `LvlPerLvl${n}`)} onChange={(v) => patchCell("hireling", rowIndex, `LvlPerLvl${n}`, v)} w="w-16" />
+                            <NumInput
+                              value={getCell(row, table, `LvlPerLvl${n}`)}
+                              onChange={(v) => patchHirelingSkill(rowIndex, `LvlPerLvl${n}`, v, skillScope)}
+                              w="w-16"
+                            />
                           </td>
                         </tr>
                       );

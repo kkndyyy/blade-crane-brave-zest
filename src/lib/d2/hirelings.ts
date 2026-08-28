@@ -79,6 +79,38 @@ export function hireLabel(name: string): string {
   return HIRE_KO[name] ?? name;
 }
 
+export const HIRE_SKILL_SLOTS = [1, 2, 3, 4, 5, 6] as const;
+
+export const HIRE_SKILL_FIELDS = ["Skill", "Mode", "Chance", "ChancePerLvl", "Level", "LvlPerLvl"] as const;
+
+export type HireSkillScope = "row" | "levels" | "allDiffs";
+
+export function hireSkillColumns(): string[] {
+  const cols: string[] = [];
+  for (const n of HIRE_SKILL_SLOTS) {
+    for (const f of HIRE_SKILL_FIELDS) cols.push(`${f}${n}`);
+  }
+  return cols;
+}
+
+export function matchingHirelingRows(table: TsvTable, sourceIndex: number, scope: HireSkillScope): number[] {
+  const src = table.rows[sourceIndex];
+  if (!src || !isDataRow(src)) return [];
+  if (scope === "row") return [sourceIndex];
+  const hireling = getCell(src, table, "Hireling");
+  const role = parseRole(getCell(src, table, "*SubType"));
+  const diff = getCell(src, table, "Difficulty") || "1";
+  const out: number[] = [];
+  table.rows.forEach((row, i) => {
+    if (!isDataRow(row)) return;
+    if (getCell(row, table, "Hireling") !== hireling) return;
+    if (parseRole(getCell(row, table, "*SubType")) !== role) return;
+    if (scope === "levels" && (getCell(row, table, "Difficulty") || "1") !== diff) return;
+    out.push(i);
+  });
+  return out;
+}
+
 export function listHirelingSkills(hireling: TsvTable): string[] {
   const names = new Set<string>();
   for (const row of hireling.rows) {

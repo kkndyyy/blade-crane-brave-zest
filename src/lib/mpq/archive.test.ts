@@ -7,6 +7,7 @@ import {
   MPQ_FILE_EXISTS,
   MPQ_FILE_SINGLE_UNIT,
   buildMpqFromFiles,
+  companionBinNamesToOmit,
   encodeText,
   inflatePayload,
 } from "./archive.ts";
@@ -183,5 +184,37 @@ describe("MpqArchive", () => {
     damaged.fill(0x7f, listEntry.pos, listEntry.pos + listEntry.compSize);
     const recovered = new MpqArchive(damaged.buffer as ArrayBuffer);
     assert.equal(recovered.extractText(EXCEL_PATH), SAMPLE_TXT);
+  });
+
+  it("drops companion excel .bin (and excel\\base\\*.bin) when the .txt is replaced", () => {
+    const txtPath = "data\\global\\excel\\uniqueitems.txt";
+    const binPath = "data\\global\\excel\\uniqueitems.bin";
+    const baseBin = "data\\global\\excel\\base\\uniqueitems.bin";
+    const otherBin = "data\\global\\excel\\levels.bin";
+    const bytes = buildMpqFromFiles([
+      { name: txtPath, data: encodeText("a\tb\r\n1\t2\r\n") },
+      { name: binPath, data: new Uint8Array([1, 2, 3, 4]) },
+      { name: baseBin, data: new Uint8Array([5, 6, 7, 8]) },
+      { name: otherBin, data: new Uint8Array([9, 9, 9]) },
+    ]);
+    const archive = new MpqArchive(bytes.buffer as ArrayBuffer);
+    assert.ok(archive.get(binPath));
+    assert.ok(archive.get(baseBin));
+    const omit = companionBinNamesToOmit([txtPath], archive.files.map((f) => f.name));
+    assert.equal(omit.has(binPath.toLowerCase()), true);
+    assert.equal(omit.has(baseBin.toLowerCase()), true);
+    assert.equal(omit.has(otherBin.toLowerCase()), false);
+
+    const next = encodeText("a\tb\r\n3\t4\r\n");
+    const rebuiltBytes = archive.rebuild(new Map([[txtPath, next]]));
+    const rebuilt = new MpqArchive(rebuiltBytes.buffer as ArrayBuffer);
+    assert.equal(rebuilt.extractText(txtPath), "a\tb\r\n3\t4\r\n");
+    assert.equal(rebuilt.get(binPath), undefined);
+    assert.equal(rebuilt.get(baseBin), undefined);
+    assert.ok(rebuilt.get(otherBin));
+    const list = rebuilt.extractText("(listfile)");
+    assert.equal(/uniqueitems\.bin/i.test(list), false);
+    assert.match(list, /uniqueitems\.txt/i);
+    assert.match(list, /levels\.bin/i);
   });
 });

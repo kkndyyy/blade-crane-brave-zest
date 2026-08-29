@@ -1,5 +1,5 @@
 {
-  "version": "1.4.8",
-  "released": "2026-08-28",
-  "notes": "copy only checked hireling skill slots"
+  "version": "1.4.9",
+  "released": "2026-08-29",
+  "notes": "strip companion excel bins so D2R -txt picks up edits"
 }

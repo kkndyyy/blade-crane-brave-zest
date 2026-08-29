@@ -12,4 +12,13 @@ Hellforge (Yupgoolg D2R editor) - run on your PC
 
 Keep the black window open. Do not Run as Administrator.
 
-Update later: copy the new run.bat AND update.zip into the same folder, then run.bat again.
+Update later: double-click GET-LATEST.bat (or update.bat) in the same folder.
+
+After saving an MPQ:
+- Replace the file your D2R shortcut actually loads
+  (example: -mod yupgoolg  ->  mods\yupgoolg\yupgoolg.mpq).
+- Shortcut target must include  -mod <name> -txt
+  Latest Yupgoolg packs ship excel .bin files. Hellforge strips the matching
+  .bin on save; without -txt the game keeps the old compiled tables.
+- If drops still look old, delete the mod cache under
+  Saved Games\Diablo II Resurrected  and launch again.

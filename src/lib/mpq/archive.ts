@@ -41,6 +41,43 @@ function normalizeName(name: string) {
   return name.replace(/\//g, "\\");
 }
 
+const EXCEL_DIR = "data\\global\\excel\\";
+const EXCEL_BASE_DIR = "data\\global\\excel\\base\\";
+
+/**
+ * D2R (and Yupgoolg packs that ship precompiled excel) load sibling .bin
+ * unless -txt is set — leftover bins make edited .txt invisible in-game.
+ * Returns lowercase normalized names of companion bins to drop.
+ */
+export function companionBinNamesToOmit(
+  replacementNames: Iterable<string>,
+  archiveNames: Iterable<string>,
+): Set<string> {
+  const existing = new Map<string, string>();
+  for (const n of archiveNames) {
+    const norm = normalizeName(n);
+    existing.set(norm.toLowerCase(), norm);
+  }
+  const replacedList = [...replacementNames].map((raw) => normalizeName(raw));
+  const replaced = new Set(replacedList.map((n) => n.toLowerCase()));
+  const omit = new Set<string>();
+  const addIfStale = (candidate: string) => {
+    const key = normalizeName(candidate).toLowerCase();
+    if (replaced.has(key)) return;
+    if (existing.has(key)) omit.add(key);
+  };
+  for (const name of replacedList) {
+    const lower = name.toLowerCase();
+    if (!lower.endsWith(".txt")) continue;
+    addIfStale(`${name.slice(0, -4)}.bin`);
+    if (lower.startsWith(EXCEL_DIR) && !lower.startsWith(EXCEL_BASE_DIR)) {
+      const stem = lower.slice(EXCEL_DIR.length, -4);
+      addIfStale(`${EXCEL_BASE_DIR}${stem}.bin`);
+    }
+  }
+  return omit;
+}
+
 function decodeText(data: Uint8Array): string {
   if (data.length >= 2 && data[0] === 0xff && data[1] === 0xfe) {
     return new TextDecoder("utf-16le").decode(data);
@@ -392,13 +429,19 @@ export class MpqArchive {
   }
 
   rebuild(replacements: Map<string, Uint8Array>): Uint8Array {
-    const files = this.files.map((f) => ({ ...f }));
+    replacements = new Map(replacements);
+    const omit = companionBinNamesToOmit(
+      replacements.keys(),
+      this.files.map((f) => f.name),
+    );
+    const files = this.files
+      .filter((f) => !omit.has(normalizeName(f.name).toLowerCase()))
+      .map((f) => ({ ...f }));
     const listName = "(listfile)";
     const names = files.map((f) => f.name);
     if (!names.some((n) => n.toLowerCase() === listName)) names.push(listName);
 
     const listContent = encodeText(names.join("\r\n") + "\r\n");
-    replacements = new Map(replacements);
     replacements.set(listName, listContent);
 
     type Packed = { name: string; data: Uint8Array; flags: number; fileSize: number; locale: number };
@@ -429,6 +472,7 @@ export class MpqArchive {
       }
     }
     for (const [name, data] of replacements) {
+      if (omit.has(normalizeName(name).toLowerCase())) continue;
       if (!packed.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
         packed.push({
           name: normalizeName(name),

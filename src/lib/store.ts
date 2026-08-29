@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MpqArchive, buildMpqFromFiles, encodeText, normalizeName } from "./mpq/archive";
+import { MpqArchive, buildMpqFromFiles, companionBinNamesToOmit, encodeText, normalizeName } from "./mpq/archive";
 import { parseTsv, serializeTsv, type TsvTable, colIndex, getCell, setCell, num, isDataRow } from "./d2/tsv";
 import { StringTable, parseStringJson } from "./d2/strings";
 import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, matchesDifficulty } from "./d2/paths";
@@ -65,7 +65,7 @@ type EditorState = {
   applyVanillaD2rDrops: () => void;
   scaleSkillDamage: (factor: number, classFilter: string) => void;
   resetTable: (tableKey: keyof Tables) => void;
-  exportMpq: () => { bytes: Uint8Array; name: string };
+  exportMpq: () => { bytes: Uint8Array; name: string; omittedBins: number };
   changedCount: () => number;
 };
 
@@ -574,10 +574,18 @@ export const useEditor = create<EditorState>((set, get) => ({
       if (orig && orig.replace(/\r\n/g, "\n") === text.replace(/\r\n/g, "\n")) return;
       replacements.set(normalizeName(path), encodeText(text));
     });
-    const base = fileName.replace(/\.mpq$/i, "") || "hellforge";
-    const outName = `${base}-edited.mpq`;
+    const outName =
+      source === "sample"
+        ? "yupgoolg-edited.mpq"
+        : /\.mpq$/i.test(fileName)
+          ? fileName
+          : `${fileName || "hellforge"}.mpq`;
     if (archive) {
-      return { bytes: archive.rebuild(replacements), name: outName };
+      const omitted = companionBinNamesToOmit(
+        replacements.keys(),
+        archive.files.map((f) => f.name),
+      );
+      return { bytes: archive.rebuild(replacements), name: outName, omittedBins: omitted.size };
     }
     const files = Object.entries(originalTexts).map(([name, text]) => {
       const n = normalizeName(name);
@@ -587,7 +595,7 @@ export const useEditor = create<EditorState>((set, get) => ({
     for (const [name, data] of replacements) {
       if (!files.some((f) => f.name === name)) files.push({ name, data });
     }
-    return { bytes: buildMpqFromFiles(files), name: source === "sample" ? "yupgoolg-edited.mpq" : outName };
+    return { bytes: buildMpqFromFiles(files), name: outName, omittedBins: 0 };
   },
 
   changedCount: () => {

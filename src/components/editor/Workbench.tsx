@@ -75,7 +75,7 @@ export function Workbench() {
 
   const onSave = () => {
     try {
-      const { bytes, name } = exportMpq();
+      const { bytes, name, omittedBins } = exportMpq();
       const blob = new Blob([new Uint8Array(bytes)], { type: "application/octet-stream" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -83,7 +83,13 @@ export function Workbench() {
       a.download = name;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success(`${name} 저장`);
+      toast.success(`${name} 저장`, {
+        duration: 14000,
+        description:
+          omittedBins > 0
+            ? `예전 엑셀 .bin ${omittedBins}개를 빼 두었습니다. 바로가기에 -mod 모드이름 -txt 를 넣고, 게임이 실제로 여는 MPQ와 같은 이름·같은 폴더로 교체하세요. 그래도 안 되면 Saved Games\\Diablo II Resurrected 아래 모드 캐시를 지운 뒤 다시 실행하세요.`
+            : "바로가기가 여는 MPQ와 같은 이름·같은 폴더로 교체하세요. 엽굵은 -mod 모드이름 -txt 가 필요합니다.",
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "저장에 실패했습니다");
     }
@@ -143,7 +149,7 @@ export function Workbench() {
           </Button>
           <Button size="sm" onClick={onSave} disabled={source === "empty" || loading}>
             <Download className="size-4" />
-            <span className="hidden sm:inline">다른 이름 저장</span>
+            <span className="hidden sm:inline">MPQ 저장</span>
           </Button>
         </div>
       </header>
@@ -171,7 +177,8 @@ export function Workbench() {
             <div className="rounded-lg border border-border bg-bg-elevated p-3 text-xs text-fg-muted leading-relaxed">
               {archive ? (
                 <p>
-                  원본 파일 {archive.files.length.toLocaleString()}개. 수정된 엑셀만 갈아 끼워 새 MPQ로 내보냅니다.
+                  원본 {archive.files.length.toLocaleString()}개. 수정한 엑셀만 갈아 끼우고, 짝이 되는 예전 .bin 은
+                  빼서 내보냅니다. 게임은 -txt 로 켜야 반영됩니다.
                 </p>
               ) : source === "sample" ? (
                 <p>엽굵 샘플 테이블입니다. 저장하면 엑셀만 담긴 작은 MPQ가 내려갑니다.</p>
@@ -190,6 +197,27 @@ export function Workbench() {
         <main className="flex min-h-0 min-w-0 flex-1 flex-col">
           {error ? (
             <p className="mb-3 rounded-md border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+          ) : null}
+          {source === "mpq" ? (
+            <div className="mb-3 rounded-md border border-border bg-bg-elevated px-3 py-2 text-xs leading-relaxed text-fg-muted">
+              <p className="font-medium text-fg">게임에 안 들어가면</p>
+              <ol className="mt-1 list-decimal space-y-0.5 pl-4">
+                <li>
+                  저장한 파일로 <span className="text-fg">바로가기가 여는 MPQ</span>를 덮어쓰세요.{" "}
+                  <code className="text-[11px] text-fg">-mod yupgoolg</code> 이면{" "}
+                  <code className="text-[11px] text-fg">mods\yupgoolg\yupgoolg.mpq</code> 입니다.
+                </li>
+                <li>
+                  바로가기 대상 끝에 <code className="text-[11px] text-fg">-mod 모드이름 -txt</code> 가 있어야
+                  합니다. 최신 엽굵은 엑셀 .bin 을 같이 넣어, -txt 없이는 헬포지 수정이 무시됩니다.
+                </li>
+                <li>
+                  그래도 이전 드랍이면{" "}
+                  <code className="text-[11px] text-fg">Saved Games\Diablo II Resurrected</code> 아래 해당 모드
+                  캐시를 지우고 다시 실행하세요.
+                </li>
+              </ol>
+            </div>
           ) : null}
           {source === "empty" ? <Welcome onSample={loadSample} onOpen={() => inputRef.current?.click()} /> : <ActivePanel />}
         </main>
@@ -236,7 +264,9 @@ function Welcome({ onSample, onOpen }: { onSample: () => void; onOpen: () => voi
         드랍과 스킬을 다듬으세요
       </h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-fg-muted">
-        엽굵 모드 MPQ를 브라우저에서 읽고, 난이도별 유니크·세트·룬·피규어 드랍과 캐릭터/몬스터 스킬을 한글 이름으로 수정한 뒤 새 .mpq 로 저장합니다. 원본 파일은 덮어쓰지 않습니다.
+        엽굵 모드 MPQ를 브라우저에서 읽고, 난이도별 유니크·세트·룬·피규어 드랍과 캐릭터/몬스터 스킬을 한글 이름으로
+        수정한 뒤 같은 이름의 .mpq 로 저장합니다. 브라우저 원본은 건드리지 않으니, 게임이 여는 모드 파일만 교체하면
+        됩니다.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <Button size="lg" onClick={onOpen}>
@@ -249,9 +279,9 @@ function Welcome({ onSample, onOpen }: { onSample: () => void; onOpen: () => voi
       </div>
       <ul className="mt-10 grid gap-3 sm:grid-cols-2">
         {[
-          ["다른 이름 저장", "수정본만 새 MPQ로 내려받습니다"],
+          ["MPQ 저장", "연 파일과 같은 이름으로 내려받습니다"],
           ["난이도별 드랍", "노멀 / 나이트메어 / 헬 보물 클래스"],
-          ["피규어 컬렉션", "엽굵 인형·만화책 컬렉션 테이블"],
+          ["-txt 필요", "최신 엽굵은 .bin 이 있어 -txt 없이는 수정이 게임에 안 들어갑니다"],
           ["스킬 한글화", "직업·몬스터 스킬을 한국어로 표시"],
         ].map(([t, d]) => (
           <li key={t} className="rounded-lg border border-border bg-bg-elevated px-4 py-3">

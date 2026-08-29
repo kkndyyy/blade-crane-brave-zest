@@ -20,6 +20,17 @@ describe("skillOptions", () => {
     assert.equal(formatBlvlSteps(steps!), expr);
   });
 
+  it("formats custom level breakpoints", () => {
+    assert.equal(
+      formatBlvlSteps([
+        { at: 1, value: 2 },
+        { at: 8, value: 4 },
+        { at: 15, value: 6 },
+      ]),
+      "((blvl>=15)?6:((blvl>=8)?4:2))",
+    );
+  });
+
   it("rewrites related petmax formulas from tooltip calc", () => {
     const petmax =
       "(skill('Demonic Mastery'.blvl)>=10)?3:((skill('Demonic Mastery'.blvl)>=5)?2:1)+stat('val1'.accr)";

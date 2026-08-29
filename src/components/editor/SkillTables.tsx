@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useEditor } from "@/lib/store";
 import { HINTS, MONSTER_EDITOR_COLS, SKILL_EDITOR_COLS, isSlamtrapMonster, labelClass, labelCol } from "@/lib/d2/labels";
@@ -441,7 +441,27 @@ function BlvlCapField({
 }) {
   const [flat, setFlat] = useState(() => (steps.length === 1 ? String(steps[0]!.value) : ""));
   const [local, setLocal] = useState(steps);
+  const localRef = useRef(local);
+  localRef.current = local;
   const useFlat = flat !== "";
+
+  const commit = (next: { at: number; value: number }[]) => {
+    const cleaned = next
+      .filter((s) => Number.isFinite(s.at) && Number.isFinite(s.value) && s.at >= 1)
+      .map((s) => ({ at: Math.floor(s.at), value: Math.floor(s.value) }));
+    const seen = new Set<number>();
+    const uniq: { at: number; value: number }[] = [];
+    for (const s of [...cleaned].sort((a, b) => a.at - b.at)) {
+      if (seen.has(s.at)) continue;
+      seen.add(s.at);
+      uniq.push(s);
+    }
+    if (!uniq.length) return;
+    if (uniq[0]!.at !== 1) uniq.unshift({ at: 1, value: uniq[0]!.value });
+    setLocal(uniq);
+    setFlat("");
+    onCommit(uniq.length === 1 ? String(uniq[0]!.value) : formatBlvlSteps(uniq));
+  };
 
   return (
     <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3 sm:col-span-2 lg:col-span-3">
@@ -461,25 +481,78 @@ function BlvlCapField({
         />
         <span className="text-xs text-fg-muted">숫자를 넣으면 모든 레벨이 그 수입니다</span>
       </label>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {local.map((s, i) => (
-          <label key={`${s.at}-${i}`} className="flex items-center gap-1.5 rounded-md border border-border bg-bg px-2 py-1.5">
-            <span className="text-xs text-fg-muted">{s.at <= 1 ? "1렙" : `${s.at}렙~`}</span>
-            <input
-              className="h-8 w-16 rounded-sm border border-border bg-bg px-2 text-sm tabular-nums"
-              value={s.value}
-              disabled={useFlat}
-              onChange={(e) => {
-                const n = Number(e.target.value);
-                if (!Number.isFinite(n)) return;
-                const next = local.map((x, j) => (j === i ? { ...x, value: n } : x));
-                setLocal(next);
-                setFlat("");
-                onCommit(formatBlvlSteps(next));
-              }}
-            />
-          </label>
-        ))}
+      <div className="mt-3 overflow-x-auto rounded-md border border-border bg-bg">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-xs text-fg-muted">
+              <th className="px-3 py-2 text-left font-medium">레벨</th>
+              <th className="px-3 py-2 text-left font-medium">값</th>
+              <th className="w-16 px-3 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {local.map((s, i) => (
+              <tr key={i} className="border-t border-border">
+                <td className="px-3 py-2">
+                  {i === 0 ? (
+                    <span className="text-fg-muted">1렙부터</span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1">
+                      <input
+                        className="h-8 w-16 rounded-sm border border-border bg-bg px-2 tabular-nums"
+                        value={Number.isFinite(s.at) ? s.at : ""}
+                        disabled={useFlat}
+                        onChange={(e) => {
+                          const n = Number(e.target.value);
+                          const next = local.map((x, j) => (j === i ? { ...x, at: n } : x)); setLocal(next); localRef.current = next;
+                        }}
+                        onBlur={() => commit(localRef.current)}
+                      />
+                      <span className="text-xs text-fg-muted">렙 이상</span>
+                    </span>
+                  )}
+                </td>
+                <td className="px-3 py-2">
+                  <input
+                    className="h-8 w-20 rounded-sm border border-border bg-bg px-2 tabular-nums"
+                    value={Number.isFinite(s.value) ? s.value : ""}
+                    disabled={useFlat}
+                    onChange={(e) => {
+                      const n = Number(e.target.value);
+                      const next = local.map((x, j) => (j === i ? { ...x, value: n } : x)); setLocal(next); localRef.current = next;
+                    }}
+                    onBlur={() => commit(localRef.current)}
+                  />
+                </td>
+                <td className="px-3 py-2 text-right">
+                  {i > 0 ? (
+                    <button
+                      type="button"
+                      className="text-xs text-fg-muted hover:text-danger"
+                      disabled={useFlat}
+                      onClick={() => commit(local.filter((_, j) => j !== i))}
+                    >
+                      삭제
+                    </button>
+                  ) : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={useFlat}
+          onClick={() => {
+            const last = local[local.length - 1] ?? { at: 1, value: 1 };
+            commit([...local, { at: last.at + 5, value: last.value + 1 }]);
+          }}
+        >
+          구간 추가
+        </Button>
       </div>
     </div>
   );

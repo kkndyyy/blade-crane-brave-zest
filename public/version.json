@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.1",
   "released": "2026-08-29",
-  "notes": "edit skill tooltip options such as Demonic Mastery max demons"
+  "notes": "edit skill option level breakpoints as well as values"
 }

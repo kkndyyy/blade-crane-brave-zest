@@ -4,6 +4,7 @@ import { parseTsv, serializeTsv, type TsvTable, colIndex, getCell, setCell, num,
 import { StringTable, parseStringJson } from "./d2/strings";
 import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, matchesDifficulty } from "./d2/paths";
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
+import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyRuneOpmSplitDouble } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
@@ -56,6 +57,7 @@ type EditorState = {
   scaleRarity: (kind: "unique" | "set" | "rune" | "figure", factor: number, fromCurrent?: boolean) => void;
   setSlamtrapSkillsDisabled: (disabled: boolean) => void;
   setSkillExtra: (skillIndex: number, extraId: string, enabled: boolean) => void;
+  setSkillDescCalc: (descKey: string, calcCol: string, value: string, syncPetmaxFromSkill?: string) => number;
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
@@ -428,6 +430,26 @@ export const useEditor = create<EditorState>((set, get) => ({
       },
       dirty: true,
     });
+  },
+
+  setSkillDescCalc: (descKey, calcCol, value, syncPetmaxFromSkill) => {
+    const skilldesc = get().tables.skilldesc;
+    if (!skilldesc) return 0;
+    const found = findSkilldescRow(skilldesc, descKey);
+    if (!found) return 0;
+    const nextDesc = cloneTable(skilldesc);
+    const row = nextDesc.rows[found.index];
+    if (!row) return 0;
+    setCell(row, nextDesc, calcCol, value);
+    const tables = { ...get().tables, skilldesc: nextDesc };
+    let synced = 0;
+    if (syncPetmaxFromSkill && tables.skills) {
+      const nextSkills = cloneTable(tables.skills);
+      synced = applyRelatedPetmax(nextSkills, syncPetmaxFromSkill, value);
+      tables.skills = nextSkills;
+    }
+    set({ tables, dirty: true });
+    return synced;
   },
 
   setVendorStock: (tableKey, rowIndex, npc, add) => {

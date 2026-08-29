@@ -4,6 +4,13 @@ import { useEditor } from "@/lib/store";
 import { HINTS, MONSTER_EDITOR_COLS, SKILL_EDITOR_COLS, isSlamtrapMonster, labelClass, labelCol } from "@/lib/d2/labels";
 import { koreanSkillName } from "@/lib/d2/strings";
 import { listSkillExtras, type ExtraId } from "@/lib/d2/skillExtras";
+import {
+  formatBlvlSteps,
+  listSkillOptions,
+  paramHint,
+  usedParamCols,
+  type SkillOption,
+} from "@/lib/d2/skillOptions";
 import { getCell, isDataRow, num, type TsvTable } from "@/lib/d2/tsv";
 import { DataGrid, SearchField } from "./DataGrid";
 import { Button } from "@/components/ui/button";
@@ -55,7 +62,7 @@ export function SkillTable() {
           <div>
             <h2 className="font-display text-2xl tracking-tight">캐릭터 스킬</h2>
             <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-              직업을 고르고 스킬을 선택하면 피해·시너지·파라미터를 수정할 수 있습니다. 데미지 2배 버튼은 선택한 직업의 현재 값에 누적됩니다.
+              직업을 고르고 스킬을 선택하면 피해·시너지·상세 옵션을 수정할 수 있습니다. 악마 숙련의 악마 최대 수처럼 게임 설명에 나오는 값은 상세 옵션에서 바꿉니다.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -106,7 +113,7 @@ export function SkillTable() {
         />
       ) : (
         <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-fg-muted">
-          목록에서 스킬을 선택하면 데미지, 시너지, 파라미터를 수정할 수 있습니다.
+          목록에서 스킬을 선택하면 데미지, 시너지, 상세 옵션을 수정할 수 있습니다.
         </p>
       )}
 
@@ -157,7 +164,11 @@ const ELEM_COLS = [
 const DAMAGE_COLS = [...ELEM_COLS, ...PHYS_COLS];
 
 const SYNERGY_COLS = ["DmgSymPerCalc", "EDmgSymPerCalc", "ELenSymPerCalc", "ToHitCalc", "calc1", "calc2", "calc3", "calc4"];
-const PARAM_COLS = ["Param1", "Param2", "Param3", "Param4", "Param5", "Param6", "Param7", "Param8"];
+const PARAM_COLS = [
+  "petmax",
+  "Param1", "Param2", "Param3", "Param4", "Param5", "Param6", "Param7", "Param8",
+  "Param9", "Param10", "Param11", "Param12", "Param13", "Param14", "Param15", "Param16",
+];
 const BASIC_COLS = ["reqlevel", "maxlvl", "minmana", "mana", "lvlmana", "manashift", "delay", "localdelay", "globaldelay", "InGame", "leftskill", "rightskill", "passive", "aura"];
 
 const ETYPE_KO: Record<string, string> = {
@@ -174,7 +185,7 @@ const ETYPE_KO: Record<string, string> = {
 const TABS: { id: DetailTab; label: string }[] = [
   { id: "damage", label: "데미지" },
   { id: "synergy", label: "시너지" },
-  { id: "params", label: "파라미터" },
+  { id: "params", label: "상세 옵션" },
   { id: "basic", label: "기본" },
 ];
 
@@ -266,6 +277,8 @@ function SkillDetail({
             onChange={onChange}
           />
         </div>
+      ) : tab === "params" ? (
+        <SkillOptionsPanel table={table} row={row} onChange={onChange} />
       ) : (
         <div className={cn("mt-4 grid gap-3", wide ? "grid-cols-1" : "sm:grid-cols-2 lg:grid-cols-3")}>
           {cols.filter((c) => hasCol(table, c)).map((c) => (
@@ -274,6 +287,214 @@ function SkillDetail({
         </div>
       )}
     </section>
+  );
+}
+
+function SkillOptionsPanel({
+  table,
+  row,
+  onChange,
+}: {
+  table: TsvTable;
+  row: string[];
+  onChange: (col: string, val: string) => void;
+}) {
+  const skilldesc = useEditor((s) => s.tables.skilldesc);
+  const strings = useEditor((s) => s.strings);
+  const setSkillDescCalc = useEditor((s) => s.setSkillDescCalc);
+  const options = listSkillOptions(row, table, skilldesc, strings);
+  const used = usedParamCols(options);
+  const skillName = getCell(row, table, "skill");
+  const descKey = getCell(row, table, "skilldesc");
+  const leftover = PARAM_COLS.filter((c) => {
+    if (!hasCol(table, c)) return false;
+    if (used.has(c)) return false;
+    const v = getCell(row, table, c).trim();
+    const hint = paramHint(row, table, c);
+    return Boolean(v || hint);
+  });
+
+  return (
+    <div className="mt-4 space-y-5">
+      {options.length ? (
+        <div>
+          <h4 className="text-sm font-medium">게임 설명에 나오는 값</h4>
+          <p className="mt-0.5 text-xs text-fg-muted leading-relaxed">
+            스킬 창에 표시되는 항목입니다. 최대 수처럼 소환 상한과 연결된 값은 같이 바뀝니다.
+          </p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {options.map((opt) => (
+              <SkillOptionField
+                key={opt.id}
+                opt={opt}
+                table={table}
+                row={row}
+                onChange={onChange}
+                onDescCalc={(col, val, sync) => {
+                  const n = setSkillDescCalc(descKey, col, val, sync ? skillName : undefined);
+                  toast.success(n > 0 ? `${opt.label} 적용 · 소환 상한 ${n}개 스킬 반영` : `${opt.label} 적용`);
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="rounded-lg border border-dashed border-border px-3 py-2 text-sm text-fg-muted">
+          이 스킬은 설명 테이블에 숫자 옵션이 없습니다. 아래 파라미터를 직접 수정하세요.
+        </p>
+      )}
+      {leftover.length ? (
+        <FieldGroup
+          title="그 외 파라미터"
+          hint="설명 창에 안 나오지만 스킬이 쓰는 값입니다."
+          cols={leftover}
+          table={table}
+          row={row}
+          onChange={onChange}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function SkillOptionField({
+  opt,
+  table,
+  row,
+  onChange,
+  onDescCalc,
+}: {
+  opt: SkillOption;
+  table: TsvTable;
+  row: string[];
+  onChange: (col: string, val: string) => void;
+  onDescCalc: (col: string, val: string, syncPetmax: boolean) => void;
+}) {
+  if (opt.kind === "cap" && opt.steps) {
+    return (
+      <BlvlCapField
+        key={opt.calc}
+        label={opt.label}
+        hint={opt.hint}
+        steps={opt.steps}
+        onCommit={(next) => onDescCalc(opt.calcCol, next, true)}
+      />
+    );
+  }
+  if (opt.kind === "ln" && opt.ln) {
+    return (
+      <div className="rounded-lg border border-border bg-bg px-3 py-3 sm:col-span-2">
+        <p className="text-sm font-medium">{opt.label}</p>
+        {opt.hint ? <p className="mt-0.5 text-xs text-fg-muted">{opt.hint}</p> : null}
+        {opt.ln.cap != null ? <p className="mt-0.5 text-xs text-fg-muted">상한 {opt.ln.cap}</p> : null}
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <MiniNum
+            label="기본"
+            value={getCell(row, table, opt.ln.baseCol)}
+            onChange={(v) => onChange(opt.ln!.baseCol, v)}
+          />
+          <MiniNum
+            label="레벨당"
+            value={getCell(row, table, opt.ln.perCol)}
+            onChange={(v) => onChange(opt.ln!.perCol, v)}
+          />
+        </div>
+      </div>
+    );
+  }
+  if (opt.kind === "param" && opt.paramCol) {
+    return (
+      <label className="block min-w-0">
+        <span className="text-sm font-medium">{opt.label}</span>
+        {opt.hint ? <span className="mt-0.5 block text-xs text-fg-muted">{opt.hint}</span> : null}
+        <input
+          className="mt-1.5 h-10 w-full rounded-sm border border-border bg-bg px-3 text-sm tabular-nums text-fg hover:border-border-strong focus:border-primary/50"
+          value={getCell(row, table, opt.paramCol)}
+          onChange={(e) => onChange(opt.paramCol!, e.target.value)}
+        />
+      </label>
+    );
+  }
+  return (
+    <label className="block min-w-0 sm:col-span-2">
+      <span className="text-sm font-medium">{opt.label}</span>
+      {opt.hint ? <span className="mt-0.5 block text-xs text-fg-muted">{opt.hint}</span> : null}
+      <input
+        className="mt-1.5 h-10 w-full rounded-sm border border-border bg-bg px-3 font-mono text-xs text-fg hover:border-border-strong focus:border-primary/50"
+        value={opt.calc}
+        onChange={(e) => onDescCalc(opt.calcCol, e.target.value, /blvl|최대 수|max/i.test(`${opt.label} ${opt.calc}`))}
+      />
+    </label>
+  );
+}
+
+function BlvlCapField({
+  label,
+  hint,
+  steps,
+  onCommit,
+}: {
+  label: string;
+  hint: string;
+  steps: { at: number; value: number }[];
+  onCommit: (formula: string) => void;
+}) {
+  const [flat, setFlat] = useState(() => (steps.length === 1 ? String(steps[0]!.value) : ""));
+  const [local, setLocal] = useState(steps);
+  const useFlat = flat !== "";
+
+  return (
+    <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3 sm:col-span-2 lg:col-span-3">
+      <p className="text-sm font-medium">{label}</p>
+      {hint ? <p className="mt-0.5 text-xs text-fg-muted">{hint}</p> : null}
+      <label className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+        <span className="w-16 shrink-0 text-fg-muted">고정</span>
+        <input
+          className="h-10 w-24 rounded-sm border border-border bg-bg px-3 text-sm tabular-nums"
+          placeholder="예: 8"
+          value={useFlat ? flat : ""}
+          onChange={(e) => {
+            const v = e.target.value.trim();
+            setFlat(v);
+            if (v && /^-?\d+$/.test(v)) onCommit(v);
+          }}
+        />
+        <span className="text-xs text-fg-muted">숫자를 넣으면 모든 레벨이 그 수입니다</span>
+      </label>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {local.map((s, i) => (
+          <label key={`${s.at}-${i}`} className="flex items-center gap-1.5 rounded-md border border-border bg-bg px-2 py-1.5">
+            <span className="text-xs text-fg-muted">{s.at <= 1 ? "1렙" : `${s.at}렙~`}</span>
+            <input
+              className="h-8 w-16 rounded-sm border border-border bg-bg px-2 text-sm tabular-nums"
+              value={s.value}
+              disabled={useFlat}
+              onChange={(e) => {
+                const n = Number(e.target.value);
+                if (!Number.isFinite(n)) return;
+                const next = local.map((x, j) => (j === i ? { ...x, value: n } : x));
+                setLocal(next);
+                setFlat("");
+                onCommit(formatBlvlSteps(next));
+              }}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MiniNum({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block min-w-0">
+      <span className="text-xs text-fg-muted">{label}</span>
+      <input
+        className="mt-1 h-10 w-full rounded-sm border border-border bg-bg px-3 text-sm tabular-nums text-fg hover:border-border-strong focus:border-primary/50"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
   );
 }
 

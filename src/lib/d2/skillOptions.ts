@@ -85,6 +85,152 @@ export function formatBlvlSteps(steps: BlvlStep[]): string {
   return expr;
 }
 
+export const BIND_RANKS = [
+  { id: "normal", ko: "일반", en: "Normal" },
+  { id: "champion", ko: "챔피언", en: "Champion" },
+  { id: "unique", ko: "유니크", en: "Unique" },
+  { id: "superunique", ko: "슈퍼유니크", en: "Super Unique" },
+  { id: "boss", ko: "보스", en: "Boss" },
+] as const;
+
+export type BindRankId = (typeof BIND_RANKS)[number]["id"];
+export type BindRankBand = { at: number; ranks: BindRankId[] };
+export type BindRankEditor = { key: string; ko: string; en: string; bands: BindRankBand[] };
+
+const RANK_ALIAS: Record<string, BindRankId> = {
+  일반: "normal",
+  노멀: "normal",
+  normal: "normal",
+  normals: "normal",
+  챔피언: "champion",
+  champion: "champion",
+  champions: "champion",
+  유니크: "unique",
+  unique: "unique",
+  uniques: "unique",
+  슈퍼유니크: "superunique",
+  superunique: "superunique",
+  superuniques: "superunique",
+  보스: "boss",
+  boss: "boss",
+  bosses: "boss",
+};
+
+const DEFAULT_BIND_BANDS: BindRankBand[] = [
+  { at: 1, ranks: ["normal"] },
+  { at: 10, ranks: ["champion"] },
+  { at: 15, ranks: ["unique"] },
+  { at: 20, ranks: ["superunique"] },
+];
+
+const BIND_HEADER_KO = "직접 투자한 스킬이 아래 이상이어야 해당 등급 악마를 속박 가능";
+const BIND_HEADER_EN = "Requires hard points to bind each monster rank";
+
+function compactRankToken(raw: string): string {
+  return raw.trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function parseRankToken(raw: string): BindRankId | null {
+  return RANK_ALIAS[compactRankToken(raw)] ?? null;
+}
+
+function parseBindRankPart(part: string): BindRankBand | null {
+  const m = part.trim().match(/^(.*?)(\d+)\s*$/);
+  if (!m) return null;
+  const names = m[1]!.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+  const ranks = names.map(parseRankToken).filter((x): x is BindRankId => Boolean(x));
+  if (!ranks.length) return null;
+  const uniq: BindRankId[] = [];
+  for (const r of ranks) if (!uniq.includes(r)) uniq.push(r);
+  return { at: Number(m[2]), ranks: uniq };
+}
+
+function parseBindRankLine(line: string): BindRankBand[] | null {
+  const trimmed = line.trim();
+  if (!trimmed) return null;
+  const parts = trimmed.split(/\s*\/\s*/);
+  const bands: BindRankBand[] = [];
+  for (const part of parts) {
+    const band = parseBindRankPart(part);
+    if (!band) return null;
+    bands.push(band);
+  }
+  return bands.length ? bands : null;
+}
+
+export function parseBindRanks(text: string): BindRankBand[] | null {
+  for (const line of text.split(/\r?\n/)) {
+    const bands = parseBindRankLine(line);
+    if (bands) return bands;
+  }
+  return null;
+}
+
+export function formatBindRankLine(bands: BindRankBand[], lang: "ko" | "en"): string {
+  const ordered = [...bands]
+    .filter((b) => Number.isFinite(b.at) && b.at >= 1 && b.ranks.length)
+    .sort((a, b) => a.at - b.at);
+  return ordered
+    .map((b) => {
+      const names = b.ranks.map((id) => BIND_RANKS.find((r) => r.id === id)?.[lang] ?? id);
+      return `${names.join(", ")} ${Math.floor(b.at)}`;
+    })
+    .join(" / ");
+}
+
+function isBindHeader(line: string): boolean {
+  const t = line.trim();
+  return t.includes("해당 등급") || t.includes("Requires hard points to bind") || t.includes("base skill levels");
+}
+
+export function replaceBindRankText(text: string, bands: BindRankBand[], lang: "ko" | "en"): string {
+  const line = formatBindRankLine(bands, lang);
+  const header = lang === "ko" ? BIND_HEADER_KO : BIND_HEADER_EN;
+  const kept: string[] = [];
+  for (const raw of text.split(/\r?\n/)) {
+    if (parseBindRankLine(raw) || isBindHeader(raw)) continue;
+    kept.push(raw);
+  }
+  while (kept.length && kept[kept.length - 1]!.trim() === "") kept.pop();
+  if (line) {
+    kept.push("");
+    kept.push(header);
+    kept.push(line);
+  }
+  return kept.join("\n");
+}
+
+function isBindDemonSkill(skillRow: string[], skills: TsvTable, longKey: string): boolean {
+  const name = getCell(skillRow, skills, "skill").toLowerCase();
+  const desc = getCell(skillRow, skills, "skilldesc").toLowerCase();
+  const key = longKey.toLowerCase();
+  return name.includes("bind demon") || desc.includes("bind demon") || key.includes("binddemon");
+}
+
+export function findBindRankEditor(
+  skillRow: string[],
+  skills: TsvTable,
+  skilldesc: TsvTable | undefined,
+  strings: StringTable,
+): BindRankEditor | null {
+  if (!skilldesc) return null;
+  const descKey = getCell(skillRow, skills, "skilldesc").trim();
+  if (!descKey) return null;
+  const descRow = skilldesc.rows.find(
+    (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
+  );
+  if (!descRow) return null;
+  const longKey =
+    getCell(descRow, skilldesc, "str long").trim() || getCell(descRow, skilldesc, "str short").trim();
+  if (!longKey) return null;
+  const raw = strings.rawText(longKey);
+  const ko = raw?.ko ?? "";
+  const en = raw?.en ?? "";
+  const bands = parseBindRanks(ko) ?? parseBindRanks(en);
+  if (!bands && !isBindDemonSkill(skillRow, skills, longKey)) return null;
+  return { key: longKey, ko, en, bands: bands ?? DEFAULT_BIND_BANDS };
+}
+
 export function blvlToPetmax(skillName: string, tooltipCalc: string): string {
   const calc = unquote(tooltipCalc).replace(/\s+/g, "");
   if (/^-?\d+$/.test(calc)) return calc;

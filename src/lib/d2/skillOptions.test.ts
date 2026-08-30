@@ -2,10 +2,14 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   blvlToPetmax,
+  formatBindRankLine,
   formatBlvlSteps,
+  parseBindRanks,
   parseBlvlSteps,
+  replaceBindRankText,
   replaceRelatedPetmax,
   tooltipLabel,
+  type BindRankBand,
 } from "./skillOptions.ts";
 
 describe("skillOptions", () => {
@@ -53,5 +57,36 @@ describe("skillOptions", () => {
       blvlToPetmax("Demonic Mastery", "((blvl>=10)?3:((blvl>=5)?2:1))"),
       "((skill('Demonic Mastery'.blvl)>=10)?3:((skill('Demonic Mastery'.blvl)>=5)?2:1))",
     );
+  });
+
+  it("parses yupgoolg bind-demon rank bands", () => {
+    const text =
+      "부상당한 악마가 명령을 따르도록 만듭니다.\n\n직접 투자한 스킬이 아래 이상이어야 해당 등급 악마를 속박 가능\n일반 10 / 챔피언, 유니크 15 / 슈퍼유니크 20";
+    assert.deepEqual(parseBindRanks(text), [
+      { at: 10, ranks: ["normal"] },
+      { at: 15, ranks: ["champion", "unique"] },
+      { at: 20, ranks: ["superunique"] },
+    ]);
+  });
+
+  it("formats and replaces bind rank lines", () => {
+    const bands: BindRankBand[] = [
+      { at: 1, ranks: ["normal"] },
+      { at: 8, ranks: ["champion"] },
+      { at: 12, ranks: ["unique", "superunique"] },
+    ];
+    assert.equal(formatBindRankLine(bands, "ko"), "일반 1 / 챔피언 8 / 유니크, 슈퍼유니크 12");
+    const next = replaceBindRankText(
+      "부상당한 악마가 명령을 따르도록 만듭니다.\n\n직접 투자한 스킬이 아래 이상이어야 해당 등급 악마를 속박 가능\n일반 10 / 챔피언, 유니크 15 / 슈퍼유니크 20",
+      bands,
+      "ko",
+    );
+    assert.match(next, /일반 1 \/ 챔피언 8 \/ 유니크, 슈퍼유니크 12/);
+    assert.match(next, /부상당한 악마가 명령을 따르도록 만듭니다/);
+    assert.deepEqual(parseBindRanks(next), [
+      { at: 1, ranks: ["normal"] },
+      { at: 8, ranks: ["champion"] },
+      { at: 12, ranks: ["unique", "superunique"] },
+    ]);
   });
 });

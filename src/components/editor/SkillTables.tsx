@@ -5,10 +5,16 @@ import { HINTS, MONSTER_EDITOR_COLS, SKILL_EDITOR_COLS, isSlamtrapMonster, label
 import { koreanSkillName } from "@/lib/d2/strings";
 import { listSkillExtras, type ExtraId } from "@/lib/d2/skillExtras";
 import {
+  BIND_RANKS,
+  findBindRankEditor,
   formatBlvlSteps,
   listSkillOptions,
   paramHint,
+  replaceBindRankText,
   usedParamCols,
+  type BindRankBand,
+  type BindRankEditor,
+  type BindRankId,
   type SkillOption,
 } from "@/lib/d2/skillOptions";
 import { getCell, isDataRow, num, type TsvTable } from "@/lib/d2/tsv";
@@ -302,7 +308,9 @@ function SkillOptionsPanel({
   const skilldesc = useEditor((s) => s.tables.skilldesc);
   const strings = useEditor((s) => s.strings);
   const setSkillDescCalc = useEditor((s) => s.setSkillDescCalc);
+  const patchSkillString = useEditor((s) => s.patchSkillString);
   const options = listSkillOptions(row, table, skilldesc, strings);
+  const bindRanks = findBindRankEditor(row, table, skilldesc, strings);
   const used = usedParamCols(options);
   const skillName = getCell(row, table, "skill");
   const descKey = getCell(row, table, "skilldesc");
@@ -316,6 +324,19 @@ function SkillOptionsPanel({
 
   return (
     <div className="mt-4 space-y-5">
+      {bindRanks ? (
+        <BindRankField
+          key={bindRanks.key}
+          editor={bindRanks}
+          onCommit={(bands) => {
+            patchSkillString(bindRanks.key, {
+              koKR: replaceBindRankText(bindRanks.ko, bands, "ko"),
+              enUS: replaceBindRankText(bindRanks.en, bands, "en"),
+            });
+            toast.success("속박 가능 등급 적용 · 스킬 설명에 반영");
+          }}
+        />
+      ) : null}
       {options.length ? (
         <div>
           <h4 className="text-sm font-medium">게임 설명에 나오는 값</h4>
@@ -338,7 +359,7 @@ function SkillOptionsPanel({
             ))}
           </div>
         </div>
-      ) : (
+      ) : bindRanks ? null : (
         <p className="rounded-lg border border-dashed border-border px-3 py-2 text-sm text-fg-muted">
           이 스킬은 설명 테이블에 숫자 옵션이 없습니다. 아래 파라미터를 직접 수정하세요.
         </p>
@@ -549,6 +570,152 @@ function BlvlCapField({
           onClick={() => {
             const last = local[local.length - 1] ?? { at: 1, value: 1 };
             commit([...local, { at: last.at + 5, value: last.value + 1 }]);
+          }}
+        >
+          구간 추가
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function BindRankField({
+  editor,
+  onCommit,
+}: {
+  editor: BindRankEditor;
+  onCommit: (bands: BindRankBand[]) => void;
+}) {
+  const [local, setLocal] = useState<BindRankBand[]>(() => editor.bands.map((b) => ({ at: b.at, ranks: [...b.ranks] })));
+  const localRef = useRef(local);
+  localRef.current = local;
+
+  const commit = (next: BindRankBand[]) => {
+    const cleaned: BindRankBand[] = [];
+    const seen = new Set<number>();
+    for (const b of [...next].sort((a, c) => a.at - c.at)) {
+      const at = Math.floor(b.at);
+      if (!Number.isFinite(at) || at < 1 || !b.ranks.length) continue;
+      if (seen.has(at)) continue;
+      seen.add(at);
+      const ranks: BindRankId[] = [];
+      for (const r of b.ranks) if (!ranks.includes(r)) ranks.push(r);
+      cleaned.push({ at, ranks });
+    }
+    if (!cleaned.length) return;
+    setLocal(cleaned);
+    onCommit(cleaned);
+  };
+
+  const toggleRank = (index: number, id: BindRankId) => {
+    const next = localRef.current.map((b, i) => {
+      if (i !== index) return b;
+      const has = b.ranks.includes(id);
+      if (has && b.ranks.length === 1) return b;
+      const ranks = has ? b.ranks.filter((r) => r !== id) : [...b.ranks, id];
+      return { ...b, ranks };
+    });
+    setLocal(next);
+    localRef.current = next;
+    if (next[index]?.ranks.length) commit(next);
+  };
+
+  return (
+    <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3">
+      <p className="text-sm font-medium">속박 가능 몬스터 등급</p>
+      <p className="mt-0.5 text-xs text-fg-muted leading-relaxed">
+        직접 투자한 스킬 레벨 이상이어야 해당 등급을 속박할 수 있습니다. 레벨 구간과 등급을 같이 바꿉니다. 스킬 설명 텍스트에
+        반영됩니다.
+      </p>
+      <div className="mt-3 overflow-x-auto rounded-md border border-border bg-bg">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-xs text-fg-muted">
+              <th className="px-3 py-2 text-left font-medium">레벨</th>
+              <th className="px-3 py-2 text-left font-medium">몬스터 등급</th>
+              <th className="w-16 px-3 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {local.map((b, i) => (
+              <tr key={i} className="border-t border-border">
+                <td className="px-3 py-2 align-top">
+                  {i === 0 ? (
+                    <span className="inline-flex items-center gap-1">
+                      <input
+                        className="h-8 w-16 rounded-sm border border-border bg-bg px-2 tabular-nums"
+                        value={Number.isFinite(b.at) ? b.at : ""}
+                        onChange={(e) => {
+                          const n = Number(e.target.value);
+                          const next = local.map((x, j) => (j === i ? { ...x, at: n } : x));
+                          setLocal(next);
+                          localRef.current = next;
+                        }}
+                        onBlur={() => commit(localRef.current)}
+                      />
+                      <span className="text-xs text-fg-muted">렙부터</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1">
+                      <input
+                        className="h-8 w-16 rounded-sm border border-border bg-bg px-2 tabular-nums"
+                        value={Number.isFinite(b.at) ? b.at : ""}
+                        onChange={(e) => {
+                          const n = Number(e.target.value);
+                          const next = local.map((x, j) => (j === i ? { ...x, at: n } : x));
+                          setLocal(next);
+                          localRef.current = next;
+                        }}
+                        onBlur={() => commit(localRef.current)}
+                      />
+                      <span className="text-xs text-fg-muted">렙 이상</span>
+                    </span>
+                  )}
+                </td>
+                <td className="px-3 py-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {BIND_RANKS.map((rank) => {
+                      const on = b.ranks.includes(rank.id);
+                      return (
+                        <button
+                          key={rank.id}
+                          type="button"
+                          onClick={() => toggleRank(i, rank.id)}
+                          className={cn(
+                            "h-8 rounded-md px-2.5 text-xs",
+                            on ? "bg-primary text-primary-fg" : "bg-bg-subtle text-fg-muted hover:text-fg",
+                          )}
+                        >
+                          {rank.ko}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </td>
+                <td className="px-3 py-2 text-right align-top">
+                  {local.length > 1 ? (
+                    <button
+                      type="button"
+                      className="text-xs text-fg-muted hover:text-danger"
+                      onClick={() => commit(local.filter((_, j) => j !== i))}
+                    >
+                      삭제
+                    </button>
+                  ) : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            const last = local[local.length - 1] ?? { at: 1, ranks: ["normal"] };
+            const unused = BIND_RANKS.map((r) => r.id).find((id) => !local.some((b) => b.ranks.includes(id)));
+            commit([...local, { at: last.at + 5, ranks: [unused ?? last.ranks[0] ?? "normal"] }]);
           }}
         >
           구간 추가

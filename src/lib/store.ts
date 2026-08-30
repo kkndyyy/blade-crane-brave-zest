@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { MpqArchive, buildMpqFromFiles, companionBinNamesToOmit, encodeText, normalizeName } from "./mpq/archive";
 import { parseTsv, serializeTsv, type TsvTable, colIndex, getCell, setCell, num, isDataRow } from "./d2/tsv";
-import { StringTable, parseStringJson } from "./d2/strings";
+import { StringTable, parseStringJson, serializeStringJson, type StringEntry } from "./d2/strings";
 import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, matchesDifficulty } from "./d2/paths";
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
@@ -41,6 +41,7 @@ type EditorState = {
   originalTexts: Record<string, string>;
   tables: Tables;
   strings: StringTable;
+  stringFiles: Record<string, StringEntry[]>;
   dirty: boolean;
   error: string | null;
   loading: boolean;
@@ -62,6 +63,7 @@ type EditorState = {
   setSlamtrapSkillsDisabled: (disabled: boolean) => void;
   setSkillExtra: (skillIndex: number, extraId: string, enabled: boolean) => void;
   setSkillDescCalc: (descKey: string, calcCol: string, value: string, syncPetmaxFromSkill?: string) => number;
+  patchSkillString: (key: string, patch: { koKR?: string; enUS?: string }) => void;
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
@@ -126,16 +128,25 @@ function ingestTexts(texts: Record<string, string>) {
   if (pick(EXCEL.itemstatcost)) tables.itemstatcost = parseTsv(pick(EXCEL.itemstatcost)!);
 
   const strings = new StringTable();
+  const stringFiles: Record<string, StringEntry[]> = {};
   for (const p of [STRINGS.itemNames, STRINGS.itemRunes, STRINGS.skills, STRINGS.monsters]) {
     const raw = pick(p);
     if (!raw) continue;
     try {
-      strings.add(parseStringJson(raw));
+      const entries = parseStringJson(raw);
+      stringFiles[p] = entries;
+      strings.add(entries);
     } catch {
       /* ignore malformed */
     }
   }
-  return { tables, strings };
+  return { tables, strings, stringFiles };
+}
+
+function stringsFromFiles(files: Record<string, StringEntry[]>): StringTable {
+  const strings = new StringTable();
+  for (const entries of Object.values(files)) strings.add(entries);
+  return strings;
 }
 
 function cloneTable(t: TsvTable): TsvTable {
@@ -194,6 +205,7 @@ export const useEditor = create<EditorState>((set, get) => ({
   originalTexts: {},
   tables: {},
   strings: new StringTable(),
+  stringFiles: {},
   dirty: false,
   error: null,
   loading: false,
@@ -218,7 +230,7 @@ export const useEditor = create<EditorState>((set, get) => ({
         const data = archive.tryExtract(path);
         if (data) texts[path] = textDecoderFile(data);
       }
-      const { tables, strings } = ingestTexts(texts);
+      const { tables, strings, stringFiles } = ingestTexts(texts);
       if (!Object.keys(tables).length) {
         throw new Error(
           "MPQ에서 엑셀 테이블을 찾지 못했습니다. 엽굵/D2R 데이터(data\\global\\excel)가 들어 있는 파일인지 확인하세요.",
@@ -231,6 +243,7 @@ export const useEditor = create<EditorState>((set, get) => ({
         originalTexts: texts,
         tables,
         strings,
+        stringFiles,
         dirty: false,
         loading: false,
         error: null,
@@ -254,7 +267,7 @@ export const useEditor = create<EditorState>((set, get) => ({
           texts[path] = await res.text();
         }),
       );
-      const { tables, strings } = ingestTexts(texts);
+      const { tables, strings, stringFiles } = ingestTexts(texts);
       set({
         source: "sample",
         fileName: "yupgoolg131.mpq (샘플)",
@@ -262,6 +275,7 @@ export const useEditor = create<EditorState>((set, get) => ({
         originalTexts: texts,
         tables,
         strings,
+        stringFiles,
         dirty: false,
         loading: false,
         error: null,
@@ -464,6 +478,21 @@ export const useEditor = create<EditorState>((set, get) => ({
     return synced;
   },
 
+  patchSkillString: (key, patch) => {
+    const path = STRINGS.skills;
+    const files = { ...get().stringFiles };
+    const current = files[path] ?? [];
+    let found = false;
+    const next = current.map((e) => {
+      if (e.Key !== key) return e;
+      found = true;
+      return { ...e, ...patch };
+    });
+    if (!found) next.push({ Key: key, enUS: patch.enUS ?? "", koKR: patch.koKR ?? "" });
+    files[path] = next;
+    set({ stringFiles: files, strings: stringsFromFiles(files), dirty: true });
+  },
+
   setVendorStock: (tableKey, rowIndex, npc, add) => {
     const table = get().tables[tableKey as VendorTableKey];
     if (!table) return;
@@ -597,7 +626,7 @@ export const useEditor = create<EditorState>((set, get) => ({
   },
 
   exportMpq: () => {
-    const { tables, originalTexts, archive, fileName, source } = get();
+    const { tables, originalTexts, archive, fileName, source, stringFiles } = get();
     const replacements = new Map<string, Uint8Array>();
     (Object.keys(TABLE_PATH) as (keyof Tables)[]).forEach((key) => {
       if (SKIP_EXPORT.has(key)) return;
@@ -609,6 +638,12 @@ export const useEditor = create<EditorState>((set, get) => ({
       if (orig && orig.replace(/\r\n/g, "\n") === text.replace(/\r\n/g, "\n")) return;
       replacements.set(normalizeName(path), encodeText(text));
     });
+    for (const [path, entries] of Object.entries(stringFiles)) {
+      const text = serializeStringJson(entries);
+      const orig = originalTexts[path];
+      if (orig && orig.replace(/\r\n/g, "\n") === text.replace(/\r\n/g, "\n")) continue;
+      replacements.set(normalizeName(path), encodeText(text));
+    }
     const outName =
       source === "sample"
         ? "yupgoolg-edited.mpq"
@@ -634,7 +669,7 @@ export const useEditor = create<EditorState>((set, get) => ({
   },
 
   changedCount: () => {
-    const { tables, originalTexts } = get();
+    const { tables, originalTexts, stringFiles } = get();
     let n = 0;
     (Object.keys(TABLE_PATH) as (keyof Tables)[]).forEach((key) => {
       if (SKIP_EXPORT.has(key)) return;
@@ -644,6 +679,14 @@ export const useEditor = create<EditorState>((set, get) => ({
       if (!orig) return;
       if (serializeTsv(table).replace(/\r\n/g, "\n") !== orig.replace(/\r\n/g, "\n")) n += 1;
     });
+    for (const [path, entries] of Object.entries(stringFiles)) {
+      const orig = originalTexts[path];
+      if (!orig) {
+        n += 1;
+        continue;
+      }
+      if (serializeStringJson(entries) !== orig.replace(/\r\n/g, "\n")) n += 1;
+    }
     return n;
   },
 }));

@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
+  "version": "1.6.1",
   "released": "2026-08-30",
-  "notes": "offline .d2s item copy, stack quantity and gold editor"
+  "notes": "edit Bind Demon rank breakpoints and monster grades"
 }

@@ -85,7 +85,7 @@ echo.
 echo Applied version.json:
 if exist "public\version.json" type "public\version.json"
 echo.
-echo Update applied. Header should show v1.6.0.
+echo Update applied. Header should show v1.6.1.
 echo.
 
 if exist "update.bat.new" (

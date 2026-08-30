@@ -89,12 +89,27 @@ export class StringTable {
     const hit = this.lookup(key);
     return hit ? hit.ko || hit.en : "";
   }
+
+  raw(key: string | undefined | null): StringEntry | undefined {
+    if (!key) return undefined;
+    return this.byKey.get(key) ?? this.byKey.get(key.toLowerCase());
+  }
+
+  rawText(key: string | undefined | null): { ko: string; en: string } | null {
+    const e = this.raw(key);
+    if (!e) return null;
+    return { ko: e.koKR || "", en: e.enUS || "" };
+  }
 }
 
 export function parseStringJson(text: string): StringEntry[] {
   const trimmed = text.replace(/^\uFEFF/, "");
   const parsed = JSON.parse(trimmed) as StringEntry[];
   return Array.isArray(parsed) ? parsed : [];
+}
+
+export function serializeStringJson(entries: StringEntry[]): string {
+  return JSON.stringify(entries);
 }
 
 function pascalNameKey(raw: string): string {

@@ -13,7 +13,7 @@ import { FIGURE_TYPES, RUNE_TYPES, isSlamtrapMonster, type Difficulty } from "./
 
 export type SourceKind = "empty" | "sample" | "mpq";
 
-export type NavId = "drops" | "uniques" | "sets" | "runes" | "figures" | "skills" | "monsters" | "shops" | "potions" | "hirelings" | "files";
+export type NavId = "drops" | "uniques" | "sets" | "runes" | "figures" | "skills" | "monsters" | "shops" | "potions" | "hirelings" | "saves" | "files";
 
 type Tables = Partial<{
   itemRatio: TsvTable;
@@ -30,6 +30,8 @@ type Tables = Partial<{
   cubemain: TsvTable;
   hireling: TsvTable;
   runes: TsvTable;
+  itemTypes: TsvTable;
+  itemstatcost: TsvTable;
 }>;
 
 type EditorState = {
@@ -45,11 +47,13 @@ type EditorState = {
   nav: NavId;
   difficulty: Difficulty;
   search: string;
+  pendingSaveFile: File | null;
   openMpq: (file: File) => Promise<void>;
   loadSample: () => Promise<void>;
   setNav: (id: NavId) => void;
   setDifficulty: (d: Difficulty) => void;
   setSearch: (q: string) => void;
+  setPendingSaveFile: (file: File | null) => void;
   patchCell: (tableKey: keyof Tables, rowIndex: number, column: string, value: string) => void;
   applyQualityBoost: (diff: Difficulty, unique: number, set: number) => void;
   scaleQuality: (diff: Difficulty, uniqueFactor: number, setFactor: number, fromCurrent?: boolean) => void;
@@ -86,7 +90,11 @@ const TABLE_PATH: Record<keyof Tables, string> = {
   cubemain: EXCEL.cubemain,
   hireling: EXCEL.hireling,
   runes: EXCEL.runes,
+  itemTypes: EXCEL.itemTypes,
+  itemstatcost: EXCEL.itemstatcost,
 };
+
+const SKIP_EXPORT = new Set<keyof Tables>(["itemTypes", "itemstatcost"]);
 
 function textDecoderFile(data: Uint8Array) {
   if (data.length >= 2 && data[0] === 0xff && data[1] === 0xfe) {
@@ -114,6 +122,8 @@ function ingestTexts(texts: Record<string, string>) {
   if (pick(EXCEL.cubemain)) tables.cubemain = parseTsv(pick(EXCEL.cubemain)!);
   if (pick(EXCEL.hireling)) tables.hireling = parseTsv(pick(EXCEL.hireling)!);
   if (pick(EXCEL.runes)) tables.runes = parseTsv(pick(EXCEL.runes)!);
+  if (pick(EXCEL.itemTypes)) tables.itemTypes = parseTsv(pick(EXCEL.itemTypes)!);
+  if (pick(EXCEL.itemstatcost)) tables.itemstatcost = parseTsv(pick(EXCEL.itemstatcost)!);
 
   const strings = new StringTable();
   for (const p of [STRINGS.itemNames, STRINGS.itemRunes, STRINGS.skills, STRINGS.monsters]) {
@@ -190,10 +200,12 @@ export const useEditor = create<EditorState>((set, get) => ({
   nav: "drops",
   difficulty: "hell",
   search: "",
+  pendingSaveFile: null,
 
   setNav: (id) => set({ nav: id }),
   setDifficulty: (d) => set({ difficulty: d }),
   setSearch: (q) => set({ search: q }),
+  setPendingSaveFile: (file) => set({ pendingSaveFile: file }),
 
   openMpq: async (file) => {
     set({ loading: true, error: null });
@@ -588,6 +600,7 @@ export const useEditor = create<EditorState>((set, get) => ({
     const { tables, originalTexts, archive, fileName, source } = get();
     const replacements = new Map<string, Uint8Array>();
     (Object.keys(TABLE_PATH) as (keyof Tables)[]).forEach((key) => {
+      if (SKIP_EXPORT.has(key)) return;
       const table = tables[key];
       if (!table) return;
       const path = TABLE_PATH[key];
@@ -624,6 +637,7 @@ export const useEditor = create<EditorState>((set, get) => ({
     const { tables, originalTexts } = get();
     let n = 0;
     (Object.keys(TABLE_PATH) as (keyof Tables)[]).forEach((key) => {
+      if (SKIP_EXPORT.has(key)) return;
       const table = tables[key];
       if (!table) return;
       const orig = originalTexts[TABLE_PATH[key]];

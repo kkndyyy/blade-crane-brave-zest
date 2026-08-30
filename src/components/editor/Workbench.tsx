@@ -14,6 +14,7 @@ import {
   Store,
   Swords,
   Table2,
+  Save,
 } from "lucide-react";
 import { useEditor, type NavId } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { MonsterTable, SkillTable } from "./SkillTables";
 import { NpcShops } from "./NpcShops";
 import { PotionTable } from "./PotionTable";
 import { HirelingTable } from "./HirelingTable";
+import { SaveEditor } from "./SaveEditor";
 import { cn } from "@/lib/utils";
 
 const NAV: { id: NavId; label: string; icon: typeof Anvil }[] = [
@@ -37,6 +39,7 @@ const NAV: { id: NavId; label: string; icon: typeof Anvil }[] = [
   { id: "shops", label: "NPC 상점", icon: Store },
   { id: "potions", label: "포션 회복", icon: Droplets },
   { id: "hirelings", label: "용병", icon: Shield },
+  { id: "saves", label: "세이브", icon: Save },
 ];
 
 export function Workbench() {
@@ -106,14 +109,25 @@ export function Workbench() {
       onDrop={(e) => {
         e.preventDefault();
         setDragging(false);
-        const file = [...e.dataTransfer.files].find((f) => f.name.toLowerCase().endsWith(".mpq"));
-        if (file) void onOpen(file);
-        else toast.error("MPQ 파일을 놓아 주세요");
+        const file =
+          [...e.dataTransfer.files].find((f) => f.name.toLowerCase().endsWith(".mpq")) ??
+          [...e.dataTransfer.files].find((f) => f.name.toLowerCase().endsWith(".d2s"));
+        if (!file) {
+          toast.error("MPQ 또는 .d2s 파일을 놓아 주세요");
+          return;
+        }
+        if (file.name.toLowerCase().endsWith(".d2s")) {
+          useEditor.getState().setPendingSaveFile(file);
+          setNav("saves");
+          toast.success(`${file.name} 을 세이브 탭에서 엽니다`);
+          return;
+        }
+        void onOpen(file);
       }}
     >
       {dragging ? (
         <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center bg-bg/80 text-lg font-medium">
-          MPQ 파일을 여기에 놓으세요
+          MPQ 또는 .d2s 파일을 여기에 놓으세요
         </div>
       ) : null}
       <header className="sticky top-0 z-20 border-b border-border bg-bg/90 backdrop-blur-sm">
@@ -219,7 +233,7 @@ export function Workbench() {
               </ol>
             </div>
           ) : null}
-          {source === "empty" ? <Welcome onSample={loadSample} onOpen={() => inputRef.current?.click()} /> : <ActivePanel />}
+          {source === "empty" && nav !== "saves" ? <Welcome onSample={loadSample} onOpen={() => inputRef.current?.click()} /> : <ActivePanel />}
         </main>
       </div>
     </div>
@@ -249,6 +263,8 @@ function ActivePanel() {
       return <PotionTable />;
     case "hirelings":
       return <HirelingTable />;
+    case "saves":
+      return <SaveEditor />;
     default:
       return <DropRates />;
   }
@@ -283,6 +299,7 @@ function Welcome({ onSample, onOpen }: { onSample: () => void; onOpen: () => voi
           ["난이도별 드랍", "노멀 / 나이트메어 / 헬 보물 클래스"],
           ["-txt 필요", "최신 엽굵은 .bin 이 있어 -txt 없이는 수정이 게임에 안 들어갑니다"],
           ["스킬 한글화", "직업·몬스터 스킬을 한국어로 표시"],
+          ["세이브 편집", "오프라인 .d2s 골드·수량·아이템 복사"],
         ].map(([t, d]) => (
           <li key={t} className="rounded-lg border border-border bg-bg-elevated px-4 py-3">
             <p className="text-sm font-medium">{t}</p>

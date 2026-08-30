@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
-  "released": "2026-08-29",
-  "notes": "edit skill option level breakpoints as well as values"
+  "version": "1.6.0",
+  "released": "2026-08-30",
+  "notes": "offline .d2s item copy, stack quantity and gold editor"
 }

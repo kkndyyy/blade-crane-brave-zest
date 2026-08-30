@@ -15,6 +15,7 @@ export const EXCEL = {
   charStats: "data\\global\\excel\\charstats.txt",
   cubemain: "data\\global\\excel\\cubemain.txt",
   hireling: "data\\global\\excel\\hireling.txt",
+  itemstatcost: "data\\global\\excel\\itemstatcost.txt",
 } as const;
 
 export const STRINGS = {
@@ -40,6 +41,7 @@ export const SAMPLE_FILES: { path: string; url: string }[] = [
   { path: EXCEL.itemTypes, url: "/sample-data/yupgoolg/itemtypes.txt" },
   { path: EXCEL.cubemain, url: "/sample-data/yupgoolg/cubemain.txt" },
   { path: EXCEL.hireling, url: "/sample-data/yupgoolg/hireling.txt" },
+  { path: EXCEL.itemstatcost, url: "/sample-data/yupgoolg/itemstatcost.txt" },
   { path: STRINGS.itemNames, url: "/sample-data/yupgoolg/item-names.json" },
   { path: STRINGS.itemRunes, url: "/sample-data/yupgoolg/item-runes.json" },
   { path: STRINGS.skills, url: "/sample-data/yupgoolg/skills.json" },

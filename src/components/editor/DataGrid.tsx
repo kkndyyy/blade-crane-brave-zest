@@ -14,6 +14,7 @@ const NUMERIC = new Set([
   "spawnable",
   "disabled",
   "enabled",
+  "numinputs",
   "lvl",
   "lvl req",
   "level",

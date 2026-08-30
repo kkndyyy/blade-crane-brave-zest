@@ -15,6 +15,7 @@ import {
   Swords,
   Table2,
   Save,
+  Box,
 } from "lucide-react";
 import { useEditor, type NavId } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import { MonsterTable, SkillTable } from "./SkillTables";
 import { NpcShops } from "./NpcShops";
 import { PotionTable } from "./PotionTable";
 import { HirelingTable } from "./HirelingTable";
+import { CubeTable } from "./CubeTable";
 import { SaveEditor } from "./SaveEditor";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +41,7 @@ const NAV: { id: NavId; label: string; icon: typeof Anvil }[] = [
   { id: "shops", label: "NPC 상점", icon: Store },
   { id: "potions", label: "포션 회복", icon: Droplets },
   { id: "hirelings", label: "용병", icon: Shield },
+  { id: "cube", label: "큐브", icon: Box },
   { id: "saves", label: "세이브", icon: Save },
 ];
 
@@ -263,6 +266,8 @@ function ActivePanel() {
       return <PotionTable />;
     case "hirelings":
       return <HirelingTable />;
+    case "cube":
+      return <CubeTable />;
     case "saves":
       return <SaveEditor />;
     default:
@@ -300,6 +305,7 @@ function Welcome({ onSample, onOpen }: { onSample: () => void; onOpen: () => voi
           ["-txt 필요", "최신 엽굵은 .bin 이 있어 -txt 없이는 수정이 게임에 안 들어갑니다"],
           ["스킬 한글화", "직업·몬스터 스킬을 한국어로 표시"],
           ["세이브 편집", "오프라인 .d2s 골드·수량·아이템 복사"],
+          ["큐브 조합", "호라드릭 큐브 재료·결과·수량을 수정"],
         ].map(([t, d]) => (
           <li key={t} className="rounded-lg border border-border bg-bg-elevated px-4 py-3">
             <p className="text-sm font-medium">{t}</p>

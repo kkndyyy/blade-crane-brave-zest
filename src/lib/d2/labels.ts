@@ -14,6 +14,14 @@ export const COL_KO: Record<string, string> = {
   spawnable: "드랍 가능",
   enabled: "활성화",
   disabled: "비활성",
+  description: "설명",
+  numinputs: "재료 수",
+  "input 1": "재료 1",
+  "input 2": "재료 2",
+  "input 3": "재료 3",
+  output: "결과",
+  "output b": "결과 B",
+  "output c": "결과 C",
   lvl: "아이템 레벨",
   "lvl req": "요구 레벨",
   reqlevel: "요구 레벨",
@@ -271,6 +279,8 @@ export const SET_EDITOR_COLS = [
 ];
 
 export const MISC_EDITOR_COLS = ["name", "code", "type", "rarity", "spawnable", "level", "levelreq", "namestr"];
+
+export const CUBE_EDITOR_COLS = ["description", "enabled", "numinputs", "input 1", "output"];
 
 export const TC_EDITOR_COLS = [
   "Treasure Class",

@@ -6,14 +6,14 @@ import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, match
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
-import { applyRuneOpmSplitDouble } from "./d2/cubeRecipes";
+import { applyRuneOpmSplitDouble, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyVanillaItemRatio, applyVanillaTcQuality } from "./d2/vanillaDrops";
 import { FIGURE_TYPES, RUNE_TYPES, isSlamtrapMonster, type Difficulty } from "./d2/labels";
 
 export type SourceKind = "empty" | "sample" | "mpq";
 
-export type NavId = "drops" | "uniques" | "sets" | "runes" | "figures" | "skills" | "monsters" | "shops" | "potions" | "hirelings" | "saves" | "files";
+export type NavId = "drops" | "uniques" | "sets" | "runes" | "figures" | "skills" | "monsters" | "shops" | "potions" | "hirelings" | "cube" | "saves" | "files";
 
 type Tables = Partial<{
   itemRatio: TsvTable;
@@ -67,6 +67,8 @@ type EditorState = {
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
+  addCubeRecipe: () => number;
+  duplicateCubeRecipe: (rowIndex: number) => number;
   setHireableSkillIcons: (enabled: boolean) => void;
   patchHirelingSkill: (rowIndex: number, column: string, value: string, scope: HireSkillScope) => void;
   copyHirelingSkills: (rowIndex: number, scope: HireSkillScope, slots?: readonly number[]) => number;
@@ -519,6 +521,29 @@ export const useEditor = create<EditorState>((set, get) => ({
     const next = cloneTable(table);
     applyRuneOpmSplitDouble(next, orig, enabled);
     set({ tables: { ...get().tables, cubemain: next }, dirty: true });
+  },
+
+  addCubeRecipe: () => {
+    const table = get().tables.cubemain;
+    if (!table) return -1;
+    const next = cloneTable(table);
+    next.rows.unshift(emptyCubeRow(next));
+    set({ tables: { ...get().tables, cubemain: next }, dirty: true });
+    return 0;
+  },
+
+  duplicateCubeRecipe: (rowIndex) => {
+    const table = get().tables.cubemain;
+    if (!table) return -1;
+    const src = table.rows[rowIndex];
+    if (!src) return -1;
+    const next = cloneTable(table);
+    const copy = [...src];
+    const desc = getCell(copy, next, "description").trim();
+    setCell(copy, next, "description", desc ? `${desc} (복사)` : "새 조합");
+    next.rows.splice(rowIndex + 1, 0, copy);
+    set({ tables: { ...get().tables, cubemain: next }, dirty: true });
+    return rowIndex + 1;
   },
 
   setHireableSkillIcons: (enabled) => {

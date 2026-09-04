@@ -10,6 +10,8 @@ export const EXCEL = {
   skillDesc: "data\\global\\excel\\skilldesc.txt",
   missiles: "data\\global\\excel\\missiles.txt",
   monstats: "data\\global\\excel\\monstats.txt",
+  monprop: "data\\global\\excel\\monprop.txt",
+  superuniques: "data\\global\\excel\\superuniques.txt",
   runes: "data\\global\\excel\\runes.txt",
   itemTypes: "data\\global\\excel\\itemtypes.txt",
   charStats: "data\\global\\excel\\charstats.txt",

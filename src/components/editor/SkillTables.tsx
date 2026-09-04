@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useEditor } from "@/lib/store";
-import { HINTS, MONSTER_EDITOR_COLS, SKILL_EDITOR_COLS, isSlamtrapMonster, labelClass, labelCol } from "@/lib/d2/labels";
+import { HINTS, SKILL_EDITOR_COLS, labelClass, labelCol } from "@/lib/d2/labels";
 import { koreanSkillName } from "@/lib/d2/strings";
 import { listSkillExtras, type ExtraId } from "@/lib/d2/skillExtras";
 import {
@@ -906,83 +906,6 @@ function SkillField({
         onChange={(e) => onChange(col, e.target.value)}
       />
     </label>
-  );
-}
-
-export function MonsterTable() {
-  const table = useEditor((s) => s.tables.monstats);
-  const strings = useEditor((s) => s.strings);
-  const search = useEditor((s) => s.search);
-  const setSearch = useEditor((s) => s.setSearch);
-  const patchCell = useEditor((s) => s.patchCell);
-  const resetTable = useEditor((s) => s.resetTable);
-  const setSlamtrapSkillsDisabled = useEditor((s) => s.setSlamtrapSkillsDisabled);
-  if (!table) return <NeedFile kind="몬스터" />;
-
-  const slamtraps = useMemo(() => {
-    const rows: { index: number; row: string[] }[] = [];
-    table.rows.forEach((row, index) => {
-      if (!isDataRow(row)) return;
-      if (isSlamtrapMonster(getCell(row, table, "Id"), getCell(row, table, "NameStr"))) {
-        rows.push({ index, row });
-      }
-    });
-    return rows;
-  }, [table]);
-
-  const slamtrapOff = slamtraps.length > 0 && slamtraps.every(({ row }) => !getCell(row, table, "Skill1").trim());
-
-  return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="font-display text-2xl tracking-tight">몬스터 스킬</h2>
-          <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-            Skill1–8 과 레벨, 난이도별 레벨/TC를 수정합니다. 스킬 칸에는 Skills.txt 의 skill 키를 넣습니다.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchField value={search} onChange={setSearch} placeholder="몬스터 이름 · ID" />
-          <Button variant="ghost" size="sm" onClick={() => resetTable("monstats")}>원본</Button>
-        </div>
-      </header>
-
-      <label className="flex items-start gap-3 rounded-xl border border-border bg-bg-elevated px-4 py-3">
-        <input
-          type="checkbox"
-          className="mt-1 size-4 accent-primary"
-          checked={slamtrapOff}
-          disabled={!slamtraps.length}
-          onChange={(e) => {
-            const off = e.target.checked;
-            setSlamtrapSkillsDisabled(off);
-            toast.success(off ? "콰과광이 스킬을 쓰지 않습니다" : "콰과광 스킬을 원본대로 되돌렸습니다");
-          }}
-        />
-        <span>
-          <span className="block text-sm font-medium">콰과광이 스킬을 쓰지 않음</span>
-          <span className="mt-0.5 block text-xs text-fg-muted leading-relaxed">
-            {slamtraps.length
-              ? `slamtrap ${slamtraps.length}마리의 Skill1–8을 비웁니다. 체크를 끄면 연 파일 원본 스킬이 복구됩니다.`
-              : "이 모드에 slamtrap(콰과광) 항목이 없습니다."}
-          </span>
-        </span>
-      </label>
-
-      <DataGrid
-        table={table}
-        columns={MONSTER_EDITOR_COLS}
-        search={search}
-        onChange={(r, c, v) => patchCell("monstats", r, c, v)}
-        displayName={(row) => {
-          const id = getCell(row, table, "Id");
-          const ns = getCell(row, table, "NameStr");
-          const name = strings.display(ns, strings.display(id, id));
-          return isSlamtrapMonster(id, ns) ? `${name}  ·  콰과광` : name;
-        }}
-        empty="몬스터가 없습니다."
-      />
-    </div>
   );
 }
 

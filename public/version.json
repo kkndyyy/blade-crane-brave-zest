@@ -1,5 +1,5 @@
 {
-  "version": "1.6.2",
-  "released": "2026-08-30",
-  "notes": "edit Horadric Cube recipes: inputs, outputs and quantities"
+  "version": "1.6.3",
+  "released": "2026-09-04",
+  "notes": "edit monster HP, damage, resists and elemental effects"
 }

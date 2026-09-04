@@ -10,6 +10,7 @@ import { applyRuneOpmSplitDouble, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyVanillaItemRatio, applyVanillaTcQuality } from "./d2/vanillaDrops";
 import { FIGURE_TYPES, RUNE_TYPES, isSlamtrapMonster, type Difficulty } from "./d2/labels";
+import { MONSTER_DMG_COLS, MONSTER_HP_COLS } from "./d2/monsterStats";
 
 export type SourceKind = "empty" | "sample" | "mpq";
 
@@ -27,6 +28,8 @@ type Tables = Partial<{
   skilldesc: TsvTable;
   missiles: TsvTable;
   monstats: TsvTable;
+  monprop: TsvTable;
+  superuniques: TsvTable;
   cubemain: TsvTable;
   hireling: TsvTable;
   runes: TsvTable;
@@ -74,6 +77,7 @@ type EditorState = {
   copyHirelingSkills: (rowIndex: number, scope: HireSkillScope, slots?: readonly number[]) => number;
   applyVanillaD2rDrops: () => void;
   scaleSkillDamage: (factor: number, classFilter: string) => void;
+  scaleMonsterCombat: (rowIndex: number, kind: "hp" | "damage", factor: number) => number;
   resetTable: (tableKey: keyof Tables) => void;
   exportMpq: () => { bytes: Uint8Array; name: string; omittedBins: number };
   changedCount: () => number;
@@ -91,6 +95,8 @@ const TABLE_PATH: Record<keyof Tables, string> = {
   skilldesc: EXCEL.skillDesc,
   missiles: EXCEL.missiles,
   monstats: EXCEL.monstats,
+  monprop: EXCEL.monprop,
+  superuniques: EXCEL.superuniques,
   cubemain: EXCEL.cubemain,
   hireling: EXCEL.hireling,
   runes: EXCEL.runes,
@@ -123,6 +129,8 @@ function ingestTexts(texts: Record<string, string>) {
   if (pick(EXCEL.skillDesc)) tables.skilldesc = parseTsv(pick(EXCEL.skillDesc)!);
   if (pick(EXCEL.missiles)) tables.missiles = parseTsv(pick(EXCEL.missiles)!);
   if (pick(EXCEL.monstats)) tables.monstats = parseTsv(pick(EXCEL.monstats)!);
+  if (pick(EXCEL.monprop)) tables.monprop = parseTsv(pick(EXCEL.monprop)!);
+  if (pick(EXCEL.superuniques)) tables.superuniques = parseTsv(pick(EXCEL.superuniques)!);
   if (pick(EXCEL.cubemain)) tables.cubemain = parseTsv(pick(EXCEL.cubemain)!);
   if (pick(EXCEL.hireling)) tables.hireling = parseTsv(pick(EXCEL.hireling)!);
   if (pick(EXCEL.runes)) tables.runes = parseTsv(pick(EXCEL.runes)!);
@@ -638,6 +646,24 @@ export const useEditor = create<EditorState>((set, get) => ({
       nextTables.missiles = nextMissiles;
     }
     set({ tables: nextTables, dirty: true });
+  },
+
+  scaleMonsterCombat: (rowIndex, kind, factor) => {
+    const table = get().tables.monstats;
+    if (!table) return 0;
+    const next = cloneTable(table);
+    const row = next.rows[rowIndex];
+    if (!row) return 0;
+    const cols = kind === "hp" ? MONSTER_HP_COLS : MONSTER_DMG_COLS;
+    let n = 0;
+    for (const col of cols) {
+      const raw = getCell(row, next, col);
+      if (!raw.trim()) continue;
+      scaleNumericCell(row, next, col, factor);
+      n += 1;
+    }
+    set({ tables: { ...get().tables, monstats: next }, dirty: true });
+    return n;
   },
 
   resetTable: (tableKey) => {

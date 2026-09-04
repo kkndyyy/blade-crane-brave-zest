@@ -22,7 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropRates } from "./DropRates";
 import { FigureTable, RuneTable, SetTable, UniqueTable } from "./ItemTables";
-import { MonsterTable, SkillTable } from "./SkillTables";
+import { SkillTable } from "./SkillTables";
+import { MonsterTable } from "./MonsterTable";
 import { NpcShops } from "./NpcShops";
 import { PotionTable } from "./PotionTable";
 import { HirelingTable } from "./HirelingTable";
@@ -37,7 +38,7 @@ const NAV: { id: NavId; label: string; icon: typeof Anvil }[] = [
   { id: "runes", label: "룬", icon: Gem },
   { id: "figures", label: "피규어", icon: Ghost },
   { id: "skills", label: "캐릭터 스킬", icon: Swords },
-  { id: "monsters", label: "몬스터 스킬", icon: Table2 },
+  { id: "monsters", label: "몬스터", icon: Table2 },
   { id: "shops", label: "NPC 상점", icon: Store },
   { id: "potions", label: "포션 회복", icon: Droplets },
   { id: "hirelings", label: "용병", icon: Shield },
@@ -306,6 +307,7 @@ function Welcome({ onSample, onOpen }: { onSample: () => void; onOpen: () => voi
           ["스킬 한글화", "직업·몬스터 스킬을 한국어로 표시"],
           ["세이브 편집", "오프라인 .d2s 골드·수량·아이템 복사"],
           ["큐브 조합", "호라드릭 큐브 재료·결과·수량을 수정"],
+          ["몬스터", "HP·피해·저항·속성 공격과 보스 플래그"],
         ].map(([t, d]) => (
           <li key={t} className="rounded-lg border border-border bg-bg-elevated px-4 py-3">
             <p className="text-sm font-medium">{t}</p>

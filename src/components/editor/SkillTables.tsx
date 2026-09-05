@@ -20,6 +20,7 @@ import {
 import { getCell, isDataRow, num, type TsvTable } from "@/lib/d2/tsv";
 import { DataGrid, SearchField } from "./DataGrid";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const CLASSES = [
@@ -37,6 +38,18 @@ const CLASSES = [
 
 type DetailTab = "damage" | "synergy" | "params" | "basic";
 
+function parseScaleFactor(raw: string): number | null {
+  const n = Number(String(raw).trim().replace(",", "."));
+  if (!Number.isFinite(n) || n <= 0) return null;
+  if (n < 0.01 || n > 100) return null;
+  return n;
+}
+
+function formatScaleFactor(n: number): string {
+  const s = n.toFixed(4).replace(/\.?0+$/, "");
+  return s || "1";
+}
+
 export function SkillTable() {
   const table = useEditor((s) => s.tables.skills);
   const skilldesc = useEditor((s) => s.tables.skilldesc);
@@ -49,6 +62,7 @@ export function SkillTable() {
   const [cls, setCls] = useState("all");
   const [selected, setSelected] = useState<number | null>(null);
   const [tab, setTab] = useState<DetailTab>("damage");
+  const [dmgFactor, setDmgFactor] = useState("2");
   if (!table) return <NeedFile kind="스킬" />;
 
   const selectedRow = selected != null ? table.rows[selected] : undefined;
@@ -73,25 +87,45 @@ export function SkillTable() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <SearchField value={search} onChange={setSearch} placeholder="스킬 이름 검색" />
+            <label className="flex items-center gap-1.5 text-xs text-fg-muted">
+              배율
+              <Input
+                className="h-9 w-[4.5rem] px-2 text-center tabular-nums"
+                inputMode="decimal"
+                value={dmgFactor}
+                onChange={(e) => setDmgFactor(e.target.value)}
+                aria-label="스킬 데미지 배율"
+              />
+            </label>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => {
-                scaleSkillDamage(2, cls);
-                toast.success("데미지 2배 상승 — 현재 값에 누적");
+                const n = parseScaleFactor(dmgFactor);
+                if (n == null) {
+                  toast.error("배율은 0.01 ~ 100 사이 숫자로 입력하세요");
+                  return;
+                }
+                scaleSkillDamage(n, cls);
+                toast.success(`데미지 ${formatScaleFactor(n)}배 상승 — 현재 값에 누적`);
               }}
             >
-              데미지 2배 상승
+              배율만큼 상승
             </Button>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => {
-                scaleSkillDamage(0.5, cls);
-                toast.success("데미지 2배 하향 — 현재 값에 누적");
+                const n = parseScaleFactor(dmgFactor);
+                if (n == null) {
+                  toast.error("배율은 0.01 ~ 100 사이 숫자로 입력하세요");
+                  return;
+                }
+                scaleSkillDamage(1 / n, cls);
+                toast.success(`데미지 ${formatScaleFactor(n)}배 하향 — 현재 값에 누적`);
               }}
             >
-              데미지 2배 하향
+              배율만큼 하향
             </Button>
             <Button variant="ghost" size="sm" onClick={() => { resetTable("skills"); resetTable("missiles"); }}>원본</Button>
           </div>

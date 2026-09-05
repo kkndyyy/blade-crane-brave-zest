@@ -185,7 +185,7 @@ export function RuneTable() {
       <div className="flex flex-col gap-2 rounded-xl border border-rune/30 bg-rune/5 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</span>
-          <span className="text-xs text-fg-muted">클릭할 때마다 현재 값에 누적됩니다</span>
+          <span className="text-xs text-fg-muted">몬스터 + 상자. 클릭할 때마다 누적</span>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button

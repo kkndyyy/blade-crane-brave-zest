@@ -131,11 +131,12 @@ export function DropRates() {
         </div>
       </header>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard label="유니크 보정 평균" value={stats?.uniqueAvg ?? "—"} hint="1024 = 확정" tone="unique" />
         <StatCard label="세트 보정 평균" value={stats?.setAvg ?? "—"} hint="1024 = 확정" tone="set" />
         <StatCard label="룬 TC 노드랍" value={stats?.runeNoDrop ?? "—"} hint={`${stats?.runeN ?? 0}개 클래스`} tone="rune" />
         <StatCard label="부모 TC 룬 가중" value={runeWeight?.avg ?? "—"} hint={`합 ${runeWeight?.weight ?? 0} · ${runeWeight?.n ?? 0}칸`} tone="rune" />
+        <StatCard label="상자 Good / 노드랍" value={runeWeight ? `${runeWeight.chestGoodAvg} / ${runeWeight.chestNoDropAvg}` : "—"} hint={`${runeWeight?.chestN ?? 0}개 상자 TC`} tone="rune" />
         <StatCard label="피규어 TC 노드랍" value={stats?.figNoDrop ?? "—"} hint={`${stats?.figN ?? 0}개 클래스`} tone="figure" />
       </div>
 
@@ -171,7 +172,7 @@ export function DropRates() {
         <div className="mt-6 rounded-lg border border-rune/30 bg-rune/5 p-4">
           <h4 className="font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</h4>
           <p className="mt-1 text-xs text-fg-muted leading-relaxed">
-            몬스터·상자 보물 클래스에서 룬 TC가 뽑히는 가중치를 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
+            몬스터는 룬 TC 가중치를, 상자는 Act Good 가중치와 노드랍을 같이 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button

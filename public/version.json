@@ -1,5 +1,5 @@
 {
-  "version": "1.6.4",
+  "version": "1.6.5",
   "released": "2026-09-05",
-  "notes": "stackable 2x / half rune drop-rate buttons with reset"
+  "notes": "rune drop 2x also scales world chest Good weights and NoDrop"
 }

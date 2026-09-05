@@ -23,6 +23,7 @@ function sample() {
       "Act 2 Good\t5\t\tJewelry B\t20\tRunes 1\t3\tRunes 2\t3",
       "Act 5 (H) Good\t5\t\tJewelry C\t60\tRunes 17\t14\tdolls16\t14",
       "Countess (H)\t-2\t0\tCountess Item (H)\t1\tCountess Rune (H)\t1\t",
+      "Act 5 (H) Chest A\t4\t50\tg01\t2\tAct 5 (H) Good\t4\tAct 5 (H) Equip A\t10",
     ].join("\r\n") + "\r\n",
   );
 }
@@ -53,6 +54,9 @@ describe("runeDrops", () => {
     assert.equal(getCell(table.rows[4]!, table, "Prob2"), "3");
     assert.equal(getCell(table.rows[5]!, table, "Prob2"), "28");
     assert.equal(getCell(table.rows[6]!, table, "Prob2"), "2");
+    assert.equal(getCell(table.rows[7]!, table, "NoDrop"), "25");
+    assert.equal(getCell(table.rows[7]!, table, "Prob2"), "8");
+    assert.equal(getCell(table.rows[7]!, table, "Prob3"), "10");
   });
 
   it("stacks a second double and resets to the original", () => {
@@ -61,11 +65,15 @@ describe("runeDrops", () => {
     applyRuneDropRateScale(table, "hell", 2);
     applyRuneDropRateScale(table, "hell", 2);
     assert.equal(getCell(table.rows[5]!, table, "Prob2"), "56");
+    assert.equal(getCell(table.rows[7]!, table, "NoDrop"), "13");
+    assert.equal(getCell(table.rows[7]!, table, "Prob2"), "16");
     const restored = restoreRuneDropRate(table, orig);
     assert.ok(restored >= 3);
     assert.equal(getCell(table.rows[3]!, table, "NoDrop"), "5");
     assert.equal(getCell(table.rows[5]!, table, "Prob2"), "14");
     assert.equal(getCell(table.rows[6]!, table, "Prob2"), "1");
+    assert.equal(getCell(table.rows[7]!, table, "NoDrop"), "50");
+    assert.equal(getCell(table.rows[7]!, table, "Prob2"), "4");
   });
 
   it("sums parent rune weights for the selected difficulty", () => {
@@ -73,7 +81,10 @@ describe("runeDrops", () => {
     const hell = runeParentWeightStats(table, "hell");
     assert.equal(hell.n, 2);
     assert.equal(hell.weight, 15);
+    assert.equal(hell.chestGoodAvg, 4);
+    assert.equal(hell.chestNoDropAvg, 50);
     const normal = runeParentWeightStats(table, "normal");
     assert.equal(normal.weight, 6);
+    assert.equal(normal.chestN, 0);
   });
 });

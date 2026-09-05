@@ -71,3 +71,12 @@ export function isFigureTc(name: string): boolean {
   const n = name.toLowerCase();
   return n.includes("doll") || n.includes("figure") || n.includes("figur") || n.includes("balldoll");
 }
+
+export function isChestTc(name: string): boolean {
+  return /\bchest\b/i.test(name);
+}
+
+/** Act N Good / Great — the chest/monster path that actually rolls runes. */
+export function isGoodDropTc(name: string): boolean {
+  return /\bgood\b/i.test(name) || /\bgreat\b/i.test(name);
+}

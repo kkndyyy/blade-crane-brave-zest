@@ -4,6 +4,7 @@ import { useEditor } from "@/lib/store";
 import { DIFF_KO, type Difficulty } from "@/lib/d2/labels";
 import { colIndex, getCell, isDataRow, num } from "@/lib/d2/tsv";
 import { matchesDifficulty, isRuneTc, isFigureTc } from "@/lib/d2/paths";
+import { runeParentWeightStats } from "@/lib/d2/runeDrops";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DataGrid, SearchField } from "./DataGrid";
@@ -39,6 +40,8 @@ export function DropRates() {
   const scaleRarity = useEditor((s) => s.scaleRarity);
   const resetTable = useEditor((s) => s.resetTable);
   const applyVanillaD2rDrops = useEditor((s) => s.applyVanillaD2rDrops);
+  const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
+  const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
 
   const stats = useMemo(() => {
     if (!treasure) return null;
@@ -70,6 +73,11 @@ export function DropRates() {
       figN,
     };
   }, [treasure, difficulty]);
+
+  const runeWeight = useMemo(
+    () => (treasure ? runeParentWeightStats(treasure, difficulty) : null),
+    [treasure, difficulty],
+  );
 
   const [uniqueBoost, setUniqueBoost] = useState(128);
   const [setBoost, setSetBoost] = useState(128);
@@ -123,10 +131,11 @@ export function DropRates() {
         </div>
       </header>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="유니크 보정 평균" value={stats?.uniqueAvg ?? "—"} hint="1024 = 확정" tone="unique" />
         <StatCard label="세트 보정 평균" value={stats?.setAvg ?? "—"} hint="1024 = 확정" tone="set" />
         <StatCard label="룬 TC 노드랍" value={stats?.runeNoDrop ?? "—"} hint={`${stats?.runeN ?? 0}개 클래스`} tone="rune" />
+        <StatCard label="부모 TC 룬 가중" value={runeWeight?.avg ?? "—"} hint={`합 ${runeWeight?.weight ?? 0} · ${runeWeight?.n ?? 0}칸`} tone="rune" />
         <StatCard label="피규어 TC 노드랍" value={stats?.figNoDrop ?? "—"} hint={`${stats?.figN ?? 0}개 클래스`} tone="figure" />
       </div>
 
@@ -157,6 +166,44 @@ export function DropRates() {
           <Button variant="ghost" size="sm" onClick={resetDrops}>
             기본값으로 초기화
           </Button>
+        </div>
+
+        <div className="mt-6 rounded-lg border border-rune/30 bg-rune/5 p-4">
+          <h4 className="font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</h4>
+          <p className="mt-1 text-xs text-fg-muted leading-relaxed">
+            몬스터·상자 보물 클래스에서 룬 TC가 뽑히는 가중치를 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const n = scaleRuneDropRate(difficulty, 0.5);
+                toast.success(n ? `룬 드랍 2배 하락 — ${DIFF_KO[difficulty]} ${n}칸 누적` : "바꿀 룬 가중치가 없습니다");
+              }}
+            >
+              룬 드랍 2배 하락
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                const n = scaleRuneDropRate(difficulty, 2);
+                toast.success(n ? `룬 드랍 2배 — ${DIFF_KO[difficulty]} ${n}칸 누적` : "바꿀 룬 가중치가 없습니다");
+              }}
+            >
+              룬 드랍 2배
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const n = resetRuneDropRate();
+                toast.success(n ? `룬 드랍률을 원본으로 되돌렸습니다 (${n}칸)` : "룬 드랍률이 이미 원본입니다");
+              }}
+            >
+              룬 드랍 초기화
+            </Button>
+          </div>
         </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">

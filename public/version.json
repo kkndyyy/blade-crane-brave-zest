@@ -1,5 +1,5 @@
 {
-  "version": "1.6.3",
-  "released": "2026-09-04",
-  "notes": "edit monster HP, damage, resists and elemental effects"
+  "version": "1.6.4",
+  "released": "2026-09-05",
+  "notes": "stackable 2x / half rune drop-rate buttons with reset"
 }

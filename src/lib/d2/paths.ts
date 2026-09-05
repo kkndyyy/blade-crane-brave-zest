@@ -51,8 +51,8 @@ export const SAMPLE_FILES: { path: string; url: string }[] = [
 ];
 
 export function tcDifficulty(name: string): "normal" | "nightmare" | "hell" | "all" {
-  if (/\(H\)\s*$/.test(name) || /\s\(H\)$/.test(name)) return "hell";
-  if (/\(N\)\s*$/.test(name) || /\s\(N\)$/.test(name)) return "nightmare";
+  if (/\(H\)/.test(name)) return "hell";
+  if (/\(N\)/.test(name)) return "nightmare";
   if (isRuneTc(name) || isFigureTc(name)) return "all";
   return "normal";
 }

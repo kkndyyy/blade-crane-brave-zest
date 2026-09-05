@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { useEditor } from "@/lib/store";
-import { FIGURE_TYPES, RUNE_TYPES, UNIQUE_EDITOR_COLS, SET_EDITOR_COLS, MISC_EDITOR_COLS } from "@/lib/d2/labels";
+import { FIGURE_TYPES, RUNE_TYPES, UNIQUE_EDITOR_COLS, SET_EDITOR_COLS, MISC_EDITOR_COLS, DIFF_KO } from "@/lib/d2/labels";
 import { getCell, isDataRow } from "@/lib/d2/tsv";
 import { figureKorean } from "@/lib/d2/strings";
 import { setBonusAffixSlots, setItemAffixSlots, uniqueAffixSlots, runewordAffixSlots } from "@/lib/d2/itemProps";
@@ -157,6 +157,9 @@ export function RuneTable() {
   const scaleRarity = useEditor((s) => s.scaleRarity);
   const resetTable = useEditor((s) => s.resetTable);
   const setRuneOpmSplitDouble = useEditor((s) => s.setRuneOpmSplitDouble);
+  const difficulty = useEditor((s) => s.difficulty);
+  const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
+  const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
   const [runeWord, setRuneWord] = useState<number | null>(null);
   if (!table) return <NeedFile kind="룬" />;
   const rw = runeWord != null && runes ? runes.rows[runeWord] : undefined;
@@ -179,6 +182,43 @@ export function RuneTable() {
       }}
       badge={<Badge tone="rune">Rune</Badge>}
     >
+      <div className="flex flex-col gap-2 rounded-xl border border-rune/30 bg-rune/5 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-sm font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</span>
+          <span className="text-xs text-fg-muted">클릭할 때마다 현재 값에 누적됩니다</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const n = scaleRuneDropRate(difficulty, 0.5);
+              toast.success(n ? `룬 드랍 2배 하락 — ${DIFF_KO[difficulty]} ${n}칸 누적` : "바꿀 룬 가중치가 없습니다");
+            }}
+          >
+            2배 하락
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              const n = scaleRuneDropRate(difficulty, 2);
+              toast.success(n ? `룬 드랍 2배 — ${DIFF_KO[difficulty]} ${n}칸 누적` : "바꿀 룬 가중치가 없습니다");
+            }}
+          >
+            2배
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const n = resetRuneDropRate();
+              toast.success(n ? `룬 드랍률을 원본으로 되돌렸습니다 (${n}칸)` : "룬 드랍률이 이미 원본입니다");
+            }}
+          >
+            드랍 초기화
+          </Button>
+        </div>
+      </div>
       {cube ? (
         <label className="flex items-start gap-3 rounded-xl border border-border bg-bg-elevated px-4 py-3">
           <input

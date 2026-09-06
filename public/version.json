@@ -1,5 +1,5 @@
 {
-  "version": "1.6.10",
+  "version": "1.6.11",
   "released": "2026-09-06",
-  "notes": "pick unique/set/runeword skill params by Korean skill name"
+  "notes": "add cold/lightning/poison/magic skill item properties like fireskill"
 }

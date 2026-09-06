@@ -18,6 +18,7 @@ export const EXCEL = {
   cubemain: "data\\global\\excel\\cubemain.txt",
   hireling: "data\\global\\excel\\hireling.txt",
   itemstatcost: "data\\global\\excel\\itemstatcost.txt",
+  properties: "data\\global\\excel\\properties.txt",
 } as const;
 
 export const STRINGS = {

@@ -1,4 +1,6 @@
 /** Korean labels for D2/D2R (and 엽굵) item property codes. */
+import { colIndex, getCell, isDataRow, setCell, type TsvTable } from "./tsv.ts";
+
 export const PROP_KO: Record<string, string> = {
   str: "힘",
   dex: "민첩",
@@ -104,6 +106,13 @@ export const PROP_KO: Record<string, string> = {
   block: "막기",
   block2: "막기 속도",
   fireskill: "화염 스킬",
+  coldskill: "냉기 스킬",
+  lightningskill: "번개 스킬",
+  ltngskill: "번개 스킬",
+  poisonskill: "독 스킬",
+  poisskill: "독 스킬",
+  magicskill: "매직 스킬",
+  magskill: "매직 스킬",
   "extra-fire": "화염 숙련",
   "extra-cold": "냉기 숙련",
   "extra-ltng": "번개 숙련",
@@ -202,3 +211,68 @@ export function runewordAffixSlots(): AffixSlot[] {
     return { prop: `T1Code${n}`, par: `T1Param${n}`, min: `T1Min${n}`, max: `T1Max${n}`, label: `옵션 ${n}` };
   });
 }
+
+/** +to all skills of one element. val1 is the D2R EType id (1 fire, 2 ltng, 3 mag, 4 cold, 5 pois). */
+export const ELEM_SKILL_PROPS = [
+  { code: "coldskill", val: "4", ko: "냉기 스킬", tooltip: "+# to Cold Skills" },
+  { code: "lightningskill", val: "2", ko: "번개 스킬", tooltip: "+# to Lightning Skills" },
+  { code: "poisonskill", val: "5", ko: "독 스킬", tooltip: "+# to Poison Skills" },
+  { code: "magicskill", val: "3", ko: "매직 스킬", tooltip: "+# to Magic Skills" },
+] as const;
+
+export const EXTRA_PROP_CODES = ["fireskill", ...ELEM_SKILL_PROPS.map((p) => p.code)];
+
+function nextPropertyId(table: TsvTable): number {
+  let max = 0;
+  for (const row of table.rows) {
+    const n = Number(getCell(row, table, "*Id"));
+    if (Number.isFinite(n) && n > max) max = n;
+  }
+  return max + 1;
+}
+
+function findPropRow(table: TsvTable, code: string): string[] | undefined {
+  const want = code.toLowerCase();
+  return table.rows.find((row) => isDataRow(row) && getCell(row, table, "code").trim().toLowerCase() === want);
+}
+
+function blankPropRow(table: TsvTable): string[] {
+  const row = table.headers.map(() => "");
+  if (colIndex(table, "*Enabled") >= 0) setCell(row, table, "*Enabled", "1");
+  else if (colIndex(table, "*done") >= 0) setCell(row, table, "*done", "1");
+  setCell(row, table, "func1", "21");
+  setCell(row, table, "stat1", "item_elemskill");
+  if (colIndex(table, "*eol") >= 0) setCell(row, table, "*eol", "0");
+  return row;
+}
+
+/** Append cold/lightning/poison/magic clones of fireskill. Returns how many rows were added. */
+export function ensureElemSkillProperties(table: TsvTable): number {
+  const source = findPropRow(table, "fireskill");
+  let added = 0;
+  let id = nextPropertyId(table);
+  for (const def of ELEM_SKILL_PROPS) {
+    if (findPropRow(table, def.code)) continue;
+    const row = source ? [...source] : blankPropRow(table);
+    while (row.length < table.headers.length) row.push("");
+    setCell(row, table, "code", def.code);
+    if (colIndex(table, "*Id") >= 0) {
+      setCell(row, table, "*Id", String(id));
+      id += 1;
+    }
+    if (colIndex(table, "*Enabled") >= 0) setCell(row, table, "*Enabled", "1");
+    setCell(row, table, "val1", def.val);
+    if (colIndex(table, "*Tooltip") >= 0) setCell(row, table, "*Tooltip", def.tooltip);
+    const stat2 = getCell(row, table, "stat2").toLowerCase();
+    if (stat2.includes("fire") || stat2.includes("elemskillfire")) {
+      setCell(row, table, "func2", "");
+      setCell(row, table, "stat2", "");
+      setCell(row, table, "set2", "");
+      setCell(row, table, "val2", "");
+    }
+    table.rows.push(row);
+    added += 1;
+  }
+  return added;
+}
+

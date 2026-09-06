@@ -7,6 +7,7 @@ import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyAllBeltsSixteen } from "./d2/belts";
+import { ensureElemSkillProperties } from "./d2/itemProps";
 import { applyRuneOpmSplitDouble, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyRuneDropRateScale, restoreRuneDropRate } from "./d2/runeDrops";
@@ -37,6 +38,7 @@ type Tables = Partial<{
   runes: TsvTable;
   itemTypes: TsvTable;
   itemstatcost: TsvTable;
+  properties: TsvTable;
 }>;
 
 type EditorState = {
@@ -107,6 +109,7 @@ const TABLE_PATH: Record<keyof Tables, string> = {
   runes: EXCEL.runes,
   itemTypes: EXCEL.itemTypes,
   itemstatcost: EXCEL.itemstatcost,
+  properties: EXCEL.properties,
 };
 
 const SKIP_EXPORT = new Set<keyof Tables>(["itemTypes", "itemstatcost"]);
@@ -141,6 +144,7 @@ function ingestTexts(texts: Record<string, string>) {
   if (pick(EXCEL.runes)) tables.runes = parseTsv(pick(EXCEL.runes)!);
   if (pick(EXCEL.itemTypes)) tables.itemTypes = parseTsv(pick(EXCEL.itemTypes)!);
   if (pick(EXCEL.itemstatcost)) tables.itemstatcost = parseTsv(pick(EXCEL.itemstatcost)!);
+  if (pick(EXCEL.properties)) tables.properties = parseTsv(pick(EXCEL.properties)!);
 
   const strings = new StringTable();
   const stringFiles: Record<string, StringEntry[]> = {};
@@ -166,6 +170,14 @@ function stringsFromFiles(files: Record<string, StringEntry[]>): StringTable {
 
 function cloneTable(t: TsvTable): TsvTable {
   return { headers: [...t.headers], rows: t.rows.map((r) => [...r]) };
+}
+
+function withElemSkillProps(tables: Tables, dirty: boolean): { tables: Tables; dirty: boolean } {
+  const table = tables.properties;
+  if (!table) return { tables, dirty };
+  const next = cloneTable(table);
+  if (!ensureElemSkillProperties(next)) return { tables, dirty };
+  return { tables: { ...tables, properties: next }, dirty: true };
 }
 
 const PLAYER_CLASSES = new Set(["ama", "sor", "nec", "pal", "war", "bar", "dru", "ass"]);
@@ -251,15 +263,16 @@ export const useEditor = create<EditorState>((set, get) => ({
           "MPQ에서 엑셀 테이블을 찾지 못했습니다. 엽굵/D2R 데이터(data\\global\\excel)가 들어 있는 파일인지 확인하세요.",
         );
       }
+      const ready = withElemSkillProps(tables, false);
       set({
         source: "mpq",
         fileName: file.name,
         archive,
         originalTexts: texts,
-        tables,
+        tables: ready.tables,
         strings,
         stringFiles,
-        dirty: false,
+        dirty: ready.dirty,
         loading: false,
         error: null,
       });
@@ -283,15 +296,16 @@ export const useEditor = create<EditorState>((set, get) => ({
         }),
       );
       const { tables, strings, stringFiles } = ingestTexts(texts);
+      const ready = withElemSkillProps(tables, false);
       set({
         source: "sample",
         fileName: "yupgoolg131.mpq (샘플)",
         archive: null,
         originalTexts: texts,
-        tables,
+        tables: ready.tables,
         strings,
         stringFiles,
-        dirty: false,
+        dirty: ready.dirty,
         loading: false,
         error: null,
       });

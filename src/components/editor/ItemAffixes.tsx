@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useEditor } from "@/lib/store";
 import { getCell, isDataRow, type TsvTable } from "@/lib/d2/tsv";
 import { koreanSkillName } from "@/lib/d2/strings";
-import { labelProp, isSkillProp, type AffixSlot } from "@/lib/d2/itemProps";
+import { labelProp, isSkillProp, EXTRA_PROP_CODES, type AffixSlot } from "@/lib/d2/itemProps";
 import { groupedSkillChoices, listSkillChoices, matchSkillChoice } from "@/lib/d2/skillPicker";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,7 @@ export function ItemAffixEditor({
         if (v) set.add(v);
       }
     }
+    for (const extra of EXTRA_PROP_CODES) set.add(extra);
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [table, slots]);
 
@@ -61,7 +62,7 @@ export function ItemAffixEditor({
         </Button>
       </div>
       <p className="mt-2 text-xs text-fg-muted leading-relaxed">
-        코드는 게임 속성 키입니다. 최소/최대가 같으면 고정 수치입니다. 스킬 계열은 파라미터에서 한글 이름으로 고르고, 저장값은 영문 스킬명입니다.
+        코드는 게임 속성 키입니다. 최소/최대가 같으면 고정 수치입니다. 스킬 계열은 파라미터에서 한글 이름으로 고르고, 저장값은 영문 스킬명입니다. 원소 스킬은 fireskill / coldskill / lightningskill / poisonskill / magicskill 입니다.
       </p>
       <div className="mt-4 overflow-auto">
         <table className="w-full min-w-[720px] text-left text-sm">

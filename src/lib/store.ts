@@ -6,6 +6,7 @@ import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, match
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
+import { applyAllBeltsSixteen } from "./d2/belts";
 import { applyRuneOpmSplitDouble, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyRuneDropRateScale, restoreRuneDropRate } from "./d2/runeDrops";
@@ -70,6 +71,7 @@ type EditorState = {
   patchSkillString: (key: string, patch: { koKR?: string; enUS?: string }) => void;
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
+  setAllBeltsSixteen: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
   addCubeRecipe: () => number;
   duplicateCubeRecipe: (rowIndex: number) => number;
@@ -523,6 +525,15 @@ export const useEditor = create<EditorState>((set, get) => ({
     const next = cloneTable(table);
     applyAllNpcsSellAllPotions(next, orig, enabled);
     set({ tables: { ...get().tables, misc: next }, dirty: true });
+  },
+
+  setAllBeltsSixteen: (enabled) => {
+    const table = get().tables.armor;
+    if (!table) return;
+    const orig = parseTsv(get().originalTexts[EXCEL.armor] ?? serializeTsv(table));
+    const next = cloneTable(table);
+    applyAllBeltsSixteen(next, orig, enabled);
+    set({ tables: { ...get().tables, armor: next }, dirty: true });
   },
 
   setRuneOpmSplitDouble: (enabled) => {

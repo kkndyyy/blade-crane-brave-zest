@@ -4,6 +4,7 @@ import { useEditor } from "@/lib/store";
 import { getCell, isDataRow, num } from "@/lib/d2/tsv";
 import { Button } from "@/components/ui/button";
 import { isAllNpcsSellAllPotions } from "@/lib/d2/vendors";
+import { isAllBeltsSixteen } from "@/lib/d2/belts";
 import { cn } from "@/lib/utils";
 
 type Kind = "hp" | "mp" | "rj";
@@ -24,10 +25,12 @@ const GROUPS: { id: Kind; title: string; hint: string }[] = [
 
 export function PotionTable() {
   const table = useEditor((s) => s.tables.misc);
+  const armor = useEditor((s) => s.tables.armor);
   const strings = useEditor((s) => s.strings);
   const patchCell = useEditor((s) => s.patchCell);
   const resetTable = useEditor((s) => s.resetTable);
   const setAllNpcsSellAllPotions = useEditor((s) => s.setAllNpcsSellAllPotions);
+  const setAllBeltsSixteen = useEditor((s) => s.setAllBeltsSixteen);
   const items = useMemo(() => {
     if (!table) return [];
     const out: { index: number; kind: Kind; code: string; name: string }[] = [];
@@ -69,7 +72,7 @@ export function PotionTable() {
         <div>
           <h2 className="font-display text-2xl tracking-tight">포션 회복</h2>
           <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-            체력·마나 포션이 채워 주는 수치와 지속 시간을 바꿉니다. 저장하면 misc.txt 에 반영됩니다.
+            체력·마나 포션이 채워 주는 수치와 지속 시간을 바꿉니다. 벨트 칸 수도 여기서 맞출 수 있습니다.
           </p>
         </div>
         <Button variant="ghost" size="sm" onClick={() => { resetTable("misc"); toast.success("포션 값을 원본으로 되돌렸습니다"); }}>
@@ -95,6 +98,29 @@ export function PotionTable() {
           </span>
         </span>
       </label>
+
+      {armor ? (
+        <label className="flex items-start gap-3 rounded-xl border border-border bg-bg-elevated px-4 py-3">
+          <input
+            type="checkbox"
+            className="mt-1 size-4 accent-primary"
+            checked={isAllBeltsSixteen(armor)}
+            onChange={(e) => {
+              const on = e.target.checked;
+              setAllBeltsSixteen(on);
+              toast.success(on ? "모든 벨트가 포션 16칸입니다" : "벨트 칸 수를 원본으로 되돌렸습니다");
+            }}
+          />
+          <span>
+            <span className="block text-sm font-medium">모든 벨트가 포션 16칸</span>
+            <span className="mt-0.5 block text-xs text-fg-muted leading-relaxed">
+              사시·라이트벨트·벨트·헤비벨트까지 플레이트/엑셉과 같은 16칸으로 맞춥니다. 벨트를 안 끼면 기본 4칸은 그대로입니다.
+            </span>
+          </span>
+        </label>
+      ) : (
+        <p className="text-xs text-fg-muted">방어구 테이블(armor.txt)이 없어 벨트 칸 수를 바꿀 수 없습니다.</p>
+      )}
 
       {GROUPS.map((g) => {
         const rows = items.filter((i) => i.kind === g.id);

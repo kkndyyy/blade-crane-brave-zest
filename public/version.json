@@ -1,5 +1,5 @@
 {
-  "version": "1.6.7",
+  "version": "1.6.8",
   "released": "2026-09-06",
-  "notes": "edit the six runes used to complete each runeword"
+  "notes": "checkbox to give every belt 16 potion slots"
 }

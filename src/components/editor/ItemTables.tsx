@@ -9,12 +9,19 @@ import { setBonusAffixSlots, setItemAffixSlots, uniqueAffixSlots, runewordAffixS
 import {
   filledRuneCount,
   formatRunesUsed,
+  groupedItemTypes,
   groupedRuneChoices,
   hasRuneGap,
+  itemTypeLabel,
+  listItemTypeChoices,
   listRuneChoices,
   runeLabel,
   runeSlots,
   runewordRuneSummary,
+  runewordTypeSummary,
+  typeSlots,
+  ETYPE_SLOTS,
+  ITYPE_SLOTS,
   RUNE_SLOTS,
 } from "@/lib/d2/runewords";
 import { DataGrid, SearchField } from "./DataGrid";
@@ -163,6 +170,7 @@ export function RuneTable() {
   const table = useEditor((s) => s.tables.misc);
   const runes = useEditor((s) => s.tables.runes);
   const cube = useEditor((s) => s.tables.cubemain);
+  const itemTypes = useEditor((s) => s.tables.itemTypes);
   const strings = useEditor((s) => s.strings);
   const search = useEditor((s) => s.search);
   const setSearch = useEditor((s) => s.setSearch);
@@ -184,7 +192,7 @@ export function RuneTable() {
   return (
     <Panel
       title="룬"
-      blurb="아래 룬 아이템은 드랍·희귀도입니다. 룬워드를 고르면 조합에 넣는 룬과 완성 옵션을 바꿀 수 있습니다."
+      blurb="아래 룬 아이템은 드랍·희귀도입니다. 룬워드를 고르면 조합 룬, 넣을 수 있는 장비 유형, 완성 옵션을 바꿀 수 있습니다."
       search={search}
       setSearch={setSearch}
       placeholder="룬 · 룬워드 이름"
@@ -279,6 +287,7 @@ export function RuneTable() {
                 title={rwName}
                 strings={strings}
                 misc={table}
+                itemTypes={itemTypes}
                 onClose={() => setRuneWord(null)}
               />
               <ItemAffixEditor
@@ -327,6 +336,7 @@ function RunewordRecipeEditor({
   title,
   strings,
   misc,
+  itemTypes,
   onClose,
 }: {
   table: TsvTable;
@@ -335,16 +345,30 @@ function RunewordRecipeEditor({
   title: string;
   strings: StringTable;
   misc?: TsvTable;
+  itemTypes?: TsvTable;
   onClose: () => void;
 }) {
   const patchCell = useEditor((s) => s.patchCell);
   const codes = runeSlots(row, table);
-  const extra = codes.filter(Boolean);
-  const choices = useMemo(() => listRuneChoices(misc, strings, extra), [misc, strings, extra.join("|")]);
-  const groups = groupedRuneChoices(choices);
+  const allowed = typeSlots(row, table, ITYPE_SLOTS);
+  const excluded = typeSlots(row, table, ETYPE_SLOTS);
+  const extraRunes = codes.filter(Boolean);
+  const extraTypes = [...allowed, ...excluded].filter(Boolean);
+  const runeChoices = useMemo(
+    () => listRuneChoices(misc, strings, extraRunes),
+    [misc, strings, extraRunes.join("|")],
+  );
+  const typeChoices = useMemo(
+    () => listItemTypeChoices(itemTypes, extraTypes),
+    [itemTypes, extraTypes.join("|")],
+  );
+  const runeGroups = groupedRuneChoices(runeChoices);
+  const typeGroups = groupedItemTypes(typeChoices);
   const sockets = filledRuneCount(codes);
   const gap = hasRuneGap(codes);
   const summary = runewordRuneSummary(codes, strings);
+  const typeSummary = runewordTypeSummary(allowed, itemTypes);
+  const excludeSummary = runewordTypeSummary(excluded, itemTypes);
 
   const setSlot = (col: (typeof RUNE_SLOTS)[number], value: string) => {
     const next = RUNE_SLOTS.map((c) => (c === col ? value : getCell(row, table, c).trim()));
@@ -361,6 +385,8 @@ function RunewordRecipeEditor({
           <h3 className="font-display text-xl tracking-tight">{title}</h3>
           <p className="mt-1 text-xs leading-relaxed text-fg-muted">
             {summary ? `${summary} · 소켓 ${sockets}칸` : "조합 룬이 없습니다"}
+            {typeSummary ? ` · ${typeSummary}` : ""}
+            {excludeSummary ? ` · 제외 ${excludeSummary}` : ""}
           </p>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -373,7 +399,7 @@ function RunewordRecipeEditor({
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {RUNE_SLOTS.map((col, i) => {
           const value = codes[i] ?? "";
-          const known = !value || choices.some((c) => c.code === value);
+          const known = !value || runeChoices.some((c) => c.code === value);
           return (
             <label key={col}>
               <span className="text-xs text-fg-muted">
@@ -388,7 +414,7 @@ function RunewordRecipeEditor({
                 onChange={(e) => setSlot(col, e.target.value)}
               >
                 <option value="">(비움)</option>
-                {groups.map((g) => (
+                {runeGroups.map((g) => (
                   <optgroup key={g.group} label={g.group}>
                     {g.items.map((c) => (
                       <option key={c.code} value={c.code}>
@@ -403,10 +429,85 @@ function RunewordRecipeEditor({
           );
         })}
       </div>
+
+      <h4 className="mt-6 text-sm font-medium">넣을 수 있는 장비</h4>
+      <p className="mt-0.5 text-xs text-fg-muted">
+        itype 최대 6종입니다. 무기(weap)처럼 상위 유형을 넣으면 하위 장비가 전부 포함됩니다.
+      </p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {ITYPE_SLOTS.map((col, i) => (
+          <TypeSelect
+            key={col}
+            label={`${i + 1}번`}
+            value={allowed[i] ?? ""}
+            groups={typeGroups}
+            itemTypes={itemTypes}
+            onChange={(v) => patchCell("runes", rowIndex, col, v)}
+          />
+        ))}
+      </div>
+
+      <h4 className="mt-6 text-sm font-medium">제외 장비</h4>
+      <p className="mt-0.5 text-xs text-fg-muted">etype. 위에 넣은 유형 중에서 빼고 싶은 하위 타입입니다.</p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {ETYPE_SLOTS.map((col, i) => (
+          <TypeSelect
+            key={col}
+            label={`제외 ${i + 1}`}
+            value={excluded[i] ?? ""}
+            groups={typeGroups}
+            itemTypes={itemTypes}
+            onChange={(v) => patchCell("runes", rowIndex, col, v)}
+          />
+        ))}
+      </div>
       {gap ? (
         <p className="mt-3 text-xs text-danger">중간에 빈 칸이 있습니다. 1번부터 연속으로 채워 주세요.</p>
       ) : null}
     </section>
+  );
+}
+
+function TypeSelect({
+  label,
+  value,
+  groups,
+  itemTypes,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  groups: ReturnType<typeof groupedItemTypes>;
+  itemTypes?: TsvTable;
+  onChange: (v: string) => void;
+}) {
+  const known = !value || groups.some((g) => g.items.some((c) => c.code === value));
+  return (
+    <label>
+      <span className="text-xs text-fg-muted">
+        {label} {value ? itemTypeLabel(value, itemTypes) : "비움"}
+      </span>
+      <select
+        className={cn(
+          "mt-1 h-10 w-full rounded-sm border border-border bg-bg px-2 text-sm",
+          !value && "text-fg-muted",
+        )}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        <option value="">(비움)</option>
+        {groups.map((g) => (
+          <optgroup key={g.group} label={g.group}>
+            {g.items.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.ko} ({c.code}{c.sockets && c.sockets !== "0" ? `, 소켓${c.sockets}` : ""})
+              </option>
+            ))}
+          </optgroup>
+        ))}
+        {!known ? <option value={value}>{value}</option> : null}
+      </select>
+    </label>
   );
 }
 

@@ -6,10 +6,15 @@ import {
   filledRuneCount,
   formatRunesUsed,
   hasRuneGap,
+  itemTypeLabel,
+  listItemTypeChoices,
   listRuneChoices,
   runeLabel,
   runeSlots,
   runewordRuneSummary,
+  runewordTypeSummary,
+  typeSlots,
+  ITYPE_SLOTS,
 } from "./runewords.ts";
 
 function strings(): RuneNameLookup {
@@ -54,5 +59,24 @@ describe("runeword rune recipe", () => {
     assert.equal(list[0]!.group, "일반");
     assert.equal(list[1]!.group, "스택");
     assert.equal(list[2]!.ko, "r99");
+  });
+
+  it("labels runeword item types in Korean", () => {
+    const types = parseTsv("ItemType\tCode\tEquiv1\tEquiv2\tMaxSockets3\r\nWeapon\tweap\t\t\t0\r\nArmor\ttors\tarmo\t\t3\r\nDolls\tdols\t\t\t6\r\n");
+    assert.equal(itemTypeLabel("weap", types), "무기");
+    assert.equal(itemTypeLabel("tors", types), "갑옷");
+    assert.equal(itemTypeLabel("dols", types), "피규어");
+    const list = listItemTypeChoices(types, ["xyz"]);
+    assert.equal(list.find((c) => c.code === "weap")?.group, "무기");
+    assert.equal(list.find((c) => c.code === "tors")?.group, "방어구");
+    assert.equal(list.find((c) => c.code === "dols")?.group, "피규어");
+    assert.equal(list.find((c) => c.code === "xyz")?.group, "기타");
+  });
+
+  it("reads itype slots and summarizes them", () => {
+    const table = parseTsv("Name\titype1\titype2\titype3\titype4\titype5\titype6\r\nSpirit\tweap\tshld\t\t\t\t\r\n");
+    const codes = typeSlots(table.rows[0]!, table, ITYPE_SLOTS);
+    assert.deepEqual(codes, ["weap", "shld", "", "", "", ""]);
+    assert.equal(runewordTypeSummary(codes.filter(Boolean)), "무기 · 방패(전체)");
   });
 });

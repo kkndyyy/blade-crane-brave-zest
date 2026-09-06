@@ -1,5 +1,5 @@
 {
-  "version": "1.6.8",
+  "version": "1.6.9",
   "released": "2026-09-06",
-  "notes": "checkbox to give every belt 16 potion slots"
+  "notes": "edit which item types a runeword can be made in"
 }

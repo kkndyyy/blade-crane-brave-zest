@@ -1,7 +1,10 @@
 import { RUNE_TYPES } from "./labels.ts";
+import { CUBE_TYPE_KO } from "./cubeRecipes.ts";
 import { getCell, isDataRow, type TsvTable } from "./tsv.ts";
 
 export const RUNE_SLOTS = ["Rune1", "Rune2", "Rune3", "Rune4", "Rune5", "Rune6"] as const;
+export const ITYPE_SLOTS = ["itype1", "itype2", "itype3", "itype4", "itype5", "itype6"] as const;
+export const ETYPE_SLOTS = ["etype1", "etype2", "etype3"] as const;
 
 export type RuneNameLookup = {
   lookup(key: string | undefined | null): { ko: string; en: string } | null;
@@ -104,4 +107,86 @@ export function groupedRuneChoices(choices: RuneChoice[]): { group: RuneGroup; i
   for (const g of GROUP_ORDER) buckets.set(g, []);
   for (const c of choices) buckets.get(c.group)!.push(c);
   return GROUP_ORDER.filter((g) => buckets.get(g)!.length).map((group) => ({ group, items: buckets.get(group)! }));
+}
+
+const TYPE_GROUP_ORDER = ["무기", "방어구", "참", "피규어", "기타"] as const;
+export type ItemTypeGroup = (typeof TYPE_GROUP_ORDER)[number];
+
+export type ItemTypeChoice = {
+  code: string;
+  ko: string;
+  group: ItemTypeGroup;
+  sockets: string;
+};
+
+function typeGroup(code: string, equiv1: string, equiv2: string): ItemTypeGroup {
+  const keys = [code, equiv1, equiv2].map((s) => s.trim().toLowerCase()).filter(Boolean);
+  if (keys.some((k) => k.includes("dol"))) return "피규어";
+  if (keys.some((k) => ["char", "lcha", "gcha", "mcha", "scha", "pcha"].includes(k))) return "참";
+  if (keys.some((k) => ["weap", "mele", "miss", "thro", "misl"].includes(k))) return "무기";
+  if (keys.some((k) => ["armo", "shld", "shie", "tors", "helm", "boot", "glov", "belt", "merc"].includes(k))) return "방어구";
+  return "기타";
+}
+
+export function itemTypeLabel(code: string, itemTypes?: TsvTable): string {
+  const c = code.trim();
+  if (!c) return "";
+  if (CUBE_TYPE_KO[c]) return CUBE_TYPE_KO[c]!;
+  if (itemTypes) {
+    for (const row of itemTypes.rows) {
+      if (!isDataRow(row)) continue;
+      if (getCell(row, itemTypes, "Code").trim() === c) {
+        return getCell(row, itemTypes, "ItemType").trim() || c;
+      }
+    }
+  }
+  return c;
+}
+
+export function typeSlots(row: string[], table: TsvTable, slots: readonly string[]): string[] {
+  return slots.map((col) => getCell(row, table, col).trim());
+}
+
+export function runewordTypeSummary(codes: string[], itemTypes?: TsvTable): string {
+  return codes.filter(Boolean).map((c) => itemTypeLabel(c, itemTypes)).join(" · ");
+}
+
+export function listItemTypeChoices(itemTypes?: TsvTable, extraCodes: string[] = []): ItemTypeChoice[] {
+  const byCode = new Map<string, ItemTypeChoice>();
+  const add = (code: string, equiv1: string, equiv2: string, sockets: string) => {
+    const c = code.trim();
+    if (!c || c.toLowerCase() === "none") return;
+    const key = c.toLowerCase();
+    if (byCode.has(key)) return;
+    byCode.set(key, {
+      code: c,
+      ko: itemTypeLabel(c, itemTypes),
+      group: typeGroup(c, equiv1, equiv2),
+      sockets,
+    });
+  };
+  if (itemTypes) {
+    for (const row of itemTypes.rows) {
+      if (!isDataRow(row)) continue;
+      add(
+        getCell(row, itemTypes, "Code"),
+        getCell(row, itemTypes, "Equiv1"),
+        getCell(row, itemTypes, "Equiv2"),
+        getCell(row, itemTypes, "MaxSockets3") || getCell(row, itemTypes, "MaxSockets1"),
+      );
+    }
+  }
+  for (const code of extraCodes) add(code, "", "", "");
+  return [...byCode.values()].sort((a, b) => {
+    const g = TYPE_GROUP_ORDER.indexOf(a.group) - TYPE_GROUP_ORDER.indexOf(b.group);
+    if (g) return g;
+    return a.ko.localeCompare(b.ko, "ko");
+  });
+}
+
+export function groupedItemTypes(choices: ItemTypeChoice[]): { group: ItemTypeGroup; items: ItemTypeChoice[] }[] {
+  const buckets = new Map<ItemTypeGroup, ItemTypeChoice[]>();
+  for (const g of TYPE_GROUP_ORDER) buckets.set(g, []);
+  for (const c of choices) buckets.get(c.group)!.push(c);
+  return TYPE_GROUP_ORDER.filter((g) => buckets.get(g)!.length).map((group) => ({ group, items: buckets.get(group)! }));
 }

@@ -56,6 +56,9 @@ export const COL_KO: Record<string, string> = {
   itype4: "유형 4",
   itype5: "유형 5",
   itype6: "유형 6",
+  etype1: "제외 1",
+  etype2: "제외 2",
+  etype3: "제외 3",
   minmana: "최소 마나",
   manashift: "마나 시프트",
   mana: "마나",
@@ -318,6 +321,8 @@ export const RUNEWORD_EDITOR_COLS = [
   "Rune5",
   "Rune6",
   "itype1",
+  "itype2",
+  "itype3",
 ];
 
 export const TC_EDITOR_COLS = [

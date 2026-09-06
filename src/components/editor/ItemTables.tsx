@@ -1,16 +1,29 @@
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useEditor } from "@/lib/store";
-import { FIGURE_TYPES, RUNE_TYPES, UNIQUE_EDITOR_COLS, SET_EDITOR_COLS, MISC_EDITOR_COLS, DIFF_KO } from "@/lib/d2/labels";
-import { getCell, isDataRow } from "@/lib/d2/tsv";
+import { FIGURE_TYPES, RUNE_TYPES, RUNEWORD_EDITOR_COLS, UNIQUE_EDITOR_COLS, SET_EDITOR_COLS, MISC_EDITOR_COLS, DIFF_KO } from "@/lib/d2/labels";
+import { colIndex, getCell, isDataRow, type TsvTable } from "@/lib/d2/tsv";
 import { figureKorean } from "@/lib/d2/strings";
+import type { StringTable } from "@/lib/d2/strings";
 import { setBonusAffixSlots, setItemAffixSlots, uniqueAffixSlots, runewordAffixSlots } from "@/lib/d2/itemProps";
+import {
+  filledRuneCount,
+  formatRunesUsed,
+  groupedRuneChoices,
+  hasRuneGap,
+  listRuneChoices,
+  runeLabel,
+  runeSlots,
+  runewordRuneSummary,
+  RUNE_SLOTS,
+} from "@/lib/d2/runewords";
 import { DataGrid, SearchField } from "./DataGrid";
 import { ItemAffixEditor } from "./ItemAffixes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { isRuneOpmSplitDouble } from "@/lib/d2/cubeRecipes";
+import { cn } from "@/lib/utils";
 
 export function UniqueTable() {
   const table = useEditor((s) => s.tables.uniqueItems);
@@ -171,7 +184,7 @@ export function RuneTable() {
   return (
     <Panel
       title="룬"
-      blurb="아래 룬 아이템은 드랍·희귀도, 그 다음 룬워드는 완성 아이템 옵션입니다."
+      blurb="아래 룬 아이템은 드랍·희귀도입니다. 룬워드를 고르면 조합에 넣는 룬과 완성 옵션을 바꿀 수 있습니다."
       search={search}
       setSearch={setSearch}
       placeholder="룬 · 룬워드 이름"
@@ -258,38 +271,142 @@ export function RuneTable() {
         <div className="mt-2 flex min-h-0 flex-col gap-3">
           <h3 className="font-display text-lg tracking-tight">룬워드 옵션</h3>
           {rw && isDataRow(rw) ? (
-            <ItemAffixEditor
-              tableKey="runes"
-              table={runes}
-              row={rw}
-              rowIndex={runeWord!}
-              slots={runewordAffixSlots()}
-              title={rwName}
-              subtitle={getCell(rw, runes, "*RunesUsed") || getCell(rw, runes, "Rune1")}
-              onClose={() => setRuneWord(null)}
-            />
+            <>
+              <RunewordRecipeEditor
+                table={runes}
+                row={rw}
+                rowIndex={runeWord!}
+                title={rwName}
+                strings={strings}
+                misc={table}
+                onClose={() => setRuneWord(null)}
+              />
+              <ItemAffixEditor
+                tableKey="runes"
+                table={runes}
+                row={rw}
+                rowIndex={runeWord!}
+                slots={runewordAffixSlots()}
+                title={`${rwName} 옵션`}
+                subtitle={runewordRuneSummary(runeSlots(rw, runes), strings) || getCell(rw, runes, "*RunesUsed")}
+                onClose={() => setRuneWord(null)}
+              />
+            </>
           ) : (
             <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-fg-muted">
-              룬워드를 선택하면 완성 옵션을 수정할 수 있습니다.
+              룬워드를 선택하면 조합 룬과 완성 옵션을 수정할 수 있습니다.
             </p>
           )}
           <DataGrid
             table={runes}
-            columns={["Name", "*Rune Name", "complete", "Rune1", "Rune2", "Rune3", "itype1"]}
+            columns={RUNEWORD_EDITOR_COLS}
             search={search}
             selectedIndex={runeWord}
             onSelectRow={setRuneWord}
             onChange={(r, c, v) => patchCell("runes", r, c, v)}
-            displayName={(row) =>
-              strings.tryDisplay(getCell(row, runes, "Name")) ||
-              strings.tryDisplay(getCell(row, runes, "*Rune Name")) ||
-              getCell(row, runes, "Name")
-            }
+            displayName={(row) => {
+              const name =
+                strings.tryDisplay(getCell(row, runes, "Name")) ||
+                strings.tryDisplay(getCell(row, runes, "*Rune Name")) ||
+                getCell(row, runes, "Name");
+              const recipe = runewordRuneSummary(runeSlots(row, runes), strings);
+              return recipe ? `${name}  ·  ${recipe}` : name;
+            }}
             empty="룬워드가 없습니다."
           />
         </div>
       ) : null}
     </Panel>
+  );
+}
+
+function RunewordRecipeEditor({
+  table,
+  row,
+  rowIndex,
+  title,
+  strings,
+  misc,
+  onClose,
+}: {
+  table: TsvTable;
+  row: string[];
+  rowIndex: number;
+  title: string;
+  strings: StringTable;
+  misc?: TsvTable;
+  onClose: () => void;
+}) {
+  const patchCell = useEditor((s) => s.patchCell);
+  const codes = runeSlots(row, table);
+  const extra = codes.filter(Boolean);
+  const choices = useMemo(() => listRuneChoices(misc, strings, extra), [misc, strings, extra.join("|")]);
+  const groups = groupedRuneChoices(choices);
+  const sockets = filledRuneCount(codes);
+  const gap = hasRuneGap(codes);
+  const summary = runewordRuneSummary(codes, strings);
+
+  const setSlot = (col: (typeof RUNE_SLOTS)[number], value: string) => {
+    const next = RUNE_SLOTS.map((c) => (c === col ? value : getCell(row, table, c).trim()));
+    patchCell("runes", rowIndex, col, value);
+    if (colIndex(table, "*RunesUsed") >= 0) {
+      patchCell("runes", rowIndex, "*RunesUsed", formatRunesUsed(next, strings));
+    }
+  };
+
+  return (
+    <section className="rounded-xl border border-rune/30 bg-rune/5 p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-display text-xl tracking-tight">{title}</h3>
+          <p className="mt-1 text-xs leading-relaxed text-fg-muted">
+            {summary ? `${summary} · 소켓 ${sockets}칸` : "조합 룬이 없습니다"}
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={onClose}>
+          닫기
+        </Button>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-fg-muted">
+        소켓에 넣는 순서입니다. 1번부터 채우고, 비운 칸 뒤에 룬을 두면 게임이 조합을 인식하지 않습니다.
+      </p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {RUNE_SLOTS.map((col, i) => {
+          const value = codes[i] ?? "";
+          const known = !value || choices.some((c) => c.code === value);
+          return (
+            <label key={col}>
+              <span className="text-xs text-fg-muted">
+                {i + 1}번 {value ? runeLabel(value, strings).ko || value : "비움"}
+              </span>
+              <select
+                className={cn(
+                  "mt-1 h-10 w-full rounded-sm border border-border bg-bg px-2 text-sm",
+                  !value && "text-fg-muted",
+                )}
+                value={value}
+                onChange={(e) => setSlot(col, e.target.value)}
+              >
+                <option value="">(비움)</option>
+                {groups.map((g) => (
+                  <optgroup key={g.group} label={g.group}>
+                    {g.items.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.ko} ({c.code})
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+                {!known ? <option value={value}>{value}</option> : null}
+              </select>
+            </label>
+          );
+        })}
+      </div>
+      {gap ? (
+        <p className="mt-3 text-xs text-danger">중간에 빈 칸이 있습니다. 1번부터 연속으로 채워 주세요.</p>
+      ) : null}
+    </section>
   );
 }
 

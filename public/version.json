@@ -1,5 +1,5 @@
 {
-  "version": "1.6.9",
+  "version": "1.6.10",
   "released": "2026-09-06",
-  "notes": "edit which item types a runeword can be made in"
+  "notes": "pick unique/set/runeword skill params by Korean skill name"
 }

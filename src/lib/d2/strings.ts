@@ -1,4 +1,4 @@
-import { getCell, isDataRow, type TsvTable } from "./tsv";
+import { getCell, isDataRow, type TsvTable } from "./tsv.ts";
 
 export type StringEntry = { Key?: string; enUS?: string; koKR?: string };
 
@@ -137,11 +137,18 @@ export function koreanSkillName(
   let desc = (opts.skilldesc ?? "").trim();
   let id = (opts.id ?? "").trim();
 
-  if (opts.skillsTable && skill) {
-    const row = opts.skillsTable.rows.find(
-      (r) => isDataRow(r) && getCell(r, opts.skillsTable!, "skill").toLowerCase() === skill.toLowerCase(),
-    );
+  if (opts.skillsTable && (skill || id)) {
+    const row = opts.skillsTable.rows.find((r) => {
+      if (!isDataRow(r)) return false;
+      const name = getCell(r, opts.skillsTable!, "skill").trim();
+      const rid = (getCell(r, opts.skillsTable!, "*Id") || getCell(r, opts.skillsTable!, "Id")).trim();
+      if (skill && name.toLowerCase() === skill.toLowerCase()) return true;
+      if (skill && /^\d+$/.test(skill) && rid === skill) return true;
+      if (id && rid === id) return true;
+      return false;
+    });
     if (row) {
+      if (!skill || /^\d+$/.test(skill)) skill = getCell(row, opts.skillsTable, "skill").trim() || skill;
       desc = desc || getCell(row, opts.skillsTable, "skilldesc");
       id = id || getCell(row, opts.skillsTable, "*Id") || getCell(row, opts.skillsTable, "Id");
     }

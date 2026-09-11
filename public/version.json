@@ -1,5 +1,5 @@
 {
-  "version": "1.6.11",
-  "released": "2026-09-06",
-  "notes": "add cold/lightning/poison/magic skill item properties like fireskill"
+  "version": "1.6.12",
+  "released": "2026-09-11",
+  "notes": "edit skill synergies by picking skills and percent instead of calc formulas"
 }

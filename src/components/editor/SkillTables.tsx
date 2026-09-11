@@ -17,6 +17,14 @@ import {
   type BindRankId,
   type SkillOption,
 } from "@/lib/d2/skillOptions";
+import { listSkillChoices, groupedSkillChoices, type SkillChoice } from "@/lib/d2/skillPicker";
+import {
+  SYNERGY_KINDS,
+  parseSynergyCalc,
+  readParamMap,
+  type SynergyKindId,
+  type SynergyTerm,
+} from "@/lib/d2/skillSynergy";
 import { getCell, isDataRow, num, type TsvTable } from "@/lib/d2/tsv";
 import { DataGrid, SearchField } from "./DataGrid";
 import { Button } from "@/components/ui/button";
@@ -82,7 +90,7 @@ export function SkillTable() {
           <div>
             <h2 className="font-display text-2xl tracking-tight">캐릭터 스킬</h2>
             <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-              직업을 고르고 스킬을 선택하면 피해·시너지·상세 옵션을 수정할 수 있습니다. 악마 숙련의 악마 최대 수처럼 게임 설명에 나오는 값은 상세 옵션에서 바꿉니다.
+              직업을 고르고 스킬을 선택하면 피해·시너지·상세 옵션을 수정할 수 있습니다. 시너지는 스킬과 레벨당 %만 고르면 됩니다.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -203,7 +211,6 @@ const ELEM_COLS = [
 ];
 const DAMAGE_COLS = [...ELEM_COLS, ...PHYS_COLS];
 
-const SYNERGY_COLS = ["DmgSymPerCalc", "EDmgSymPerCalc", "ELenSymPerCalc", "ToHitCalc", "calc1", "calc2", "calc3", "calc4"];
 const PARAM_COLS = [
   "petmax",
   "Param1", "Param2", "Param3", "Param4", "Param5", "Param6", "Param7", "Param8",
@@ -259,8 +266,7 @@ function SkillDetail({
   onChange: (col: string, val: string) => void;
   onClose: () => void;
 }) {
-  const cols = tab === "damage" ? DAMAGE_COLS : tab === "synergy" ? SYNERGY_COLS : tab === "params" ? PARAM_COLS : BASIC_COLS;
-  const wide = tab === "synergy";
+  const cols = tab === "damage" ? DAMAGE_COLS : tab === "params" ? PARAM_COLS : BASIC_COLS;
   const eType = getCell(row, table, "EType");
   const eMin = getCell(row, table, "EMin");
   const eMax = getCell(row, table, "EMax");
@@ -319,14 +325,196 @@ function SkillDetail({
         </div>
       ) : tab === "params" ? (
         <SkillOptionsPanel table={table} row={row} onChange={onChange} />
+      ) : tab === "synergy" ? (
+        <SynergyPanel table={table} row={row} rowIndex={rowIndex} onChange={onChange} />
       ) : (
-        <div className={cn("mt-4 grid gap-3", wide ? "grid-cols-1" : "sm:grid-cols-2 lg:grid-cols-3")}>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {cols.filter((c) => hasCol(table, c)).map((c) => (
-            <SkillField key={c} table={table} row={row} col={c} wide={wide} onChange={onChange} />
+            <SkillField key={c} table={table} row={row} col={c} onChange={onChange} />
           ))}
         </div>
       )}
     </section>
+  );
+}
+
+const OTHER_SYNERGY_COLS = ["ToHitCalc", "calc1", "calc2", "calc3", "calc4"];
+
+function SynergyPanel({
+  table,
+  row,
+  rowIndex,
+  onChange,
+}: {
+  table: TsvTable;
+  row: string[];
+  rowIndex: number;
+  onChange: (col: string, val: string) => void;
+}) {
+  const skilldesc = useEditor((s) => s.tables.skilldesc);
+  const strings = useEditor((s) => s.strings);
+  const setSkillSynergy = useEditor((s) => s.setSkillSynergy);
+  const choices = useMemo(
+    () => listSkillChoices(table, skilldesc, strings),
+    [table, skilldesc, strings],
+  );
+  const klass = labelClass(getCell(row, table, "charclass"));
+  const groups = useMemo(() => {
+    const all = groupedSkillChoices(choices);
+    const mine = all.filter((g) => g.group === klass);
+    const rest = all.filter((g) => g.group !== klass);
+    return [...mine, ...rest];
+  }, [choices, klass]);
+  const params = readParamMap(row, table);
+  const self = getCell(row, table, "skill");
+
+  return (
+    <div className="mt-4 space-y-5">
+      <p className="text-xs text-fg-muted leading-relaxed">
+        시너지로 쓸 스킬과 레벨당 %만 고르면 됩니다. 계산식과 스킬 창 설명은 같이 바뀝니다.
+      </p>
+      {SYNERGY_KINDS.map((kind) => {
+        if (!hasCol(table, kind.col)) return null;
+        const parsed = parseSynergyCalc(getCell(row, table, kind.col), params, self);
+        return (
+          <SynergyKindCard
+            key={kind.id}
+            kind={kind.id}
+            label={kind.label}
+            hint={kind.hint}
+            parsed={parsed}
+            groups={groups}
+            onCommit={(terms, extra) => {
+              setSkillSynergy(rowIndex, kind.id, terms, extra);
+            }}
+          />
+        );
+      })}
+      <FieldGroup
+        title="기타 계산식"
+        hint="명중·부가 계산식입니다. 대부분 시너지가 아니면 비어 있습니다."
+        cols={OTHER_SYNERGY_COLS}
+        table={table}
+        row={row}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+
+function SynergyKindCard({
+  kind,
+  label,
+  hint,
+  parsed,
+  groups,
+  onCommit,
+}: {
+  kind: SynergyKindId;
+  label: string;
+  hint: string;
+  parsed: ReturnType<typeof parseSynergyCalc>;
+  groups: { group: string; items: SkillChoice[] }[];
+  onCommit: (terms: SynergyTerm[], extra: string) => void;
+}) {
+  const terms = parsed.terms;
+  const uniform = terms.length > 0 && terms.every((t) => t.percent === terms[0]!.percent);
+  const used = new Set(terms.map((t) => t.skill.toLowerCase()));
+
+  const setTerm = (index: number, patch: Partial<SynergyTerm>) => {
+    const next = terms.map((t, i) => (i === index ? { ...t, ...patch } : t));
+    onCommit(next, parsed.extra);
+  };
+
+  const setAllPercent = (percent: number) => {
+    onCommit(
+      terms.map((t) => ({ ...t, percent })),
+      parsed.extra,
+    );
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-bg px-3 py-3">
+      <p className="text-sm font-medium">{label} 시너지</p>
+      <p className="mt-0.5 text-xs text-fg-muted leading-relaxed">{hint}</p>
+      {!parsed.editable && parsed.raw ? (
+        <p className="mt-2 rounded-md bg-bg-subtle px-2 py-1.5 text-xs text-fg-muted leading-relaxed">
+          이 식은 자동으로 나누기 어렵습니다. 아래에서 스킬을 고치면 시너지 형식으로 다시 씁니다.
+        </p>
+      ) : null}
+      {uniform && terms.length > 0 ? (
+        <label className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-fg-muted">레벨당</span>
+          <PercentInput value={terms[0]!.percent} onCommit={setAllPercent} />
+          <span className="text-fg-muted">%</span>
+        </label>
+      ) : null}
+      <div className="mt-3 space-y-2">
+        {terms.map((t, i) => (
+          <div key={`${t.skill}-${i}`} className="flex flex-wrap items-center gap-2">
+            <select
+              className="h-9 min-w-[12rem] flex-1 rounded-sm border border-border bg-bg-elevated px-2 text-sm"
+              value={t.skill}
+              onChange={(e) => setTerm(i, { skill: e.target.value })}
+            >
+              {groups.map((g) => (
+                <optgroup key={g.group} label={g.group}>
+                  {g.items.map((c) => (
+                    <option key={c.skill} value={c.skill}>
+                      {c.ko}
+                      {c.ko !== c.skill ? ` · ${c.skill}` : ""}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+              {!groups.some((g) => g.items.some((c) => c.skill === t.skill)) && t.skill ? (
+                <option value={t.skill}>{t.skill}</option>
+              ) : null}
+            </select>
+            {!uniform ? (
+              <label className="flex items-center gap-1 text-sm text-fg-muted">
+                <PercentInput value={t.percent} onCommit={(n) => setTerm(i, { percent: n })} />
+                %
+              </label>
+            ) : null}
+            <button
+              type="button"
+              className="text-xs text-fg-muted hover:text-danger"
+              onClick={() => {
+                onCommit(terms.filter((_, j) => j !== i), parsed.extra);
+                toast.success(`${label} 시너지 스킬 삭제`);
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            const pick = groups.flatMap((g) => g.items).find((c) => !used.has(c.skill.toLowerCase()));
+            onCommit(
+              [
+                ...terms,
+                {
+                  skill: pick?.skill ?? "",
+                  stat: "blvl",
+                  percent: terms[0]?.percent ?? 10,
+                  percentSrc: terms[0]?.percentSrc ?? { kind: "par", n: kind === "elen" ? 7 : 8 },
+                },
+              ],
+              parsed.extra,
+            );
+            toast.success(`${label} 시너지 스킬 추가`);
+          }}
+        >
+          스킬 추가
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -756,6 +944,23 @@ function BindRankField({
         </Button>
       </div>
     </div>
+  );
+}
+
+function PercentInput({ value, onCommit }: { value: number; onCommit: (n: number) => void }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  return (
+    <input
+      className="h-9 w-20 rounded-sm border border-border bg-bg-elevated px-2 tabular-nums text-fg"
+      inputMode="numeric"
+      value={draft ?? (Number.isFinite(value) ? String(value) : "")}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={() => {
+        const n = Number(String(draft ?? value).trim());
+        setDraft(null);
+        if (Number.isFinite(n)) onCommit(n);
+      }}
+    />
   );
 }
 

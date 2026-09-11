@@ -5,6 +5,7 @@ import { StringTable, parseStringJson, serializeStringJson, type StringEntry } f
 import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, matchesDifficulty } from "./d2/paths";
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
+import { applySynergyDesc, applySynergyToSkill, type SynergyKindId, type SynergyTerm } from "./d2/skillSynergy";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyAllBeltsSixteen } from "./d2/belts";
 import { ensureElemSkillProperties } from "./d2/itemProps";
@@ -70,6 +71,7 @@ type EditorState = {
   setSlamtrapSkillsDisabled: (disabled: boolean) => void;
   setSkillExtra: (skillIndex: number, extraId: string, enabled: boolean) => void;
   setSkillDescCalc: (descKey: string, calcCol: string, value: string, syncPetmaxFromSkill?: string) => number;
+  setSkillSynergy: (skillIndex: number, kind: SynergyKindId, terms: SynergyTerm[], extra?: string) => void;
   patchSkillString: (key: string, patch: { koKR?: string; enUS?: string }) => void;
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
@@ -505,6 +507,21 @@ export const useEditor = create<EditorState>((set, get) => ({
     }
     set({ tables, dirty: true });
     return synced;
+  },
+
+  setSkillSynergy: (skillIndex, kind, terms, extra = "") => {
+    const skills = get().tables.skills;
+    if (!skills) return;
+    const nextSkills = cloneTable(skills);
+    applySynergyToSkill(nextSkills, skillIndex, kind, terms, extra);
+    const tables = { ...get().tables, skills: nextSkills };
+    const skilldesc = get().tables.skilldesc;
+    if (skilldesc) {
+      const nextDesc = cloneTable(skilldesc);
+      applySynergyDesc(nextSkills, nextDesc, skillIndex);
+      tables.skilldesc = nextDesc;
+    }
+    set({ tables, dirty: true });
   },
 
   patchSkillString: (key, patch) => {

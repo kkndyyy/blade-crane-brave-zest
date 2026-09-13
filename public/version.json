@@ -1,5 +1,5 @@
 {
-  "version": "1.6.21",
+  "version": "1.6.22",
   "released": "2026-09-13",
-  "notes": "Cube checkbox: full set + transmute gems x10 + magic/rare amulet → set-bonus amulet"
+  "notes": "Set-bonus amulet cube recipes now include 6-piece sets (gems swapped for the amulet)"
 }

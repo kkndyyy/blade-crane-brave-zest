@@ -1,5 +1,5 @@
 {
-  "version": "1.6.19",
+  "version": "1.6.20",
   "released": "2026-09-13",
-  "notes": "Caster projectile count uses Charged Bolt funcs 17/23 so Fire Ball actually fires"
+  "notes": "Fire Ball count uses Charged Bolt Param1/Param2 + ln12; explosion stays on the missile"
 }

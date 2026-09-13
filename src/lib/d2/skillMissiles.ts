@@ -136,10 +136,20 @@ function findFreeParam(row: string[], skills: TsvTable, reserved: Set<number>): 
   return null;
 }
 
-function moveParamSlot(row: string[], skills: TsvTable, from: number, to: number, skilldesc?: TsvTable) {
-  setCell(row, skills, `Param${to}`, getCell(row, skills, `Param${from}`));
+function moveParamSlot(
+  row: string[],
+  skills: TsvTable,
+  from: number,
+  to: number,
+  skilldesc?: TsvTable,
+  origRow?: string[],
+  origSkills?: TsvTable,
+) {
+  const srcTable = origSkills ?? skills;
+  const srcRow = origRow ?? row;
+  setCell(row, skills, `Param${to}`, getCell(srcRow, srcTable, `Param${from}`));
   setCell(row, skills, `Param${from}`, "");
-  const desc = paramHint(row, skills, `Param${from}`);
+  const desc = paramHint(srcRow, srcTable, `Param${from}`) || paramHint(row, skills, `Param${from}`);
   if (desc) {
     setDesc(row, skills, to, desc);
     for (const col of [`*Param${from} Description`, `*Param${from} Description2`, `*Param${from} desc`]) {
@@ -163,18 +173,42 @@ function countDesc(desc: string): boolean {
   return classify(desc) != null;
 }
 
-function relocateForCountParams(row: string[], skills: TsvTable, skilldesc?: TsvTable) {
+function relocateForCountParams(
+  row: string[],
+  skills: TsvTable,
+  skilldesc?: TsvTable,
+  origRow?: string[],
+  origSkills?: TsvTable,
+) {
   const reserved = new Set<number>([1, 2, 3]);
   for (const n of [1, 2, 3]) {
-    const desc = paramHint(row, skills, `Param${n}`);
-    if (n <= 2 && countDesc(desc)) continue;
-    if (n === 3 && /activation frame/i.test(desc)) continue;
-    if (paramFree(row, skills, n)) continue;
+    const liveDesc = paramHint(row, skills, `Param${n}`);
+    const origDesc = origRow && origSkills ? paramHint(origRow, origSkills, `Param${n}`) : "";
+    const desc = liveDesc || origDesc;
+    if (n <= 2 && countDesc(liveDesc || desc)) continue;
+    if (n === 3 && /activation frame/i.test(liveDesc || desc)) continue;
+    const otherUse = descLooksUsed(desc) && !countDesc(desc);
+    if (!otherUse && paramFree(row, skills, n)) continue;
+    if (!otherUse) continue;
     const dest = findFreeParam(row, skills, reserved);
     if (dest == null) continue;
     reserved.add(dest);
-    moveParamSlot(row, skills, n, dest, skilldesc);
+    moveParamSlot(row, skills, n, dest, skilldesc, origRow, origSkills);
   }
+}
+
+export function isMissileCountEnabled(row: string[], skills: TsvTable): boolean {
+  const func = getCell(row, skills, "srvdofunc").trim();
+  if (COUNT_FUNCS.has(func)) return true;
+  return countDesc(paramHint(row, skills, "Param1"));
+}
+
+export function countInputValue(field: MissileCountField, row: string[], skills: TsvTable, col: string): string {
+  if (field.synthetic && !isMissileCountEnabled(row, skills)) {
+    if (col === field.baseCol) return "1";
+    if (col === field.perCol) return "0";
+  }
+  return getCell(row, skills, col);
 }
 
 function emptyMirrors(): Pick<MissileCountField, "baseMirrors" | "perMirrors" | "maxMirrors"> {
@@ -242,16 +276,22 @@ export function applyMissileCountTooltip(skilldesc: TsvTable | undefined, descKe
 }
 
 /** Turn a 1-missile skill into func-8 multi-missile so Param1/Param2 control count. */
-export function enableMissileCount(skills: TsvTable, rowIndex: number, skilldesc?: TsvTable): boolean {
+export function enableMissileCount(
+  skills: TsvTable,
+  rowIndex: number,
+  skilldesc?: TsvTable,
+  origSkills?: TsvTable,
+): boolean {
   const row = skills.rows[rowIndex];
   if (!row) return false;
   const func = getCell(row, skills, "srvdofunc").trim();
   if (COUNT_FUNCS.has(func)) {
     if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");
-    return false;
+    return true;
   }
   if (!isSimpleMissileSkill(row, skills)) return false;
-  relocateForCountParams(row, skills, skilldesc);
+  const origRow = origSkills?.rows[rowIndex];
+  relocateForCountParams(row, skills, skilldesc, origRow, origSkills);
   moveMissileCol(row, skills, "srvmissile", "srvmissilea");
   moveMissileCol(row, skills, "cltmissile", "cltmissilea");
   setCell(row, skills, "srvdofunc", "8");

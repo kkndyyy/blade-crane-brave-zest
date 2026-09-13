@@ -544,9 +544,11 @@ export const useEditor = create<EditorState>((set, get) => ({
     const next = cloneTable(skills);
     const skilldesc = get().tables.skilldesc;
     const nextDesc = skilldesc ? cloneTable(skilldesc) : undefined;
-    enableMissileCount(next, skillIndex, nextDesc);
+    const origText = get().originalTexts[EXCEL.skills];
+    const origSkills = origText ? parseTsv(origText) : undefined;
+    const ok = enableMissileCount(next, skillIndex, nextDesc, origSkills);
     const row = next.rows[skillIndex];
-    if (!row) return;
+    if (!row || !ok) return;
     setCell(row, next, column, value);
     applyMissileMirrors(next, mirrors, value);
     set({

@@ -27,6 +27,7 @@ import {
 } from "@/lib/d2/skillSynergy";
 import {
   countAtLevel,
+  countInputValue,
   listMissileCountFields,
   missileCountParamCols,
   previewLevels,
@@ -1004,10 +1005,12 @@ function MissileCountCard({
   maxLvl: number;
   onChange: (col: string, val: string, mirrors: MissileCountField["baseMirrors"]) => void;
 }) {
-  const baseRaw = getCell(row, table, field.baseCol).trim();
-  const extraRaw = getCell(row, table, field.perCol ?? field.maxCol ?? "").trim();
-  const base = num(baseRaw || (field.synthetic ? "1" : "0"));
-  const extra = num(extraRaw || (field.synthetic ? "0" : "0"));
+  const baseRaw = countInputValue(field, row, table, field.baseCol);
+  const extraRaw = field.perCol
+    ? countInputValue(field, row, table, field.perCol)
+    : getCell(row, table, field.maxCol ?? "").trim();
+  const base = num(baseRaw);
+  const extra = num(extraRaw);
   const levels = previewLevels(maxLvl);
   return (
     <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3">
@@ -1017,13 +1020,13 @@ function MissileCountCard({
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         <MiniNum
           label={field.kind === "minmax" ? "최소 (1렙)" : field.kind === "fixed" ? "개수" : "1렙 개수"}
-          value={baseRaw || (field.synthetic ? "1" : baseRaw)}
+          value={baseRaw}
           onChange={(v) => onChange(field.baseCol, v, field.baseMirrors)}
         />
         {field.perCol ? (
           <MiniNum
             label={field.kind === "every" ? "몇 렙마다 +1" : "레벨당 +"}
-            value={extraRaw || (field.synthetic ? "0" : extraRaw)}
+            value={extraRaw}
             onChange={(v) => onChange(field.perCol!, v, field.perMirrors)}
           />
         ) : null}

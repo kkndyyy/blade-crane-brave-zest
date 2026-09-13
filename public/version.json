@@ -1,5 +1,5 @@
 {
-  "version": "1.6.15",
+  "version": "1.6.16",
   "released": "2026-09-13",
-  "notes": "projectile count for Fire Ball-like skills; keep explosion radius by relocating params"
+  "notes": "Fire Ball count editor no longer shows explosion radius as projectile count"
 }

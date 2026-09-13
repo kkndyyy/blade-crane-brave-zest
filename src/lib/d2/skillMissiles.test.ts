@@ -4,6 +4,7 @@ import { parseTsv, getCell } from "./tsv.ts";
 import {
   applyMissileMirrors,
   countAtLevel,
+  countInputValue,
   enableMissileCount,
   isSimpleMissileSkill,
   listMissileCountFields,
@@ -111,6 +112,10 @@ describe("missile count fields", () => {
     ]);
     assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), true);
     assert.equal(listMissileCountFields(skills.rows[0]!, skills)[0]!.synthetic, true);
+    assert.equal(
+      countInputValue(listMissileCountFields(skills.rows[0]!, skills)[0]!, skills.rows[0]!, skills, "Param1"),
+      "1",
+    );
     const skilldesc = table([
       "skilldesc\tdescline1\tdesctexta1\tdesccalca1\tdsc2line1\tdsc2texta1\tdsc2calca1\tdescline2\tdesctexta2\tdesccalca2",
       "fireball\t75\tStrSkill5\tenma\t36\tStrSkillRadiusSingular\tpar1*2\t\t\t",
@@ -124,6 +129,17 @@ describe("missile count fields", () => {
     assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "dsc2calca1"), "par4*2");
     assert.equal(getCell(row, skills, "srvdofunc"), "8");
     assert.equal(getCell(row, skills, "srvmissilea"), "fireball");
+  });
+
+  it("restores original explosion radius if Param1 was overwritten as count", () => {
+    const header =
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tcalc1\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tParam4\t*Param4 Description\tParam8\tskilldesc";
+    const orig = table([header, "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t4\tExplosion Radius\t\t\t\t\t\t14\tfire ball"]);
+    const skills = table([header, "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t10\tExplosion Radius\t\t\t\t\t\t14\tfire ball"]);
+    assert.equal(enableMissileCount(skills, 0, undefined, orig), true);
+    assert.equal(getCell(skills.rows[0]!, skills, "Param4"), "4");
+    assert.equal(getCell(skills.rows[0]!, skills, "calc1"), "par4");
+    assert.equal(getCell(skills.rows[0]!, skills, "Param1"), "1");
   });
 
   it("rewrites ln12 when freeze params move", () => {

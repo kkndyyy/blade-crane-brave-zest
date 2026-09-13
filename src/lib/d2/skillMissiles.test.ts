@@ -4,6 +4,8 @@ import { parseTsv, getCell } from "./tsv.ts";
 import {
   applyMissileMirrors,
   countAtLevel,
+  enableMissileCount,
+  isSimpleMissileSkill,
   listMissileCountFields,
   missileCountParamCols,
 } from "./skillMissiles.ts";
@@ -88,5 +90,52 @@ describe("missile count fields", () => {
     const fields = listMissileCountFields(skills.rows[0]!, skills, skilldesc);
     assert.equal(fields[0]!.cap, 24);
     assert.equal(countAtLevel(fields[0]!, 3, 1, 40), 24);
+  });
+
+  it("offers a synthetic count editor for fire-bolt-like skills", () => {
+    const skills = table([
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tskilldesc",
+      "Fire Bolt\t\t\tfirebolt\tfirebolt\t\t\t\t\t\t\t\tfirebolt",
+    ]);
+    assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), true);
+    const fields = listMissileCountFields(skills.rows[0]!, skills);
+    assert.equal(fields[0]!.synthetic, true);
+    assert.equal(fields[0]!.baseCol, "Param1");
+  });
+
+  it("does not convert fire ball whose Param1 is explosion radius", () => {
+    const skills = table([
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tParam1\t*Param1 Description\tParam2\t*Param2 Description",
+      "Fire Ball\t\t\tfireball\tfireball\t4\tExplosion Radius\t\t",
+    ]);
+    assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), false);
+    assert.equal(listMissileCountFields(skills.rows[0]!, skills).length, 0);
+  });
+
+  it("enables func-8 multi-missile and writes count params", () => {
+    const skills = table([
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tskilldesc",
+      "Fire Bolt\t\t\tfirebolt\tfirebolt\t\t\t\t\t\t\t\tfirebolt",
+    ]);
+    const skilldesc = table([
+      "skilldesc\tdescline1\tdesctexta1\tdesccalca1\tdescline2\tdesctexta2\tdesccalca2",
+      "firebolt\t75\tStrSkill5\tenma\t\t\t",
+    ]);
+    assert.equal(enableMissileCount(skills, 0, skilldesc), true);
+    const row = skills.rows[0]!;
+    assert.equal(getCell(row, skills, "srvdofunc"), "8");
+    assert.equal(getCell(row, skills, "cltdofunc"), "17");
+    assert.equal(getCell(row, skills, "srvmissile"), "");
+    assert.equal(getCell(row, skills, "srvmissilea"), "firebolt");
+    assert.equal(getCell(row, skills, "cltmissilea"), "firebolt");
+    assert.equal(getCell(row, skills, "Param1"), "1");
+    assert.equal(getCell(row, skills, "Param2"), "0");
+    assert.equal(getCell(row, skills, "Param3"), "1");
+    assert.match(getCell(row, skills, "*Param1 Description"), /Missiles created baseline/i);
+    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "descline2"), "74");
+    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "desccalca2"), "ln12");
+    const fields = listMissileCountFields(row, skills, skilldesc);
+    assert.equal(fields[0]!.synthetic, undefined);
+    assert.equal(fields[0]!.kind, "ln");
   });
 });

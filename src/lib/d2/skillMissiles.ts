@@ -17,6 +17,7 @@ export type MissileCountField = {
   baseMirrors: MissileMirror[];
   perMirrors: MissileMirror[];
   maxMirrors: MissileMirror[];
+  synthetic?: boolean;
 };
 
 const COUNT_FUNCS = new Set(["8", "11", "12", "14", "17", "43", "45", "118"]);
@@ -66,11 +67,127 @@ function parseCapFromDesc(skills: TsvTable, skillRow: string[], skilldesc?: TsvT
   for (const g of groups) {
     for (let i = 1; i <= g.n; i++) {
       const calc = getCell(descRow, skilldesc, `${g.calc}${i}`).replace(/["'\s]/g, "");
-      const m = calc.match(/^min\((?:ln\d{2},(\d+)|(\d+),ln\d{2})\)$/i);
-      if (m) return Number(m[1] || m[2]);
+      const cap = calc.match(/^min\((?:ln\d{2},(\d+)|(\d+),ln\d{2})\)$/i);
+      if (cap) return Number(cap[1] || cap[2]);
     }
   }
   return undefined;
+}
+
+function descLooksUsed(desc: string): boolean {
+  const s = desc.toLowerCase().trim();
+  if (!s) return false;
+  if (/synergy/.test(s)) return false;
+  return true;
+}
+
+function paramFree(row: string[], skills: TsvTable, n: number): boolean {
+  const val = getCell(row, skills, `Param${n}`).trim();
+  const desc = paramHint(row, skills, `Param${n}`);
+  if (descLooksUsed(desc)) return false;
+  if (!val || val === "0") return true;
+  return false;
+}
+
+function primaryMissile(row: string[], skills: TsvTable): string {
+  return getCell(row, skills, "srvmissile").trim() || getCell(row, skills, "cltmissile").trim();
+}
+
+export function isSimpleMissileSkill(row: string[], skills: TsvTable): boolean {
+  if (!primaryMissile(row, skills)) return false;
+  const srvdo = getCell(row, skills, "srvdofunc").trim();
+  const cltdo = getCell(row, skills, "cltdofunc").trim();
+  if (srvdo && srvdo !== "0") return false;
+  if (cltdo && cltdo !== "0") return false;
+  if (!paramFree(row, skills, 1) || !paramFree(row, skills, 2)) return false;
+  return true;
+}
+
+function emptyMirrors(): Pick<MissileCountField, "baseMirrors" | "perMirrors" | "maxMirrors"> {
+  return { baseMirrors: [], perMirrors: [], maxMirrors: [] };
+}
+
+function syntheticMissileCountField(
+  row: string[],
+  skills: TsvTable,
+  skilldesc?: TsvTable,
+): MissileCountField | null {
+  if (!isSimpleMissileSkill(row, skills)) return null;
+  return {
+    id: "synthetic-ln",
+    kind: "ln",
+    label: "투사체 개수",
+    hint: "원래 1발입니다. 개수를 바꾸면 여러 발을 부채꼴로 발사합니다.",
+    baseCol: "Param1",
+    perCol: "Param2",
+    cap: parseCapFromDesc(skills, row, skilldesc),
+    synthetic: true,
+    ...emptyMirrors(),
+  };
+}
+
+function moveMissileCol(row: string[], skills: TsvTable, from: string, to: string) {
+  const src = getCell(row, skills, from).trim();
+  if (!src) return;
+  if (!getCell(row, skills, to).trim()) setCell(row, skills, to, src);
+  setCell(row, skills, from, "");
+}
+
+function setDesc(row: string[], skills: TsvTable, n: number, text: string) {
+  const cur = paramHint(row, skills, `Param${n}`);
+  if (descLooksUsed(cur)) return;
+  for (const col of [`*Param${n} Description`, `*Param${n} Description2`, `*Param${n} desc`]) {
+    if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
+      setCell(row, skills, col, text);
+      return;
+    }
+  }
+}
+
+export function applyMissileCountTooltip(skilldesc: TsvTable | undefined, descKey: string): boolean {
+  if (!skilldesc || !descKey.trim()) return false;
+  const found = skilldesc.rows.find(
+    (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
+  );
+  if (!found) return false;
+  for (let i = 1; i <= 6; i++) {
+    const calc = getCell(found, skilldesc, `desccalca${i}`) + getCell(found, skilldesc, `dsc2calca${i}`);
+    if (/ln12/i.test(calc.replace(/\s+/g, ""))) return false;
+  }
+  for (let i = 1; i <= 6; i++) {
+    const line = getCell(found, skilldesc, `descline${i}`).trim();
+    const texta = getCell(found, skilldesc, `desctexta${i}`).trim();
+    const calca = getCell(found, skilldesc, `desccalca${i}`).trim();
+    if (line || texta || calca) continue;
+    setCell(found, skilldesc, `descline${i}`, "74");
+    setCell(found, skilldesc, `desctexta${i}`, "StrSkill27");
+    setCell(found, skilldesc, `desccalca${i}`, "ln12");
+    return true;
+  }
+  return false;
+}
+
+/** Turn a 1-missile skill into func-8 multi-missile so Param1/Param2 control count. */
+export function enableMissileCount(skills: TsvTable, rowIndex: number, skilldesc?: TsvTable): boolean {
+  const row = skills.rows[rowIndex];
+  if (!row) return false;
+  const func = getCell(row, skills, "srvdofunc").trim();
+  if (COUNT_FUNCS.has(func)) {
+    if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");
+    return false;
+  }
+  if (!isSimpleMissileSkill(row, skills)) return false;
+  moveMissileCol(row, skills, "srvmissile", "srvmissilea");
+  moveMissileCol(row, skills, "cltmissile", "cltmissilea");
+  setCell(row, skills, "srvdofunc", "8");
+  setCell(row, skills, "cltdofunc", "17");
+  if (!getCell(row, skills, "Param3").trim()) setCell(row, skills, "Param3", "1");
+  setDesc(row, skills, 1, "# of Missiles created baseline");
+  setDesc(row, skills, 2, "# of Missiles created per level");
+  if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");
+  if (!getCell(row, skills, "Param2").trim()) setCell(row, skills, "Param2", "0");
+  applyMissileCountTooltip(skilldesc, getCell(row, skills, "skilldesc"));
+  return true;
 }
 
 export function listMissileCountFields(
@@ -100,13 +217,12 @@ export function listMissileCountFields(
           baseCol: "Param1",
           perCol: per ? "Param2" : undefined,
           cap: parseCapFromDesc(skills, row, skilldesc),
-          baseMirrors: [],
-          perMirrors: [],
-          maxMirrors: [],
+          ...emptyMirrors(),
         },
       ];
     }
-    return [];
+    const syn = syntheticMissileCountField(row, skills, skilldesc);
+    return syn ? [syn] : [];
   }
 
   const cap = parseCapFromDesc(skills, row, skilldesc);

@@ -968,6 +968,7 @@ function MissileCountPanel({
 }) {
   const skilldesc = useEditor((s) => s.tables.skilldesc);
   const patchSkillWithMirrors = useEditor((s) => s.patchSkillWithMirrors);
+  const setSkillMissileCount = useEditor((s) => s.setSkillMissileCount);
   const fields = listMissileCountFields(row, table, skilldesc);
   if (!fields.length) return null;
   const maxLvl = num(getCell(row, table, "maxlvl"), 20);
@@ -981,7 +982,8 @@ function MissileCountPanel({
           row={row}
           maxLvl={maxLvl}
           onChange={(col, val, mirrors) => {
-            patchSkillWithMirrors(rowIndex, col, val, mirrors);
+            if (field.synthetic) setSkillMissileCount(rowIndex, col, val, mirrors);
+            else patchSkillWithMirrors(rowIndex, col, val, mirrors);
           }}
         />
       ))}
@@ -1002,8 +1004,10 @@ function MissileCountCard({
   maxLvl: number;
   onChange: (col: string, val: string, mirrors: MissileCountField["baseMirrors"]) => void;
 }) {
-  const base = num(getCell(row, table, field.baseCol));
-  const extra = num(getCell(row, table, field.perCol ?? field.maxCol ?? ""));
+  const baseRaw = getCell(row, table, field.baseCol).trim();
+  const extraRaw = getCell(row, table, field.perCol ?? field.maxCol ?? "").trim();
+  const base = num(baseRaw || (field.synthetic ? "1" : "0"));
+  const extra = num(extraRaw || (field.synthetic ? "0" : "0"));
   const levels = previewLevels(maxLvl);
   return (
     <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3">
@@ -1013,13 +1017,13 @@ function MissileCountCard({
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         <MiniNum
           label={field.kind === "minmax" ? "최소 (1렙)" : field.kind === "fixed" ? "개수" : "1렙 개수"}
-          value={getCell(row, table, field.baseCol)}
+          value={baseRaw || (field.synthetic ? "1" : baseRaw)}
           onChange={(v) => onChange(field.baseCol, v, field.baseMirrors)}
         />
         {field.perCol ? (
           <MiniNum
             label={field.kind === "every" ? "몇 렙마다 +1" : "레벨당 +"}
-            value={getCell(row, table, field.perCol)}
+            value={extraRaw || (field.synthetic ? "0" : extraRaw)}
             onChange={(v) => onChange(field.perCol!, v, field.perMirrors)}
           />
         ) : null}

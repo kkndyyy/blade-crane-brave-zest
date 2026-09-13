@@ -175,7 +175,7 @@ export function CubeTable() {
           <span className="block text-sm font-medium">형상변환 목걸이 조합 추가</span>
           <span className="mt-0.5 block text-xs text-fg-muted leading-relaxed">
             풀세트 + 형상변환보석 10개 + 매직/레어 목걸이 → 해당 세트 옵션이 붙은 목걸이.
-            시곤·불멸의 왕·파괴된 디아블로(6피스)는 재료 칸이 가득 차서 빠집니다.
+            시곤·불멸의 왕·파괴된 디아블로는 재료 종류가 7칸이라 보석 대신 풀세트+목걸이만 넣습니다.
           </span>
         </span>
       </label>

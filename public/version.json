@@ -1,5 +1,5 @@
 {
-  "version": "1.6.12",
-  "released": "2026-09-11",
-  "notes": "edit skill synergies by picking skills and percent instead of calc formulas"
+  "version": "1.6.13",
+  "released": "2026-09-13",
+  "notes": "edit skill missile/projectile counts from param descriptions"
 }

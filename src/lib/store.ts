@@ -6,6 +6,7 @@ import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, match
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
 import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
 import { applySynergyDesc, applySynergyToSkill, type SynergyKindId, type SynergyTerm } from "./d2/skillSynergy";
+import { applyMissileMirrors, type MissileMirror } from "./d2/skillMissiles";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyAllBeltsSixteen } from "./d2/belts";
 import { ensureElemSkillProperties } from "./d2/itemProps";
@@ -72,6 +73,7 @@ type EditorState = {
   setSkillExtra: (skillIndex: number, extraId: string, enabled: boolean) => void;
   setSkillDescCalc: (descKey: string, calcCol: string, value: string, syncPetmaxFromSkill?: string) => number;
   setSkillSynergy: (skillIndex: number, kind: SynergyKindId, terms: SynergyTerm[], extra?: string) => void;
+  patchSkillWithMirrors: (skillIndex: number, column: string, value: string, mirrors?: MissileMirror[]) => void;
   patchSkillString: (key: string, patch: { koKR?: string; enUS?: string }) => void;
   setVendorStock: (tableKey: "misc" | "armor" | "weapons", rowIndex: number, npc: string, add: boolean) => void;
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
@@ -522,6 +524,17 @@ export const useEditor = create<EditorState>((set, get) => ({
       tables.skilldesc = nextDesc;
     }
     set({ tables, dirty: true });
+  },
+
+  patchSkillWithMirrors: (skillIndex, column, value, mirrors = []) => {
+    const skills = get().tables.skills;
+    if (!skills) return;
+    const next = cloneTable(skills);
+    const row = next.rows[skillIndex];
+    if (!row) return;
+    setCell(row, next, column, value);
+    applyMissileMirrors(next, mirrors, value);
+    set({ tables: { ...get().tables, skills: next }, dirty: true });
   },
 
   patchSkillString: (key, patch) => {

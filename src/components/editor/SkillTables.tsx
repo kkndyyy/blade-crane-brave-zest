@@ -25,6 +25,13 @@ import {
   type SynergyKindId,
   type SynergyTerm,
 } from "@/lib/d2/skillSynergy";
+import {
+  countAtLevel,
+  listMissileCountFields,
+  missileCountParamCols,
+  previewLevels,
+  type MissileCountField,
+} from "@/lib/d2/skillMissiles";
 import { getCell, isDataRow, num, type TsvTable } from "@/lib/d2/tsv";
 import { DataGrid, SearchField } from "./DataGrid";
 import { Button } from "@/components/ui/button";
@@ -90,7 +97,7 @@ export function SkillTable() {
           <div>
             <h2 className="font-display text-2xl tracking-tight">캐릭터 스킬</h2>
             <p className="mt-1 max-w-2xl text-sm text-fg-muted leading-relaxed">
-              직업을 고르고 스킬을 선택하면 피해·시너지·상세 옵션을 수정할 수 있습니다. 시너지는 스킬과 레벨당 %만 고르면 됩니다.
+              직업을 고르고 스킬을 선택하면 피해·투사체 개수·시너지·상세 옵션을 수정할 수 있습니다.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -294,6 +301,7 @@ function SkillDetail({
       </div>
 
       <SkillExtras skillIndex={rowIndex} skillRow={row} skills={table} />
+      <MissileCountPanel table={table} row={row} rowIndex={rowIndex} />
 
       {tab === "damage" ? (
         <div className="mt-4 space-y-5">
@@ -533,7 +541,9 @@ function SkillOptionsPanel({
   const patchSkillString = useEditor((s) => s.patchSkillString);
   const options = listSkillOptions(row, table, skilldesc, strings);
   const bindRanks = findBindRankEditor(row, table, skilldesc, strings);
+  const missileFields = listMissileCountFields(row, table, skilldesc);
   const used = usedParamCols(options);
+  for (const c of missileCountParamCols(missileFields)) used.add(c);
   const skillName = getCell(row, table, "skill");
   const descKey = getCell(row, table, "skilldesc");
   const leftover = PARAM_COLS.filter((c) => {
@@ -943,6 +953,110 @@ function BindRankField({
           구간 추가
         </Button>
       </div>
+    </div>
+  );
+}
+
+function MissileCountPanel({
+  table,
+  row,
+  rowIndex,
+}: {
+  table: TsvTable;
+  row: string[];
+  rowIndex: number;
+}) {
+  const skilldesc = useEditor((s) => s.tables.skilldesc);
+  const patchSkillWithMirrors = useEditor((s) => s.patchSkillWithMirrors);
+  const fields = listMissileCountFields(row, table, skilldesc);
+  if (!fields.length) return null;
+  const maxLvl = num(getCell(row, table, "maxlvl"), 20);
+  return (
+    <div className="mt-4 space-y-3">
+      {fields.map((field) => (
+        <MissileCountCard
+          key={field.id}
+          field={field}
+          table={table}
+          row={row}
+          maxLvl={maxLvl}
+          onChange={(col, val, mirrors) => {
+            patchSkillWithMirrors(rowIndex, col, val, mirrors);
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MissileCountCard({
+  field,
+  table,
+  row,
+  maxLvl,
+  onChange,
+}: {
+  field: MissileCountField;
+  table: TsvTable;
+  row: string[];
+  maxLvl: number;
+  onChange: (col: string, val: string, mirrors: MissileCountField["baseMirrors"]) => void;
+}) {
+  const base = num(getCell(row, table, field.baseCol));
+  const extra = num(getCell(row, table, field.perCol ?? field.maxCol ?? ""));
+  const levels = previewLevels(maxLvl);
+  return (
+    <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-3">
+      <p className="text-sm font-medium">{field.label}</p>
+      <p className="mt-0.5 text-xs text-fg-muted leading-relaxed">{field.hint}</p>
+      {field.cap != null ? <p className="mt-0.5 text-xs text-fg-muted">설명 상한 {field.cap}개</p> : null}
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <MiniNum
+          label={field.kind === "minmax" ? "최소 (1렙)" : field.kind === "fixed" ? "개수" : "1렙 개수"}
+          value={getCell(row, table, field.baseCol)}
+          onChange={(v) => onChange(field.baseCol, v, field.baseMirrors)}
+        />
+        {field.perCol ? (
+          <MiniNum
+            label={field.kind === "every" ? "몇 렙마다 +1" : "레벨당 +"}
+            value={getCell(row, table, field.perCol)}
+            onChange={(v) => onChange(field.perCol!, v, field.perMirrors)}
+          />
+        ) : null}
+        {field.maxCol ? (
+          <MiniNum
+            label="최대"
+            value={getCell(row, table, field.maxCol)}
+            onChange={(v) => onChange(field.maxCol!, v, field.maxMirrors)}
+          />
+        ) : null}
+      </div>
+      {field.kind !== "fixed" ? (
+        <div className="mt-3 overflow-x-auto rounded-md border border-border bg-bg">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="text-xs text-fg-muted">
+                <th className="px-3 py-2 font-medium">스킬 레벨</th>
+                {levels.map((lv) => (
+                  <th key={lv} className="px-3 py-2 font-medium tabular-nums">
+                    {lv}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-3 py-2 text-fg-muted">개수</td>
+                {levels.map((lv) => (
+                  <td key={lv} className="px-3 py-2 tabular-nums text-fg">
+                    {countAtLevel(field, base, extra, lv)}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : null}
     </div>
   );
 }

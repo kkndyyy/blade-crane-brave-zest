@@ -4,9 +4,9 @@ import { parseTsv, serializeTsv, type TsvTable, colIndex, getCell, setCell, num,
 import { StringTable, parseStringJson, serializeStringJson, type StringEntry } from "./d2/strings";
 import { EXCEL, STRINGS, SAMPLE_FILES, tcDifficulty, isRuneTc, isFigureTc, matchesDifficulty } from "./d2/paths";
 import { applySkillExtra, type ExtraId } from "./d2/skillExtras";
-import { applyRelatedPetmax, findSkilldescRow } from "./d2/skillOptions";
+import { applyRelatedPetmax, findSkilldescRow, paramHint } from "./d2/skillOptions";
 import { applySynergyDesc, applySynergyToSkill, type SynergyKindId, type SynergyTerm } from "./d2/skillSynergy";
-import { applyMissileMirrors, enableMissileCount, type MissileMirror } from "./d2/skillMissiles";
+import { applyMissileMirrors, enableMissileCount, isExplosionRadiusDesc, syncExplosionRadiusToMissile, type MissileMirror } from "./d2/skillMissiles";
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyAllBeltsSixteen } from "./d2/belts";
 import { ensureElemSkillProperties } from "./d2/itemProps";
@@ -331,6 +331,14 @@ export const useEditor = create<EditorState>((set, get) => ({
     if (!row) return;
     setCell(row, next, column, value);
     tables[tableKey] = next;
+    if (tableKey === "skills" && /^Param\d+$/i.test(column) && tables.missiles) {
+      const hint = paramHint(row, next, column);
+      if (isExplosionRadiusDesc(hint)) {
+        const missiles = cloneTable(tables.missiles);
+        syncExplosionRadiusToMissile(row, next, missiles, value);
+        tables.missiles = missiles;
+      }
+    }
     set({ tables, dirty: true });
   },
 
@@ -546,13 +554,20 @@ export const useEditor = create<EditorState>((set, get) => ({
     const nextDesc = skilldesc ? cloneTable(skilldesc) : undefined;
     const origText = get().originalTexts[EXCEL.skills];
     const origSkills = origText ? parseTsv(origText) : undefined;
-    const ok = enableMissileCount(next, skillIndex, nextDesc, origSkills);
+    const missiles = get().tables.missiles;
+    const nextMissiles = missiles ? cloneTable(missiles) : undefined;
+    const ok = enableMissileCount(next, skillIndex, nextDesc, origSkills, nextMissiles);
     const row = next.rows[skillIndex];
     if (!row || !ok) return;
     setCell(row, next, column, value);
     applyMissileMirrors(next, mirrors, value);
     set({
-      tables: { ...get().tables, skills: next, ...(nextDesc ? { skilldesc: nextDesc } : {}) },
+      tables: {
+        ...get().tables,
+        skills: next,
+        ...(nextDesc ? { skilldesc: nextDesc } : {}),
+        ...(nextMissiles ? { missiles: nextMissiles } : {}),
+      },
       dirty: true,
     });
   },

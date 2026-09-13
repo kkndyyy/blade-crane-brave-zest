@@ -9,6 +9,7 @@ import {
   isSimpleMissileSkill,
   listMissileCountFields,
   missileCountParamCols,
+  pickCountSlots,
   rewriteParamRefs,
 } from "./skillMissiles.ts";
 
@@ -105,41 +106,57 @@ describe("missile count fields", () => {
     assert.equal(fields[0]!.baseCol, "Param1");
   });
 
-  it("offers a count editor for fire ball and keeps explosion radius", () => {
+  it("keeps fire ball explosion on Param1 and puts count on free params", () => {
     const skills = table([
-      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tcalc1\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tParam4\t*Param4 Description\tParam8\tskilldesc",
-      "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t4\tExplosion Radius\t\t\t\t\t\t14\tfireball",
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tsrvmissileb\tcltmissilea\tcltmissileb\tcalc1\t*calc1 desc\tcalc2\t*calc2 desc\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\t*Param3 Description\tParam4\t*Param4 Description\tParam8\tskilldesc",
+      "Fire Ball\t\t\tfireball\tfireball\t\t\t\t\tpar1\tExplosion Radius\t\t\t4\tExplosion Radius\t\t\t\t\t\t\t14\tfire ball",
     ]);
-    assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), true);
-    assert.equal(listMissileCountFields(skills.rows[0]!, skills)[0]!.synthetic, true);
+    const missiles = table([
+      "Missile\t*ID\tsHitPar1\t*server hit param1 desc\tSkill",
+      'fireball\t62\t0\t"Explosion Radius (If 0, then use Skill Calc1)"\tFire Ball',
+    ]);
+    const slots = pickCountSlots(skills.rows[0]!, skills);
+    assert.deepEqual(slots, { baseN: 2, perN: 4, actN: 3 });
+    assert.equal(listMissileCountFields(skills.rows[0]!, skills)[0]!.baseCol, "Param2");
     assert.equal(
-      countInputValue(listMissileCountFields(skills.rows[0]!, skills)[0]!, skills.rows[0]!, skills, "Param1"),
+      countInputValue(listMissileCountFields(skills.rows[0]!, skills)[0]!, skills.rows[0]!, skills, "Param2"),
       "1",
     );
     const skilldesc = table([
       "skilldesc\tdescline1\tdesctexta1\tdesccalca1\tdsc2line1\tdsc2texta1\tdsc2calca1\tdescline2\tdesctexta2\tdesccalca2",
-      "fireball\t75\tStrSkill5\tenma\t36\tStrSkillRadiusSingular\tpar1*2\t\t\t",
+      "fire ball\t75\tStrSkill5\tenma\t36\tStrSkillRadiusSingular\tpar1*2\t\t\t",
     ]);
-    assert.equal(enableMissileCount(skills, 0, skilldesc), true);
+    assert.equal(enableMissileCount(skills, 0, skilldesc, undefined, missiles), true);
     const row = skills.rows[0]!;
-    assert.equal(getCell(row, skills, "Param1"), "1");
-    assert.equal(getCell(row, skills, "Param4"), "4");
-    assert.match(getCell(row, skills, "*Param4 Description"), /Explosion Radius/i);
-    assert.equal(getCell(row, skills, "calc1"), "par4");
-    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "dsc2calca1"), "par4*2");
+    assert.equal(getCell(row, skills, "Param1"), "4");
+    assert.match(getCell(row, skills, "*Param1 Description"), /Explosion Radius/i);
+    assert.equal(getCell(row, skills, "Param2"), "1");
+    assert.equal(getCell(row, skills, "Param4"), "0");
+    assert.equal(getCell(row, skills, "calc1"), "min(24,ln24)");
+    assert.equal(getCell(row, skills, "calc2"), "par3");
+    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "dsc2calca1"), "par1*2");
     assert.equal(getCell(row, skills, "srvdofunc"), "8");
-    assert.equal(getCell(row, skills, "srvmissilea"), "fireball");
+    assert.equal(getCell(row, skills, "srvmissilea"), "fireballp");
+    assert.equal(getCell(row, skills, "srvmissileb"), "fireballp");
+    const clone = missiles.rows.find((r) => getCell(r, missiles, "Missile") === "fireballp");
+    assert.ok(clone);
+    assert.equal(getCell(clone!, missiles, "sHitPar1"), "4");
+    assert.equal(getCell(missiles.rows[0]!, missiles, "sHitPar1"), "0");
   });
 
-  it("restores original explosion radius if Param1 was overwritten as count", () => {
+  it("restores stolen explosion radius back onto Param1", () => {
     const header =
-      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tcalc1\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tParam4\t*Param4 Description\tParam8\tskilldesc";
-    const orig = table([header, "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t4\tExplosion Radius\t\t\t\t\t\t14\tfire ball"]);
-    const skills = table([header, "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t10\tExplosion Radius\t\t\t\t\t\t14\tfire ball"]);
-    assert.equal(enableMissileCount(skills, 0, undefined, orig), true);
-    assert.equal(getCell(skills.rows[0]!, skills, "Param4"), "4");
-    assert.equal(getCell(skills.rows[0]!, skills, "calc1"), "par4");
-    assert.equal(getCell(skills.rows[0]!, skills, "Param1"), "1");
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tsrvmissileb\tcltmissilea\tcalc1\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tParam4\t*Param4 Description\tParam8\tskilldesc";
+    const orig = table([header, "Fire Ball\t\t\tfireball\tfireball\t\t\t\tpar1\t4\tExplosion Radius\t\t\t\t\t\t14\tfire ball"]);
+    const skills = table([header, "Fire Ball\t8\t17\t\t\tfireball\t\t\tpar4\t1\t# of Missiles created baseline\t0\t# of Missiles created per level\t1\t4\tExplosion Radius\t14\tfire ball"]);
+    const missiles = table([
+      "Missile\t*ID\tsHitPar1\tSkill",
+      "fireball\t62\t0\tFire Ball",
+    ]);
+    assert.equal(enableMissileCount(skills, 0, undefined, orig, missiles), true);
+    assert.equal(getCell(skills.rows[0]!, skills, "Param1"), "4");
+    assert.match(getCell(skills.rows[0]!, skills, "*Param1 Description"), /Explosion Radius/i);
+    assert.match(getCell(skills.rows[0]!, skills, "calc1"), /ln\d{2}/);
   });
 
   it("rewrites ln12 when freeze params move", () => {
@@ -151,8 +168,8 @@ describe("missile count fields", () => {
 
   it("enables func-8 multi-missile and writes count params", () => {
     const skills = table([
-      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tskilldesc",
-      "Fire Bolt\t\t\tfirebolt\tfirebolt\t\t\t\t\t\t\t\tfirebolt",
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tsrvmissileb\tcltmissilea\tcltmissileb\tcalc1\tcalc2\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tskilldesc",
+      "Fire Bolt\t\t\tfirebolt\tfirebolt\t\t\t\t\t\t\t\t\t\t\t\tfirebolt",
     ]);
     const skilldesc = table([
       "skilldesc\tdescline1\tdesctexta1\tdesccalca1\tdescline2\tdesctexta2\tdesccalca2",
@@ -165,12 +182,13 @@ describe("missile count fields", () => {
     assert.equal(getCell(row, skills, "srvmissile"), "");
     assert.equal(getCell(row, skills, "srvmissilea"), "firebolt");
     assert.equal(getCell(row, skills, "cltmissilea"), "firebolt");
+    assert.equal(getCell(row, skills, "srvmissileb"), "firebolt");
     assert.equal(getCell(row, skills, "Param1"), "1");
     assert.equal(getCell(row, skills, "Param2"), "0");
     assert.equal(getCell(row, skills, "Param3"), "1");
     assert.match(getCell(row, skills, "*Param1 Description"), /Missiles created baseline/i);
-    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "descline2"), "74");
-    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "desccalca2"), "ln12");
+    assert.equal(getCell(row, skills, "calc1"), "min(24,ln12)");
+    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "desccalca2"), "min(24,ln12)");
     const fields = listMissileCountFields(row, skills, skilldesc);
     assert.equal(fields[0]!.synthetic, undefined);
     assert.equal(fields[0]!.kind, "ln");

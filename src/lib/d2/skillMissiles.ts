@@ -128,79 +128,205 @@ function rewriteTableFormulas(table: TsvTable, row: string[], from: number, to: 
   }
 }
 
-function findFreeParam(row: string[], skills: TsvTable, reserved: Set<number>): number | null {
-  for (let n = 4; n <= 16; n++) {
+function findFreeParam(row: string[], skills: TsvTable, reserved: Set<number>, start = 1): number | null {
+  for (let n = start; n <= 16; n++) {
     if (reserved.has(n)) continue;
     if (paramFree(row, skills, n)) return n;
   }
   return null;
 }
 
-function moveParamSlot(
-  row: string[],
-  skills: TsvTable,
-  from: number,
-  to: number,
-  skilldesc?: TsvTable,
-  origRow?: string[],
-  origSkills?: TsvTable,
-) {
-  const srcTable = origSkills ?? skills;
-  const srcRow = origRow ?? row;
-  setCell(row, skills, `Param${to}`, getCell(srcRow, srcTable, `Param${from}`));
-  setCell(row, skills, `Param${from}`, "");
-  const desc = paramHint(srcRow, srcTable, `Param${from}`) || paramHint(row, skills, `Param${from}`);
-  if (desc) {
-    setDesc(row, skills, to, desc);
-    for (const col of [`*Param${from} Description`, `*Param${from} Description2`, `*Param${from} desc`]) {
-      if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
-        setCell(row, skills, col, "");
-        break;
-      }
-    }
-  }
-  rewriteTableFormulas(skills, row, from, to);
-  const descKey = getCell(row, skills, "skilldesc").trim();
-  if (skilldesc && descKey) {
-    const found = skilldesc.rows.find(
-      (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
-    );
-    if (found) rewriteTableFormulas(skilldesc, found, from, to);
-  }
-}
-
 function countDesc(desc: string): boolean {
   return classify(desc) != null;
 }
 
-function relocateForCountParams(
+export function isExplosionRadiusDesc(desc: string): boolean {
+  return /explosion radius|radius of impact/i.test(desc);
+}
+
+function forceDesc(row: string[], skills: TsvTable, n: number, text: string) {
+  for (const col of [`*Param${n} Description`, `*Param${n} Description2`, `*Param${n} desc`]) {
+    if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
+      setCell(row, skills, col, text);
+      return;
+    }
+  }
+}
+
+function setCalcDesc(row: string[], skills: TsvTable, calc: string, text: string) {
+  for (const col of [`*${calc} desc`, `*${calc} Desc`, `*${calc} Description`]) {
+    if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
+      setCell(row, skills, col, text);
+      return;
+    }
+  }
+}
+
+function calcLooksLikeCount(expr: string): boolean {
+  return /ln\d{2}/i.test(expr.replace(/\s+/g, ""));
+}
+
+export type CountSlots = { baseN: number; perN: number; actN: number };
+
+export function pickCountSlots(row: string[], skills: TsvTable): CountSlots | null {
+  const reserved = new Set<number>();
+  for (let n = 1; n <= 16; n++) {
+    const desc = paramHint(row, skills, `Param${n}`);
+    if (countDesc(desc)) continue;
+    if (/activation frame/i.test(desc)) continue;
+    if (!paramFree(row, skills, n)) reserved.add(n);
+  }
+  let actN: number | null = null;
+  if (!reserved.has(3)) actN = 3;
+  else actN = findFreeParam(row, skills, reserved);
+  if (actN == null) return null;
+  reserved.add(actN);
+
+  let baseN: number | null = null;
+  let perN: number | null = null;
+  for (let n = 1; n <= 16; n++) {
+    const kind = classify(paramHint(row, skills, `Param${n}`));
+    if (kind === "base" && baseN == null) baseN = n;
+    if (kind === "per" && perN == null) perN = n;
+  }
+  if (baseN != null) reserved.add(baseN);
+  if (perN != null) reserved.add(perN);
+  if (baseN == null) {
+    baseN = findFreeParam(row, skills, reserved);
+    if (baseN == null) return null;
+    reserved.add(baseN);
+  }
+  if (perN == null) {
+    perN = findFreeParam(row, skills, reserved);
+    if (perN == null) return null;
+  }
+  return { baseN, perN, actN };
+}
+
+/** Undo v1.6.15/16 stealing Param1 (count) and parking radius on Param4+. */
+export function restoreExplosionRadiusParam(
   row: string[],
   skills: TsvTable,
   skilldesc?: TsvTable,
   origRow?: string[],
   origSkills?: TsvTable,
 ) {
-  const reserved = new Set<number>([1, 2, 3]);
-  for (const n of [1, 2, 3]) {
-    const liveDesc = paramHint(row, skills, `Param${n}`);
-    const origDesc = origRow && origSkills ? paramHint(origRow, origSkills, `Param${n}`) : "";
-    const desc = liveDesc || origDesc;
-    if (n <= 2 && countDesc(liveDesc || desc)) continue;
-    if (n === 3 && /activation frame/i.test(liveDesc || desc)) continue;
-    const otherUse = descLooksUsed(desc) && !countDesc(desc);
-    if (!otherUse && paramFree(row, skills, n)) continue;
-    if (!otherUse) continue;
-    const dest = findFreeParam(row, skills, reserved);
-    if (dest == null) continue;
-    reserved.add(dest);
-    moveParamSlot(row, skills, n, dest, skilldesc, origRow, origSkills);
+  const origDesc = origRow && origSkills ? paramHint(origRow, origSkills, "Param1") : "";
+  const origVal = origRow && origSkills ? getCell(origRow, origSkills, "Param1").trim() : "";
+  const liveDesc = paramHint(row, skills, "Param1");
+  if (isExplosionRadiusDesc(liveDesc)) {
+    if (origVal && isExplosionRadiusDesc(origDesc)) setCell(row, skills, "Param1", origVal);
+    return;
+  }
+  for (let n = 2; n <= 16; n++) {
+    if (!isExplosionRadiusDesc(paramHint(row, skills, `Param${n}`))) continue;
+    const radius = origVal && isExplosionRadiusDesc(origDesc) ? origVal : getCell(row, skills, `Param${n}`);
+    setCell(row, skills, "Param1", radius);
+    forceDesc(row, skills, 1, "Explosion Radius");
+    setCell(row, skills, `Param${n}`, "");
+    forceDesc(row, skills, n, "");
+    rewriteTableFormulas(skills, row, n, 1);
+    const descKey = getCell(row, skills, "skilldesc").trim();
+    if (skilldesc && descKey) {
+      const found = skilldesc.rows.find(
+        (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
+      );
+      if (found) rewriteTableFormulas(skilldesc, found, n, 1);
+    }
+    return;
+  }
+}
+
+function findMissileRow(missiles: TsvTable, name: string): string[] | undefined {
+  const want = name.trim().toLowerCase();
+  if (!want) return undefined;
+  return missiles.rows.find((r) => isDataRow(r) && getCell(r, missiles, "Missile").toLowerCase() === want);
+}
+
+function nextMissileNumericId(missiles: TsvTable): number {
+  let max = 0;
+  for (const row of missiles.rows) {
+    const n = num(getCell(row, missiles, "*ID"));
+    if (n > max) max = n;
+  }
+  return max + 1;
+}
+
+function uniqueMissileName(missiles: TsvTable, base: string): string {
+  const stem = base.replace(/[^A-Za-z0-9]/g, "").slice(0, 28) || "missile";
+  const tryName = (n: string) => !findMissileRow(missiles, n);
+  if (tryName(`${stem}p`)) return `${stem}p`;
+  for (let i = 2; i < 50; i++) {
+    if (tryName(`${stem}p${i}`)) return `${stem}p${i}`;
+  }
+  return `${stem}p${nextMissileNumericId(missiles)}`;
+}
+
+/** Clone a missile that reads skill calc1 as radius, pin sHitPar1, return the name to fire. */
+export function pinMissileExplosion(
+  missiles: TsvTable | undefined,
+  sourceName: string,
+  radius: string,
+  skillName: string,
+): string | null {
+  if (!missiles || !sourceName.trim()) return null;
+  const src = findMissileRow(missiles, sourceName);
+  if (!src) return null;
+  const hit = getCell(src, missiles, "sHitPar1").trim();
+  const usesSkillCalc = !hit || hit === "0";
+  const alreadyOurs =
+    getCell(src, missiles, "Skill").trim().toLowerCase() === skillName.trim().toLowerCase() &&
+    /p\d*$/i.test(getCell(src, missiles, "Missile"));
+  if (!usesSkillCalc && alreadyOurs) {
+    setCell(src, missiles, "sHitPar1", radius || "4");
+    return getCell(src, missiles, "Missile");
+  }
+  if (!usesSkillCalc) return sourceName;
+  const cloneName = uniqueMissileName(missiles, sourceName);
+  const copy = [...src];
+  while (copy.length < missiles.headers.length) copy.push("");
+  missiles.rows.push(copy);
+  setCell(copy, missiles, "Missile", cloneName);
+  setCell(copy, missiles, "*ID", String(nextMissileNumericId(missiles)));
+  setCell(copy, missiles, "sHitPar1", radius || "4");
+  if (skillName.trim()) setCell(copy, missiles, "Skill", skillName);
+  return cloneName;
+}
+
+export function syncExplosionRadiusToMissile(
+  skillRow: string[],
+  skills: TsvTable,
+  missiles: TsvTable,
+  radius: string,
+) {
+  const names = ["srvmissile", "srvmissilea", "srvmissileb", "cltmissile", "cltmissilea"].map((c) =>
+    getCell(skillRow, skills, c).trim(),
+  );
+  const seen = new Set<string>();
+  for (const name of names) {
+    if (!name || seen.has(name.toLowerCase())) continue;
+    seen.add(name.toLowerCase());
+    const row = findMissileRow(missiles, name);
+    if (!row) continue;
+    const hit = getCell(row, missiles, "sHitPar1").trim();
+    if (!hit || hit === "0") continue;
+    setCell(row, missiles, "sHitPar1", radius);
+  }
+}
+
+function assignMultiMissiles(row: string[], skills: TsvTable, name: string) {
+  setCell(row, skills, "srvmissile", "");
+  setCell(row, skills, "cltmissile", "");
+  for (const col of ["srvmissilea", "srvmissileb", "cltmissilea", "cltmissileb"]) {
+    if (!skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) continue;
+    setCell(row, skills, col, name);
   }
 }
 
 export function isMissileCountEnabled(row: string[], skills: TsvTable): boolean {
   const func = getCell(row, skills, "srvdofunc").trim();
   if (COUNT_FUNCS.has(func)) return true;
-  return countDesc(paramHint(row, skills, "Param1"));
+  return countDesc(paramHint(row, skills, "Param1")) || countDesc(paramHint(row, skills, "Param2"));
 }
 
 export function countInputValue(field: MissileCountField, row: string[], skills: TsvTable, col: string): string {
@@ -220,47 +346,50 @@ function syntheticMissileCountField(
   skills: TsvTable,
   skilldesc?: TsvTable,
 ): MissileCountField | null {
-  if (!isSimpleMissileSkill(row, skills)) return null;
+  if (!isSimpleMissileSkill(row, skills) && !COUNT_FUNCS.has(getCell(row, skills, "srvdofunc").trim())) return null;
+  const slots = pickCountSlots(row, skills);
+  if (!slots) return null;
   return {
     id: "synthetic-ln",
     kind: "ln",
     label: "투사체 개수",
-    hint: "원래 1발입니다. 개수를 바꾸면 여러 발을 부채꼴로 발사합니다. 폭발 반경처럼 원래 쓰던 값은 다른 칸으로 옮겨 둡니다.",
-    baseCol: "Param1",
-    perCol: "Param2",
-    cap: parseCapFromDesc(skills, row, skilldesc),
+    hint: "원래 1발입니다. 개수를 바꾸면 여러 발을 부채꼴로 발사합니다. 폭발 반경은 Param1에 그대로 둡니다.",
+    baseCol: `Param${slots.baseN}`,
+    perCol: `Param${slots.perN}`,
+    cap: parseCapFromDesc(skills, row, skilldesc) ?? 24,
     synthetic: true,
     ...emptyMirrors(),
   };
 }
 
-function moveMissileCol(row: string[], skills: TsvTable, from: string, to: string) {
-  const src = getCell(row, skills, from).trim();
-  if (!src) return;
-  if (!getCell(row, skills, to).trim()) setCell(row, skills, to, src);
-  setCell(row, skills, from, "");
-}
-
 function setDesc(row: string[], skills: TsvTable, n: number, text: string) {
   const cur = paramHint(row, skills, `Param${n}`);
-  if (descLooksUsed(cur)) return;
-  for (const col of [`*Param${n} Description`, `*Param${n} Description2`, `*Param${n} desc`]) {
-    if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
-      setCell(row, skills, col, text);
-      return;
-    }
-  }
+  if (descLooksUsed(cur) && !countDesc(cur) && !/activation frame/i.test(cur)) return;
+  forceDesc(row, skills, n, text);
 }
 
-export function applyMissileCountTooltip(skilldesc: TsvTable | undefined, descKey: string): boolean {
+export function applyMissileCountTooltip(
+  skilldesc: TsvTable | undefined,
+  descKey: string,
+  formula = "ln12",
+): boolean {
   if (!skilldesc || !descKey.trim()) return false;
   const found = skilldesc.rows.find(
     (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
   );
   if (!found) return false;
+  const compact = formula.replace(/\s+/g, "");
   for (let i = 1; i <= 6; i++) {
-    const calc = getCell(found, skilldesc, `desccalca${i}`) + getCell(found, skilldesc, `dsc2calca${i}`);
-    if (/ln12/i.test(calc.replace(/\s+/g, ""))) return false;
+    const calc = (getCell(found, skilldesc, `desccalca${i}`) + getCell(found, skilldesc, `dsc2calca${i}`)).replace(
+      /\s+/g,
+      "",
+    );
+    if (
+      calc.toLowerCase().includes(compact.toLowerCase()) ||
+      (/ln\d{2}/i.test(calc) && /strskill27/i.test(getCell(found, skilldesc, `desctexta${i}`)))
+    ) {
+      return false;
+    }
   }
   for (let i = 1; i <= 6; i++) {
     const line = getCell(found, skilldesc, `descline${i}`).trim();
@@ -269,40 +398,54 @@ export function applyMissileCountTooltip(skilldesc: TsvTable | undefined, descKe
     if (line || texta || calca) continue;
     setCell(found, skilldesc, `descline${i}`, "74");
     setCell(found, skilldesc, `desctexta${i}`, "StrSkill27");
-    setCell(found, skilldesc, `desccalca${i}`, "ln12");
+    setCell(found, skilldesc, `desccalca${i}`, formula);
     return true;
   }
   return false;
 }
 
-/** Turn a 1-missile skill into func-8 multi-missile so Param1/Param2 control count. */
 export function enableMissileCount(
   skills: TsvTable,
   rowIndex: number,
   skilldesc?: TsvTable,
   origSkills?: TsvTable,
+  missiles?: TsvTable,
 ): boolean {
   const row = skills.rows[rowIndex];
   if (!row) return false;
-  const func = getCell(row, skills, "srvdofunc").trim();
-  if (COUNT_FUNCS.has(func)) {
-    if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");
-    return true;
-  }
-  if (!isSimpleMissileSkill(row, skills)) return false;
   const origRow = origSkills?.rows[rowIndex];
-  relocateForCountParams(row, skills, skilldesc, origRow, origSkills);
-  moveMissileCol(row, skills, "srvmissile", "srvmissilea");
-  moveMissileCol(row, skills, "cltmissile", "cltmissilea");
+  restoreExplosionRadiusParam(row, skills, skilldesc, origRow, origSkills);
+  const func = getCell(row, skills, "srvdofunc").trim();
+  if (!COUNT_FUNCS.has(func) && !isSimpleMissileSkill(row, skills)) return false;
+  const slots = pickCountSlots(row, skills);
+  if (!slots) return false;
+  const srcMissile =
+    getCell(row, skills, "srvmissile").trim() ||
+    getCell(row, skills, "srvmissilea").trim() ||
+    getCell(row, skills, "cltmissile").trim();
+  const radius = getCell(row, skills, "Param1").trim() || "4";
+  const missileName =
+    pinMissileExplosion(missiles, srcMissile, radius, getCell(row, skills, "skill")) || srcMissile;
+  if (missileName) assignMultiMissiles(row, skills, missileName);
   setCell(row, skills, "srvdofunc", "8");
   setCell(row, skills, "cltdofunc", "17");
-  if (!getCell(row, skills, "Param3").trim()) setCell(row, skills, "Param3", "1");
-  setDesc(row, skills, 3, "Missile Activation Frame");
-  setDesc(row, skills, 1, "# of Missiles created baseline");
-  setDesc(row, skills, 2, "# of Missiles created per level");
-  if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");
-  if (!getCell(row, skills, "Param2").trim()) setCell(row, skills, "Param2", "0");
-  applyMissileCountTooltip(skilldesc, getCell(row, skills, "skilldesc"));
+  if (!getCell(row, skills, `Param${slots.actN}`).trim()) setCell(row, skills, `Param${slots.actN}`, "1");
+  if (!getCell(row, skills, `Param${slots.baseN}`).trim()) setCell(row, skills, `Param${slots.baseN}`, "1");
+  if (!getCell(row, skills, `Param${slots.perN}`).trim()) setCell(row, skills, `Param${slots.perN}`, "0");
+  setDesc(row, skills, slots.baseN, "# of Missiles created baseline");
+  setDesc(row, skills, slots.perN, "# of Missiles created per level");
+  setDesc(row, skills, slots.actN, "Missile Activation Frame");
+  const ln = `ln${slots.baseN}${slots.perN}`;
+  const countCalc = `min(24,${ln})`;
+  if (!calcLooksLikeCount(getCell(row, skills, "calc1"))) {
+    setCell(row, skills, "calc1", countCalc);
+    setCalcDesc(row, skills, "calc1", "# missiles");
+  }
+  if (!getCell(row, skills, "calc2").trim()) {
+    setCell(row, skills, "calc2", `par${slots.actN}`);
+    setCalcDesc(row, skills, "calc2", "activation frame");
+  }
+  applyMissileCountTooltip(skilldesc, getCell(row, skills, "skilldesc"), countCalc);
   return true;
 }
 

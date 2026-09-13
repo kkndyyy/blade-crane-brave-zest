@@ -1,5 +1,5 @@
 {
-  "version": "1.6.20",
+  "version": "1.6.21",
   "released": "2026-09-13",
-  "notes": "Fire Ball count uses Charged Bolt Param1/Param2 + ln12; explosion stays on the missile"
+  "notes": "Cube checkbox: full set + transmute gems x10 + magic/rare amulet → set-bonus amulet"
 }

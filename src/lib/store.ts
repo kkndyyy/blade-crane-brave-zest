@@ -10,7 +10,7 @@ import { applyMissileMirrors, enableMissileCount, isExplosionRadiusDesc, syncExp
 import { applyAllNpcsSellAllPotions, applyVendorStock, type VendorTableKey } from "./d2/vendors";
 import { applyAllBeltsSixteen } from "./d2/belts";
 import { ensureElemSkillProperties } from "./d2/itemProps";
-import { applyRuneOpmSplitDouble, emptyCubeRow } from "./d2/cubeRecipes";
+import { applyRuneOpmSplitDouble, applySetAmuletTransmute, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
 import { applyRuneDropRateScale, restoreRuneDropRate } from "./d2/runeDrops";
 import { applyVanillaItemRatio, applyVanillaTcQuality } from "./d2/vanillaDrops";
@@ -80,6 +80,7 @@ type EditorState = {
   setAllNpcsSellAllPotions: (enabled: boolean) => void;
   setAllBeltsSixteen: (enabled: boolean) => void;
   setRuneOpmSplitDouble: (enabled: boolean) => void;
+  setSetAmuletTransmute: (enabled: boolean) => number;
   addCubeRecipe: () => number;
   duplicateCubeRecipe: (rowIndex: number) => number;
   setHireableSkillIcons: (enabled: boolean) => void;
@@ -622,6 +623,41 @@ export const useEditor = create<EditorState>((set, get) => ({
     const next = cloneTable(table);
     applyRuneOpmSplitDouble(next, orig, enabled);
     set({ tables: { ...get().tables, cubemain: next }, dirty: true });
+  },
+
+  setSetAmuletTransmute: (enabled) => {
+    const cube = get().tables.cubemain;
+    if (!cube) return 0;
+    const uniqueItems = get().tables.uniqueItems;
+    if (enabled && !uniqueItems) return 0;
+    const nextCube = cloneTable(cube);
+    const nextUniques = uniqueItems ? cloneTable(uniqueItems) : undefined;
+    const result = applySetAmuletTransmute(nextCube, nextUniques, enabled, get().stringFiles[STRINGS.itemNames]);
+    const files = { ...get().stringFiles };
+    const path = STRINGS.itemNames;
+    let names = [...(files[path] ?? [])];
+    if (enabled) {
+      for (const n of result.names) {
+        const i = names.findIndex((e) => e.Key === n.key);
+        if (i >= 0) names[i] = { ...names[i], ...n };
+        else names.push(n);
+      }
+    } else {
+      const drop = new Set(names.filter((e) => e.Key?.startsWith("AmuSet")).map((e) => e.Key));
+      names = names.filter((e) => !e.Key || !drop.has(e.Key));
+    }
+    files[path] = names;
+    set({
+      tables: {
+        ...get().tables,
+        cubemain: nextCube,
+        ...(nextUniques ? { uniqueItems: nextUniques } : {}),
+      },
+      stringFiles: files,
+      strings: stringsFromFiles(files),
+      dirty: true,
+    });
+    return result.recipes;
   },
 
   addCubeRecipe: () => {

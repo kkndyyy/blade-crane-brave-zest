@@ -11,6 +11,7 @@ import {
   countedInputs,
   cubePartLabel,
   formatCubeField,
+  isSetAmuletTransmuteEnabled,
   parseCubeField,
   recipeKind,
   recipeSummary,
@@ -41,6 +42,7 @@ function buildNameMap(
   armor?: TsvTable,
   weapons?: TsvTable,
   itemTypes?: TsvTable,
+  uniqueItems?: TsvTable,
 ): Map<string, string> {
   const names = new Map<string, string>();
   const add = (code: string, key: string, fallback: string) => {
@@ -65,12 +67,20 @@ function buildNameMap(
       if (code && type && !names.has(code.toLowerCase())) names.set(code.toLowerCase(), type);
     }
   }
+  if (uniqueItems) {
+    for (const row of uniqueItems.rows) {
+      if (!isDataRow(row)) continue;
+      const index = getCell(row, uniqueItems, "index");
+      add(index, index, getCell(row, uniqueItems, "*ItemName"));
+    }
+  }
   for (const [k, v] of Object.entries(CUBE_FLAG_KO)) names.set(k, v);
   return names;
 }
 
 export function CubeTable() {
   const table = useEditor((s) => s.tables.cubemain);
+  const uniqueItems = useEditor((s) => s.tables.uniqueItems);
   const misc = useEditor((s) => s.tables.misc);
   const armor = useEditor((s) => s.tables.armor);
   const weapons = useEditor((s) => s.tables.weapons);
@@ -82,12 +92,13 @@ export function CubeTable() {
   const resetTable = useEditor((s) => s.resetTable);
   const addCubeRecipe = useEditor((s) => s.addCubeRecipe);
   const duplicateCubeRecipe = useEditor((s) => s.duplicateCubeRecipe);
+  const setSetAmuletTransmute = useEditor((s) => s.setSetAmuletTransmute);
   const [selected, setSelected] = useState<number | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
 
   const names = useMemo(
-    () => buildNameMap(strings, misc, armor, weapons, itemTypes),
-    [strings, misc, armor, weapons, itemTypes],
+    () => buildNameMap(strings, misc, armor, weapons, itemTypes, uniqueItems),
+    [strings, misc, armor, weapons, itemTypes, uniqueItems],
   );
 
   if (!table) {
@@ -139,6 +150,35 @@ export function CubeTable() {
           ))}
         </div>
       </header>
+
+      <label className="flex items-start gap-3 rounded-xl border border-border bg-bg-elevated px-4 py-3">
+        <input
+          type="checkbox"
+          className="mt-1 size-4 accent-primary"
+          disabled={!uniqueItems}
+          checked={isSetAmuletTransmuteEnabled(table)}
+          onChange={(e) => {
+            const on = e.target.checked;
+            const n = setSetAmuletTransmute(on);
+            if (on && n === 0) {
+              toast.error("유니크 테이블이 없어 목걸이 조합을 만들 수 없습니다");
+              return;
+            }
+            toast.success(
+              on
+                ? `형상변환 목걸이 조합 ${n}개를 추가했습니다`
+                : "형상변환 목걸이 조합을 제거했습니다",
+            );
+          }}
+        />
+        <span>
+          <span className="block text-sm font-medium">형상변환 목걸이 조합 추가</span>
+          <span className="mt-0.5 block text-xs text-fg-muted leading-relaxed">
+            풀세트 + 형상변환보석 10개 + 매직/레어 목걸이 → 해당 세트 옵션이 붙은 목걸이.
+            시곤·불멸의 왕·파괴된 디아블로(6피스)는 재료 칸이 가득 차서 빠집니다.
+          </span>
+        </span>
+      </label>
 
       {selectedRow && isDataRow(selectedRow) ? (
         <CubeDetail

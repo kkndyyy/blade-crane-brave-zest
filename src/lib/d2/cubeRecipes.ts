@@ -139,6 +139,7 @@ export const CUBE_TYPE_KO: Record<string, string> = {
   phlm: "프리나 헬름",
   ring: "반지",
   amul: "목걸이",
+  amu: "목걸이",
   char: "참",
   gem: "보석",
   gem0: "깨진 보석",
@@ -315,5 +316,156 @@ export function emptyCubeRow(table: TsvTable): string[] {
   setCell(row, table, "version", "100");
   setCell(row, table, "numinputs", "1");
   return row;
+}
+
+export const SET_AMULET_DESC_PREFIX = "형상변환 목걸이";
+export const SET_AMULET_UNIQUE_PREFIX = "Amu";
+
+function cloneRow(row: string[], table: TsvTable): string[] {
+  return table.headers.map((_, i) => row[i] ?? "");
+}
+
+function outputCode(row: string[], table: TsvTable): string {
+  return parseCubeField(getCell(row, table, "output")).tokens[0] ?? "";
+}
+
+function hasTx4x10(row: string[], table: TsvTable): boolean {
+  for (const col of INPUT_COLS) {
+    const p = parseCubeField(getCell(row, table, col));
+    if (p.tokens.some((t) => t.toLowerCase() === "tx4") && p.qty === 10) return true;
+  }
+  return false;
+}
+
+function firstEmptyInputCol(row: string[], table: TsvTable): (typeof INPUT_COLS)[number] | null {
+  for (const col of INPUT_COLS) {
+    if (!parseCubeField(getCell(row, table, col)).tokens.length) return col;
+  }
+  return null;
+}
+
+/** Full-set + tx4×10 → Set* ring. The x10 (tx6) compact copies are skipped. */
+export function isSetTransmuteSource(row: string[], table: TsvTable): boolean {
+  if (!isDataRow(row)) return false;
+  const desc = getCell(row, table, "description").trim();
+  if (!desc || /x10/i.test(desc) || desc.startsWith(SET_AMULET_DESC_PREFIX)) return false;
+  const out = outputCode(row, table);
+  if (!/^Set/i.test(out)) return false;
+  return hasTx4x10(row, table);
+}
+
+export function isSetAmuletTransmuteRecipe(row: string[], table: TsvTable): boolean {
+  return isDataRow(row) && getCell(row, table, "description").startsWith(SET_AMULET_DESC_PREFIX);
+}
+
+export function isSetAmuletUnique(row: string[], table: TsvTable): boolean {
+  if (!isDataRow(row)) return false;
+  const index = getCell(row, table, "index").trim();
+  return index.startsWith(SET_AMULET_UNIQUE_PREFIX) && index.slice(SET_AMULET_UNIQUE_PREFIX.length).startsWith("Set");
+}
+
+export function isSetAmuletTransmuteEnabled(cube?: TsvTable): boolean {
+  if (!cube) return false;
+  return cube.rows.some((row) => isSetAmuletTransmuteRecipe(row, cube));
+}
+
+function nextUniqueId(uniques: TsvTable): number {
+  let max = 0;
+  for (const row of uniques.rows) {
+    if (!isDataRow(row)) continue;
+    const n = Number(getCell(row, uniques, "*ID"));
+    if (Number.isFinite(n) && n > max) max = n;
+  }
+  return max + 1;
+}
+
+function findUnique(uniques: TsvTable, index: string): string[] | undefined {
+  const want = index.trim().toLowerCase();
+  return uniques.rows.find((r) => isDataRow(r) && getCell(r, uniques, "index").trim().toLowerCase() === want);
+}
+
+export type SetAmuletString = { key: string; enUS: string; koKR: string };
+
+type NameEntry = { Key?: string; enUS?: string; koKR?: string };
+
+function findName(entries: NameEntry[] | undefined, key: string): NameEntry | undefined {
+  if (!entries) return undefined;
+  const want = key.trim().toLowerCase();
+  return entries.find((e) => (e.Key || "").trim().toLowerCase() === want);
+}
+
+function withSuffix(text: string, suffix: string): string {
+  const t = text.trimEnd();
+  const s = suffix.trim();
+  if (!t) return s;
+  if (t.endsWith(s)) return t;
+  return `${t} ${s}`;
+}
+
+export function applySetAmuletTransmute(
+  cube: TsvTable,
+  uniques: TsvTable | undefined,
+  enabled: boolean,
+  existingNames?: NameEntry[],
+): { recipes: number; uniques: number; names: SetAmuletString[]; skipped: number } {
+  const names: SetAmuletString[] = [];
+  cube.rows = cube.rows.filter((row) => !isSetAmuletTransmuteRecipe(row, cube));
+  if (uniques) uniques.rows = uniques.rows.filter((row) => !isSetAmuletUnique(row, uniques));
+  if (!enabled) return { recipes: 0, uniques: 0, names, skipped: 0 };
+
+  const sources = cube.rows.filter((row) => isSetTransmuteSource(row, cube));
+  let uid = uniques ? nextUniqueId(uniques) : 0;
+  let nUni = 0;
+  let nRec = 0;
+  let skipped = 0;
+
+  for (const src of sources) {
+    const setOut = outputCode(src, cube);
+    if (!setOut) continue;
+    const slot = firstEmptyInputCol(src, cube);
+    // 7 input columns already full (6-piece sets). Adding an amulet would
+    // duplicate the ring recipe's inputs and steal or collide with it.
+    if (!slot) {
+      skipped += 1;
+      continue;
+    }
+
+    const amuIndex = `${SET_AMULET_UNIQUE_PREFIX}${setOut}`;
+    const srcDesc = getCell(src, cube, "description").trim() || setOut;
+    const srcUnique = uniques ? findUnique(uniques, setOut) : undefined;
+    const commentName = srcUnique && uniques ? getCell(srcUnique, uniques, "*ItemName").trim() : "";
+    const srcName = findName(existingNames, setOut);
+    const fallback = commentName || setOut.replace(/^Set/i, "").trim() || srcDesc;
+    const enUS = srcName?.enUS ? withSuffix(srcName.enUS, "Amulet") : withSuffix(fallback, "Amulet");
+    const koKR = srcName?.koKR ? withSuffix(srcName.koKR, "목걸이") : withSuffix(fallback, "목걸이");
+
+    if (uniques && srcUnique && !findUnique(uniques, amuIndex)) {
+      const copy = cloneRow(srcUnique, uniques);
+      setCell(copy, uniques, "index", amuIndex);
+      setCell(copy, uniques, "*ID", String(uid++));
+      setCell(copy, uniques, "code", "amu");
+      setCell(copy, uniques, "spawnable", "");
+      setCell(copy, uniques, "nolimit", "1");
+      setCell(copy, uniques, "*ItemName", withSuffix(commentName || fallback, "Amulet"));
+      uniques.rows.push(copy);
+      nUni += 1;
+      names.push({ key: amuIndex, enUS, koKR });
+    }
+    if (uniques && !findUnique(uniques, amuIndex)) continue;
+
+    for (const q of ["mag", "rar"] as const) {
+      const row = cloneRow(src, cube);
+      const tag = q === "mag" ? "매직" : "레어";
+      setCell(row, cube, "description", `${SET_AMULET_DESC_PREFIX} ${srcDesc} (${tag})`);
+      setCell(row, cube, "enabled", "1");
+      setCell(row, cube, "output", amuIndex);
+      setCell(row, cube, slot, `"amu,${q}"`);
+      syncNumInputs(row, cube);
+      cube.rows.push(row);
+      nRec += 1;
+    }
+  }
+
+  return { recipes: nRec, uniques: nUni, names, skipped };
 }
 

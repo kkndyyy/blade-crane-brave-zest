@@ -1,5 +1,5 @@
 {
-  "version": "1.6.17",
+  "version": "1.6.18",
   "released": "2026-09-13",
-  "notes": "Fire Ball count uses calc1; explosion radius stays on Param1 via missile sHitPar1"
+  "notes": "Fire Ball multi-shot uses vanilla fireball + calc3; no cloned missile IDs"
 }

@@ -243,54 +243,38 @@ function findMissileRow(missiles: TsvTable, name: string): string[] | undefined 
   return missiles.rows.find((r) => isDataRow(r) && getCell(r, missiles, "Missile").toLowerCase() === want);
 }
 
-function nextMissileNumericId(missiles: TsvTable): number {
-  let max = 0;
-  for (const row of missiles.rows) {
-    const n = num(getCell(row, missiles, "*ID"));
-    if (n > max) max = n;
-  }
-  return max + 1;
+/** Map v1.6.17 clones like fireballp back to the vanilla missile D2R already knows. */
+export function canonicalMissileName(name: string, missiles?: TsvTable): string {
+  const n = name.trim();
+  if (!n || !missiles) return n;
+  const m = n.match(/^(.*)p\d*$/i);
+  const stem = m?.[1]?.trim() ?? "";
+  if (!stem || stem.toLowerCase() === n.toLowerCase()) return n;
+  if (findMissileRow(missiles, stem)) return stem;
+  return n;
 }
 
-function uniqueMissileName(missiles: TsvTable, base: string): string {
-  const stem = base.replace(/[^A-Za-z0-9]/g, "").slice(0, 28) || "missile";
-  const tryName = (n: string) => !findMissileRow(missiles, n);
-  if (tryName(`${stem}p`)) return `${stem}p`;
-  for (let i = 2; i < 50; i++) {
-    if (tryName(`${stem}p${i}`)) return `${stem}p${i}`;
+function listedMissile(row: string[], skills: TsvTable): string {
+  for (const col of ["srvmissile", "srvmissilea", "srvmissileb", "cltmissile", "cltmissilea", "cltmissileb"]) {
+    const v = getCell(row, skills, col).trim();
+    if (v) return v;
   }
-  return `${stem}p${nextMissileNumericId(missiles)}`;
+  return "";
 }
 
-/** Clone a missile that reads skill calc1 as radius, pin sHitPar1, return the name to fire. */
+/** Pin sHitPar1 on the existing missile so explosion stays off skill calc1. Never clone — D2R ignores new missile IDs. */
 export function pinMissileExplosion(
   missiles: TsvTable | undefined,
   sourceName: string,
   radius: string,
-  skillName: string,
 ): string | null {
-  if (!missiles || !sourceName.trim()) return null;
-  const src = findMissileRow(missiles, sourceName);
-  if (!src) return null;
-  const hit = getCell(src, missiles, "sHitPar1").trim();
-  const usesSkillCalc = !hit || hit === "0";
-  const alreadyOurs =
-    getCell(src, missiles, "Skill").trim().toLowerCase() === skillName.trim().toLowerCase() &&
-    /p\d*$/i.test(getCell(src, missiles, "Missile"));
-  if (!usesSkillCalc && alreadyOurs) {
-    setCell(src, missiles, "sHitPar1", radius || "4");
-    return getCell(src, missiles, "Missile");
-  }
-  if (!usesSkillCalc) return sourceName;
-  const cloneName = uniqueMissileName(missiles, sourceName);
-  const copy = [...src];
-  while (copy.length < missiles.headers.length) copy.push("");
-  missiles.rows.push(copy);
-  setCell(copy, missiles, "Missile", cloneName);
-  setCell(copy, missiles, "*ID", String(nextMissileNumericId(missiles)));
-  setCell(copy, missiles, "sHitPar1", radius || "4");
-  if (skillName.trim()) setCell(copy, missiles, "Skill", skillName);
-  return cloneName;
+  const name = canonicalMissileName(sourceName, missiles);
+  if (!name) return null;
+  if (!missiles) return name;
+  const src = findMissileRow(missiles, name);
+  if (!src) return name;
+  setCell(src, missiles, "sHitPar1", radius || "4");
+  return name;
 }
 
 export function syncExplosionRadiusToMissile(
@@ -300,7 +284,7 @@ export function syncExplosionRadiusToMissile(
   radius: string,
 ) {
   const names = ["srvmissile", "srvmissilea", "srvmissileb", "cltmissile", "cltmissilea"].map((c) =>
-    getCell(skillRow, skills, c).trim(),
+    canonicalMissileName(getCell(skillRow, skills, c).trim(), missiles),
   );
   const seen = new Set<string>();
   for (const name of names) {
@@ -419,13 +403,10 @@ export function enableMissileCount(
   if (!COUNT_FUNCS.has(func) && !isSimpleMissileSkill(row, skills)) return false;
   const slots = pickCountSlots(row, skills);
   if (!slots) return false;
-  const srcMissile =
-    getCell(row, skills, "srvmissile").trim() ||
-    getCell(row, skills, "srvmissilea").trim() ||
-    getCell(row, skills, "cltmissile").trim();
+  const srcMissile = canonicalMissileName(listedMissile(row, skills), missiles);
+  const hasExplosion = isExplosionRadiusDesc(paramHint(row, skills, "Param1"));
   const radius = getCell(row, skills, "Param1").trim() || "4";
-  const missileName =
-    pinMissileExplosion(missiles, srcMissile, radius, getCell(row, skills, "skill")) || srcMissile;
+  const missileName = hasExplosion ? pinMissileExplosion(missiles, srcMissile, radius) || srcMissile : srcMissile;
   if (missileName) assignMultiMissiles(row, skills, missileName);
   setCell(row, skills, "srvdofunc", "8");
   setCell(row, skills, "cltdofunc", "17");
@@ -444,6 +425,12 @@ export function enableMissileCount(
   if (!getCell(row, skills, "calc2").trim()) {
     setCell(row, skills, "calc2", `par${slots.actN}`);
     setCalcDesc(row, skills, "calc2", "activation frame");
+  }
+  // Teeth / Multiple Shot / Ice Arrow all set calc3; empty calc3 makes func-8 spawn nothing.
+  if (!getCell(row, skills, "calc3").trim()) {
+    const hitCalc = calcLooksLikeCount(getCell(row, skills, "calc1")) ? getCell(row, skills, "calc1") : countCalc;
+    setCell(row, skills, "calc3", hitCalc);
+    setCalcDesc(row, skills, "calc3", "# missiles with hit");
   }
   applyMissileCountTooltip(skilldesc, getCell(row, skills, "skilldesc"), countCalc);
   return true;

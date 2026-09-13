@@ -1,5 +1,5 @@
 {
-  "version": "1.6.14",
+  "version": "1.6.15",
   "released": "2026-09-13",
-  "notes": "let 1-missile skills like Fire Bolt set projectile count"
+  "notes": "projectile count for Fire Ball-like skills; keep explosion radius by relocating params"
 }

@@ -93,14 +93,88 @@ function primaryMissile(row: string[], skills: TsvTable): string {
   return getCell(row, skills, "srvmissile").trim() || getCell(row, skills, "cltmissile").trim();
 }
 
+function emptyDoFunc(value: string): boolean {
+  const v = value.trim();
+  return !v || v === "0";
+}
+
+/** Projectile skills that launch a missile without a special do-func (Fire Bolt, Fire Ball, Ice Blast…). */
 export function isSimpleMissileSkill(row: string[], skills: TsvTable): boolean {
   if (!primaryMissile(row, skills)) return false;
-  const srvdo = getCell(row, skills, "srvdofunc").trim();
-  const cltdo = getCell(row, skills, "cltdofunc").trim();
-  if (srvdo && srvdo !== "0") return false;
-  if (cltdo && cltdo !== "0") return false;
-  if (!paramFree(row, skills, 1) || !paramFree(row, skills, 2)) return false;
+  if (!emptyDoFunc(getCell(row, skills, "srvdofunc"))) return false;
+  if (!emptyDoFunc(getCell(row, skills, "cltdofunc"))) return false;
   return true;
+}
+
+export function rewriteParamRefs(expr: string, from: number, to: number): string {
+  if (from === to) return expr;
+  let s = expr;
+  s = s.replace(new RegExp(`\\bln${from}(\\d)\\b`, "gi"), (_, b: string) => `ln${to}${b}`);
+  s = s.replace(new RegExp(`\\bln(\\d)${from}\\b`, "gi"), (_, a: string) => `ln${a}${to}`);
+  s = s.replace(new RegExp(`\\bdm${from}(\\d)\\b`, "gi"), (_, b: string) => `dm${to}${b}`);
+  s = s.replace(new RegExp(`\\bdm(\\d)${from}\\b`, "gi"), (_, a: string) => `dm${a}${to}`);
+  s = s.replace(new RegExp(`\\bpar${from}\\b`, "gi"), `par${to}`);
+  s = s.replace(new RegExp(`\\bpa${from}\\b`, "gi"), to > 8 ? `pa${to}` : `par${to}`);
+  return s;
+}
+
+function rewriteTableFormulas(table: TsvTable, row: string[], from: number, to: number) {
+  for (let i = 0; i < table.headers.length; i++) {
+    const h = table.headers[i] ?? "";
+    if (/^Param\d+$/i.test(h) || /^\*Param/i.test(h)) continue;
+    const v = row[i];
+    if (!v || !/(?:par|pa|ln|dm)\d/i.test(v)) continue;
+    row[i] = rewriteParamRefs(v, from, to);
+  }
+}
+
+function findFreeParam(row: string[], skills: TsvTable, reserved: Set<number>): number | null {
+  for (let n = 4; n <= 16; n++) {
+    if (reserved.has(n)) continue;
+    if (paramFree(row, skills, n)) return n;
+  }
+  return null;
+}
+
+function moveParamSlot(row: string[], skills: TsvTable, from: number, to: number, skilldesc?: TsvTable) {
+  setCell(row, skills, `Param${to}`, getCell(row, skills, `Param${from}`));
+  setCell(row, skills, `Param${from}`, "");
+  const desc = paramHint(row, skills, `Param${from}`);
+  if (desc) {
+    setDesc(row, skills, to, desc);
+    for (const col of [`*Param${from} Description`, `*Param${from} Description2`, `*Param${from} desc`]) {
+      if (skills.headers.some((h) => h.toLowerCase() === col.toLowerCase())) {
+        setCell(row, skills, col, "");
+        break;
+      }
+    }
+  }
+  rewriteTableFormulas(skills, row, from, to);
+  const descKey = getCell(row, skills, "skilldesc").trim();
+  if (skilldesc && descKey) {
+    const found = skilldesc.rows.find(
+      (r) => isDataRow(r) && getCell(r, skilldesc, "skilldesc").toLowerCase() === descKey.toLowerCase(),
+    );
+    if (found) rewriteTableFormulas(skilldesc, found, from, to);
+  }
+}
+
+function countDesc(desc: string): boolean {
+  return classify(desc) != null;
+}
+
+function relocateForCountParams(row: string[], skills: TsvTable, skilldesc?: TsvTable) {
+  const reserved = new Set<number>([1, 2, 3]);
+  for (const n of [1, 2, 3]) {
+    const desc = paramHint(row, skills, `Param${n}`);
+    if (n <= 2 && countDesc(desc)) continue;
+    if (n === 3 && /activation frame/i.test(desc)) continue;
+    if (paramFree(row, skills, n)) continue;
+    const dest = findFreeParam(row, skills, reserved);
+    if (dest == null) continue;
+    reserved.add(dest);
+    moveParamSlot(row, skills, n, dest, skilldesc);
+  }
 }
 
 function emptyMirrors(): Pick<MissileCountField, "baseMirrors" | "perMirrors" | "maxMirrors"> {
@@ -117,7 +191,7 @@ function syntheticMissileCountField(
     id: "synthetic-ln",
     kind: "ln",
     label: "투사체 개수",
-    hint: "원래 1발입니다. 개수를 바꾸면 여러 발을 부채꼴로 발사합니다.",
+    hint: "원래 1발입니다. 개수를 바꾸면 여러 발을 부채꼴로 발사합니다. 폭발 반경처럼 원래 쓰던 값은 다른 칸으로 옮겨 둡니다.",
     baseCol: "Param1",
     perCol: "Param2",
     cap: parseCapFromDesc(skills, row, skilldesc),
@@ -177,11 +251,13 @@ export function enableMissileCount(skills: TsvTable, rowIndex: number, skilldesc
     return false;
   }
   if (!isSimpleMissileSkill(row, skills)) return false;
+  relocateForCountParams(row, skills, skilldesc);
   moveMissileCol(row, skills, "srvmissile", "srvmissilea");
   moveMissileCol(row, skills, "cltmissile", "cltmissilea");
   setCell(row, skills, "srvdofunc", "8");
   setCell(row, skills, "cltdofunc", "17");
   if (!getCell(row, skills, "Param3").trim()) setCell(row, skills, "Param3", "1");
+  setDesc(row, skills, 3, "Missile Activation Frame");
   setDesc(row, skills, 1, "# of Missiles created baseline");
   setDesc(row, skills, 2, "# of Missiles created per level");
   if (!getCell(row, skills, "Param1").trim()) setCell(row, skills, "Param1", "1");

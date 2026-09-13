@@ -8,6 +8,7 @@ import {
   isSimpleMissileSkill,
   listMissileCountFields,
   missileCountParamCols,
+  rewriteParamRefs,
 } from "./skillMissiles.ts";
 
 function table(rows: string[]) {
@@ -103,13 +104,33 @@ describe("missile count fields", () => {
     assert.equal(fields[0]!.baseCol, "Param1");
   });
 
-  it("does not convert fire ball whose Param1 is explosion radius", () => {
+  it("offers a count editor for fire ball and keeps explosion radius", () => {
     const skills = table([
-      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tParam1\t*Param1 Description\tParam2\t*Param2 Description",
-      "Fire Ball\t\t\tfireball\tfireball\t4\tExplosion Radius\t\t",
+      "skill\tsrvdofunc\tcltdofunc\tsrvmissile\tcltmissile\tsrvmissilea\tcltmissilea\tcalc1\tParam1\t*Param1 Description\tParam2\t*Param2 Description\tParam3\tParam4\t*Param4 Description\tParam8\tskilldesc",
+      "Fire Ball\t\t\tfireball\tfireball\t\t\tpar1\t4\tExplosion Radius\t\t\t\t\t\t14\tfireball",
     ]);
-    assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), false);
-    assert.equal(listMissileCountFields(skills.rows[0]!, skills).length, 0);
+    assert.equal(isSimpleMissileSkill(skills.rows[0]!, skills), true);
+    assert.equal(listMissileCountFields(skills.rows[0]!, skills)[0]!.synthetic, true);
+    const skilldesc = table([
+      "skilldesc\tdescline1\tdesctexta1\tdesccalca1\tdsc2line1\tdsc2texta1\tdsc2calca1\tdescline2\tdesctexta2\tdesccalca2",
+      "fireball\t75\tStrSkill5\tenma\t36\tStrSkillRadiusSingular\tpar1*2\t\t\t",
+    ]);
+    assert.equal(enableMissileCount(skills, 0, skilldesc), true);
+    const row = skills.rows[0]!;
+    assert.equal(getCell(row, skills, "Param1"), "1");
+    assert.equal(getCell(row, skills, "Param4"), "4");
+    assert.match(getCell(row, skills, "*Param4 Description"), /Explosion Radius/i);
+    assert.equal(getCell(row, skills, "calc1"), "par4");
+    assert.equal(getCell(skilldesc.rows[0]!, skilldesc, "dsc2calca1"), "par4*2");
+    assert.equal(getCell(row, skills, "srvdofunc"), "8");
+    assert.equal(getCell(row, skills, "srvmissilea"), "fireball");
+  });
+
+  it("rewrites ln12 when freeze params move", () => {
+    assert.equal(rewriteParamRefs("ln12", 1, 4), "ln42");
+    assert.equal(rewriteParamRefs("ln42", 2, 5), "ln45");
+    assert.equal(rewriteParamRefs("min(24,ln12)", 1, 4), "min(24,ln42)");
+    assert.equal(rewriteParamRefs("par10+par1", 1, 4), "par10+par4");
   });
 
   it("enables func-8 multi-missile and writes count params", () => {

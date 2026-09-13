@@ -1,5 +1,5 @@
 {
-  "version": "1.6.18",
+  "version": "1.6.19",
   "released": "2026-09-13",
-  "notes": "Fire Ball multi-shot uses vanilla fireball + calc3; no cloned missile IDs"
+  "notes": "Caster projectile count uses Charged Bolt funcs 17/23 so Fire Ball actually fires"
 }

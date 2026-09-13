@@ -262,6 +262,32 @@ function listedMissile(row: string[], skills: TsvTable): string {
   return "";
 }
 
+/** Caster skills (Fire Ball, Fire Bolt) must use Charged Bolt 17/23 — AmaDoMultipleShot 8 does not fire on staff/orb. */
+export function useChargedBoltFuncs(row: string[], skills: TsvTable, origRow?: string[], origSkills?: TsvTable): boolean {
+  if (origRow && origSkills && isSimpleMissileSkill(origRow, origSkills)) return true;
+  if (isSimpleMissileSkill(row, skills)) return true;
+  if (isExplosionRadiusDesc(paramHint(row, skills, "Param1"))) return true;
+  const func = getCell(row, skills, "srvdofunc").trim();
+  if (func === "17") return true;
+  if (func !== "8") return false;
+  const st = getCell(row, skills, "cltstfunc").trim();
+  const itype = getCell(row, skills, "itypea1").trim().toLowerCase();
+  if (itype === "miss") return false;
+  if (st === "19" || st === "11") return false;
+  return true;
+}
+
+function applyDoFuncs(row: string[], skills: TsvTable, bolt: boolean) {
+  if (bolt) {
+    setCell(row, skills, "srvdofunc", "17");
+    setCell(row, skills, "cltdofunc", "23");
+    return;
+  }
+  setCell(row, skills, "srvdofunc", "8");
+  setCell(row, skills, "cltdofunc", "17");
+  if (!getCell(row, skills, "cltstfunc").trim()) setCell(row, skills, "cltstfunc", "19");
+}
+
 /** Pin sHitPar1 on the existing missile so explosion stays off skill calc1. Never clone — D2R ignores new missile IDs. */
 export function pinMissileExplosion(
   missiles: TsvTable | undefined,
@@ -403,13 +429,13 @@ export function enableMissileCount(
   if (!COUNT_FUNCS.has(func) && !isSimpleMissileSkill(row, skills)) return false;
   const slots = pickCountSlots(row, skills);
   if (!slots) return false;
+  const bolt = useChargedBoltFuncs(row, skills, origRow, origSkills);
   const srcMissile = canonicalMissileName(listedMissile(row, skills), missiles);
   const hasExplosion = isExplosionRadiusDesc(paramHint(row, skills, "Param1"));
   const radius = getCell(row, skills, "Param1").trim() || "4";
   const missileName = hasExplosion ? pinMissileExplosion(missiles, srcMissile, radius) || srcMissile : srcMissile;
   if (missileName) assignMultiMissiles(row, skills, missileName);
-  setCell(row, skills, "srvdofunc", "8");
-  setCell(row, skills, "cltdofunc", "17");
+  applyDoFuncs(row, skills, bolt);
   if (!getCell(row, skills, `Param${slots.actN}`).trim()) setCell(row, skills, `Param${slots.actN}`, "1");
   if (!getCell(row, skills, `Param${slots.baseN}`).trim()) setCell(row, skills, `Param${slots.baseN}`, "1");
   if (!getCell(row, skills, `Param${slots.perN}`).trim()) setCell(row, skills, `Param${slots.perN}`, "0");
@@ -422,15 +448,15 @@ export function enableMissileCount(
     setCell(row, skills, "calc1", countCalc);
     setCalcDesc(row, skills, "calc1", "# missiles");
   }
-  if (!getCell(row, skills, "calc2").trim()) {
-    setCell(row, skills, "calc2", `par${slots.actN}`);
-    setCalcDesc(row, skills, "calc2", "activation frame");
-  }
-  // Teeth / Multiple Shot / Ice Arrow all set calc3; empty calc3 makes func-8 spawn nothing.
-  if (!getCell(row, skills, "calc3").trim()) {
-    const hitCalc = calcLooksLikeCount(getCell(row, skills, "calc1")) ? getCell(row, skills, "calc1") : countCalc;
-    setCell(row, skills, "calc3", hitCalc);
-    setCalcDesc(row, skills, "calc3", "# missiles with hit");
+  if (!bolt) {
+    if (!getCell(row, skills, "calc2").trim()) {
+      setCell(row, skills, "calc2", `par${slots.actN}`);
+      setCalcDesc(row, skills, "calc2", "activation frame");
+    }
+    if (!getCell(row, skills, "calc3").trim() || calcLooksLikeCount(getCell(row, skills, "calc3"))) {
+      setCell(row, skills, "calc3", "2");
+      setCalcDesc(row, skills, "calc3", "# of missiles that can trigger item modifier events");
+    }
   }
   applyMissileCountTooltip(skilldesc, getCell(row, skills, "skilldesc"), countCalc);
   return true;

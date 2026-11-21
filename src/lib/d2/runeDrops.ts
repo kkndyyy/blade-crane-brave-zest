@@ -75,50 +75,35 @@ export function applyRuneDropRateScale(
   return changed;
 }
 
-/** Vanilla D2R no-drop chance for Countess rune TCs: NoDrop 5 vs item weight 15 → 25%.
- * Rune ladders (Runes N, hyper) are absent here and stay at 0, matching vanilla. */
-const VANILLA_RUNE_NODROP: Record<string, { noDrop: number; probSum: number }> = {
-  "Countess Rune": { noDrop: 5, probSum: 15 },
-  "Countess Rune (N)": { noDrop: 5, probSum: 15 },
-  "Countess Rune (H)": { noDrop: 5, probSum: 15 },
-};
+/** Vanilla D2R NoDrop for each rune treasure class. Ladders are blank (always drop). */
+const VANILLA_COUNTESS_NODROP = "5";
 
-function itemProbSum(row: string[], table: TsvTable): number {
-  let sum = 0;
-  for (const n of treasureItemSlots(table)) {
-    if (!getCell(row, table, `Item${n}`).trim()) continue;
-    sum += num(getCell(row, table, `Prob${n}`), 0);
+/** Vanilla NoDrop for this rune TC, or null if this button should leave the row alone. */
+export function vanillaRuneTcNoDrop(name: string): string | null {
+  const key = name.trim();
+  if (key === "Countess Rune" || key === "Countess Rune (N)" || key === "Countess Rune (H)") {
+    return VANILLA_COUNTESS_NODROP;
   }
-  return sum;
-}
-
-function isRuneLadder(name: string): boolean {
-  return /^(hyper\s+)?runes\s+\d+$/i.test(name.trim());
+  if (/^Runes \d+$/.test(key) || /^hyper Runes \d+$/i.test(key)) return "";
+  return null;
 }
 
 /**
- * Set rune-ladder and Countess rune NoDrop so the no-drop chance matches vanilla D2R.
- * Chance = NoDrop / (NoDrop + item weights). Ladders (Runes N, hyper Runes N) become 0.
- * Countess rows are scaled to the current weights so the chance stays 25%.
- * Other rune TCs such as "hyper Runes" are left alone. Picks and item slots stay.
+ * Set each rune ladder and Countess rune TC's NoDrop to that TC's vanilla D2R value.
+ * Runes 1–17 and extra ladders (Runes 18+, hyper Runes N) become blank.
+ * Each Countess rune TC becomes 5, the vanilla number, not a rescaled chance.
+ * "hyper Runes", chests, picks, and item weights are left alone.
  */
 export function applyVanillaRuneNoDrop(table: TsvTable): number {
   const nameI = colIndex(table, "Treasure Class");
   let changed = 0;
   for (const row of table.rows) {
     if (!isDataRow(row)) continue;
-    const name = row[nameI] ?? "";
-    const spec = VANILLA_RUNE_NODROP[name];
-    if (!spec && !isRuneLadder(name)) continue;
-    const curSum = itemProbSum(row, table);
-    let next = 0;
-    if (spec && spec.noDrop > 0 && spec.probSum > 0) {
-      if (curSum <= 0) next = spec.noDrop;
-      else next = Math.max(1, Math.round((curSum * spec.noDrop) / spec.probSum));
-    }
+    const next = vanillaRuneTcNoDrop(row[nameI] ?? "");
+    if (next == null) continue;
     const raw = getCell(row, table, "NoDrop");
-    if (num(raw, 0) === next) continue;
-    setCell(row, table, "NoDrop", next === 0 ? "" : String(next));
+    if (num(raw, 0) === num(next, 0)) continue;
+    setCell(row, table, "NoDrop", next);
     changed += 1;
   }
   return changed;

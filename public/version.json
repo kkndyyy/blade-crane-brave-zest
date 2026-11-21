@@ -1,5 +1,5 @@
 {
-  "version": "1.6.23",
+  "version": "1.6.24",
   "released": "2026-09-13",
-  "notes": "Button sets rune treasure-class NoDrop chance to vanilla D2R (ladders 0, Countess 25%)"
+  "notes": "Rune NoDrop button copies each rune TC's own vanilla value (ladders blank, Countess 5)"
 }

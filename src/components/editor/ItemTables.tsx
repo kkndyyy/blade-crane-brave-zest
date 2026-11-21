@@ -236,12 +236,12 @@ export function RuneTable() {
               const n = applyVanillaRuneNoDrop();
               toast.success(
                 n
-                  ? `룬 노드랍을 바닐라와 맞췄습니다 (${n}칸). 사다리는 없음, 카운티스는 25%`
-                  : "룬 노드랍이 이미 바닐라와 같습니다",
+                  ? `룬 TC별 노드랍을 바닐라 값으로 맞췄습니다 (${n}칸). 사다리 0, 카운티스 5`
+                  : "룬 TC 노드랍이 이미 바닐라 값입니다",
               );
             }}
           >
-            노드랍 바닐라
+            TC별 노드랍 바닐라
           </Button>
           <Button
             variant="ghost"

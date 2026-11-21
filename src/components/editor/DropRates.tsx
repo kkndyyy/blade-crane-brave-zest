@@ -174,7 +174,7 @@ export function DropRates() {
           <h4 className="font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</h4>
           <p className="mt-1 text-xs text-fg-muted leading-relaxed">
             몬스터는 룬 TC 가중치를, 상자는 Act Good 가중치와 노드랍을 같이 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
-            룬 노드랍 바닐라는 전 난이도 룬 TC만 바꿉니다. 사다리는 노드랍 없음, 카운티스는 한 번 뽑을 때 25%입니다.
+            룬 TC별 노드랍 바닐라는 각 룬 TC의 NoDrop만 그 TC의 바닐라 값으로 바꿉니다. 사다리(Runes·hyper Runes 번호)는 0, 카운티스 룬 3줄은 각각 5입니다.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
@@ -203,12 +203,12 @@ export function DropRates() {
                 const n = applyVanillaRuneNoDrop();
                 toast.success(
                   n
-                    ? `룬 노드랍을 바닐라와 맞췄습니다 (${n}칸). 사다리는 없음, 카운티스는 25%`
-                    : "룬 노드랍이 이미 바닐라와 같습니다",
+                    ? `룬 TC별 노드랍을 바닐라 값으로 맞췄습니다 (${n}칸). 사다리 0, 카운티스 5`
+                    : "룬 TC 노드랍이 이미 바닐라 값입니다",
                 );
               }}
             >
-              룬 노드랍 바닐라
+              룬 TC별 노드랍 바닐라
             </Button>
             <Button
               variant="ghost"

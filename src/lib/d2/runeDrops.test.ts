@@ -4,6 +4,7 @@ import { parseTsv, getCell } from "./tsv.ts";
 import { tcDifficulty } from "./paths.ts";
 import {
   applyRuneDropRateScale,
+  applyRuneTcNoDrop,
   applyVanillaRuneNoDrop,
   restoreRuneDropRate,
   runeParentWeightStats,
@@ -114,5 +115,34 @@ describe("runeDrops", () => {
     assert.equal(getCell(table.rows[5]!, table, "NoDrop"), "8");
     assert.equal(getCell(table.rows[6]!, table, "NoDrop"), "50");
     assert.equal(applyVanillaRuneNoDrop(table), 0);
+  });
+
+  it("sets every rune ladder and Countess rune TC NoDrop to one value", () => {
+    const table = parseTsv(
+      [
+        HEADER,
+        "Runes 17\t1\t\ta33\t1\tRunes 16\t720",
+        "Countess Rune\t1\t15\tRunes 6\t15\t",
+        "Countess Rune (N)\t2\t5\tRunes 11\t3\t",
+        "hyper Runes 1\t1\t9\ta01\t3\t",
+        "hyper Runes\t2\t8\thyper Runes 11\t6\t",
+        "Act 1 Chest A\t4\t50\tg01\t2\t",
+      ].join("\r\n") + "\r\n",
+    );
+    const n = applyRuneTcNoDrop(table, 12);
+    assert.equal(n, 4);
+    assert.equal(getCell(table.rows[0]!, table, "NoDrop"), "12");
+    assert.equal(getCell(table.rows[1]!, table, "NoDrop"), "12");
+    assert.equal(getCell(table.rows[2]!, table, "NoDrop"), "12");
+    assert.equal(getCell(table.rows[3]!, table, "NoDrop"), "12");
+    assert.equal(getCell(table.rows[4]!, table, "NoDrop"), "8");
+    assert.equal(getCell(table.rows[5]!, table, "NoDrop"), "50");
+    assert.equal(getCell(table.rows[0]!, table, "Prob2"), "720");
+    assert.equal(applyRuneTcNoDrop(table, 12), 0);
+    assert.equal(applyRuneTcNoDrop(table, 0), 4);
+    assert.equal(getCell(table.rows[0]!, table, "NoDrop"), "0");
+    assert.equal(getCell(table.rows[4]!, table, "NoDrop"), "8");
+    assert.equal(applyRuneTcNoDrop(table, -1), 0);
+    assert.equal(applyRuneTcNoDrop(table, 1.5), 0);
   });
 });

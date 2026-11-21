@@ -42,6 +42,7 @@ export function DropRates() {
   const applyVanillaD2rDrops = useEditor((s) => s.applyVanillaD2rDrops);
   const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
   const applyVanillaRuneNoDrop = useEditor((s) => s.applyVanillaRuneNoDrop);
+  const setRuneTcNoDrop = useEditor((s) => s.setRuneTcNoDrop);
   const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
 
   const stats = useMemo(() => {
@@ -82,6 +83,7 @@ export function DropRates() {
 
   const [uniqueBoost, setUniqueBoost] = useState(128);
   const [setBoost, setSetBoost] = useState(128);
+  const [runeNoDrop, setRuneNoDrop] = useState("0");
 
   const applyPreset = (p: (typeof PRESETS)[number]) => {
     const fromCurrent = !!p.stack;
@@ -175,6 +177,7 @@ export function DropRates() {
           <p className="mt-1 text-xs text-fg-muted leading-relaxed">
             몬스터는 룬 TC 가중치를, 상자는 Act Good 가중치와 노드랍을 같이 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
             룬 TC별 노드랍 바닐라는 각 룬 TC의 NoDrop만 그 TC의 바닐라 값으로 바꿉니다. 사다리(Runes·hyper Runes 번호)는 0, 카운티스 룬 3줄은 각각 5입니다.
+            일괄 설정은 같은 룬 TC들의 NoDrop을 입력한 정수 하나로 바꿉니다. 0이면 항상 드랍입니다.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
@@ -209,6 +212,38 @@ export function DropRates() {
               }}
             >
               룬 TC별 노드랍 바닐라
+            </Button>
+            <label className="flex items-center gap-2">
+              <span className="text-xs text-fg-muted">노드랍</span>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                inputMode="numeric"
+                aria-label="룬 TC 노드랍"
+                value={runeNoDrop}
+                onChange={(e) => setRuneNoDrop(e.target.value)}
+                className="h-8 w-20 rounded-xs border border-border bg-bg px-2 text-sm tabular-nums"
+              />
+            </label>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const value = Number(runeNoDrop);
+                if (!Number.isInteger(value) || value < 0) {
+                  toast.error("노드랍은 0 이상의 정수로 입력하세요");
+                  return;
+                }
+                const n = setRuneTcNoDrop(value);
+                toast.success(
+                  n
+                    ? `룬 TC 노드랍을 ${value}로 맞췄습니다 (${n}칸)`
+                    : `룬 TC 노드랍이 이미 ${value}입니다`,
+                );
+              }}
+            >
+              룬 TC 노드랍 일괄
             </Button>
             <Button
               variant="ghost"

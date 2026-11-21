@@ -181,8 +181,10 @@ export function RuneTable() {
   const difficulty = useEditor((s) => s.difficulty);
   const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
   const applyVanillaRuneNoDrop = useEditor((s) => s.applyVanillaRuneNoDrop);
+  const setRuneTcNoDrop = useEditor((s) => s.setRuneTcNoDrop);
   const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
   const [runeWord, setRuneWord] = useState<number | null>(null);
+  const [runeNoDrop, setRuneNoDrop] = useState("0");
   if (!table) return <NeedFile kind="룬" />;
   const rw = runeWord != null && runes ? runes.rows[runeWord] : undefined;
   const rwName = rw
@@ -242,6 +244,38 @@ export function RuneTable() {
             }}
           >
             TC별 노드랍 바닐라
+          </Button>
+          <label className="flex items-center gap-2">
+            <span className="text-xs text-fg-muted">노드랍</span>
+            <input
+              type="number"
+              min={0}
+              step={1}
+              inputMode="numeric"
+              aria-label="룬 TC 노드랍"
+              value={runeNoDrop}
+              onChange={(e) => setRuneNoDrop(e.target.value)}
+              className="h-8 w-20 rounded-xs border border-border bg-bg px-2 text-sm tabular-nums"
+            />
+          </label>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const value = Number(runeNoDrop);
+              if (!Number.isInteger(value) || value < 0) {
+                toast.error("노드랍은 0 이상의 정수로 입력하세요");
+                return;
+              }
+              const n = setRuneTcNoDrop(value);
+              toast.success(
+                n
+                  ? `룬 TC 노드랍을 ${value}로 맞췄습니다 (${n}칸)`
+                  : `룬 TC 노드랍이 이미 ${value}입니다`,
+              );
+            }}
+          >
+            노드랍 일괄
           </Button>
           <Button
             variant="ghost"

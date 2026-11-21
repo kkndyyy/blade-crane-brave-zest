@@ -75,6 +75,28 @@ export function applyRuneDropRateScale(
   return changed;
 }
 
+/**
+ * Set every rune-ladder and Countess rune TC's NoDrop to one integer.
+ * Same rows as the vanilla button: Runes N, hyper Runes N, and the three
+ * Countess Rune rows. Parent "hyper Runes", chests, picks, and item weights stay.
+ * 0 is stored as "0" (always drop). Non-integers and negatives change nothing.
+ */
+export function applyRuneTcNoDrop(table: TsvTable, value: number): number {
+  if (!Number.isInteger(value) || value < 0) return 0;
+  const text = String(value);
+  const nameI = colIndex(table, "Treasure Class");
+  let changed = 0;
+  for (const row of table.rows) {
+    if (!isDataRow(row)) continue;
+    if (vanillaRuneTcNoDrop(row[nameI] ?? "") == null) continue;
+    const raw = getCell(row, table, "NoDrop");
+    if (num(raw, 0) === value) continue;
+    setCell(row, table, "NoDrop", text);
+    changed += 1;
+  }
+  return changed;
+}
+
 /** Vanilla D2R NoDrop for each rune treasure class. Ladders are blank (always drop). */
 const VANILLA_COUNTESS_NODROP = "5";
 

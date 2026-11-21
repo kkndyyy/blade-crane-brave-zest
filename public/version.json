@@ -1,5 +1,5 @@
 {
-  "version": "1.6.24",
-  "released": "2026-09-13",
-  "notes": "Rune NoDrop button copies each rune TC's own vanilla value (ladders blank, Countess 5)"
+  "version": "1.6.25",
+  "released": "2026-11-21",
+  "notes": "Bulk-set rune TC NoDrop to a typed value (ladders and Countess rune rows)"
 }

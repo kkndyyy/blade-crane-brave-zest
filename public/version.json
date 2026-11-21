@@ -1,5 +1,5 @@
 {
-  "version": "1.6.22",
+  "version": "1.6.23",
   "released": "2026-09-13",
-  "notes": "Set-bonus amulet cube recipes now include 6-piece sets (gems swapped for the amulet)"
+  "notes": "Button sets rune treasure-class NoDrop chance to vanilla D2R (ladders 0, Countess 25%)"
 }

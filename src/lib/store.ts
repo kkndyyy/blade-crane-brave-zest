@@ -12,7 +12,7 @@ import { applyAllBeltsSixteen } from "./d2/belts";
 import { ensureElemSkillProperties } from "./d2/itemProps";
 import { applyRuneOpmSplitDouble, applySetAmuletTransmute, emptyCubeRow } from "./d2/cubeRecipes";
 import { applyHireableIcons, matchingHirelingRows, hireSkillColumns, type HireSkillScope } from "./d2/hirelings";
-import { applyRuneDropRateScale, restoreRuneDropRate } from "./d2/runeDrops";
+import { applyRuneDropRateScale, applyVanillaRuneNoDrop, restoreRuneDropRate } from "./d2/runeDrops";
 import { applyVanillaItemRatio, applyVanillaTcQuality } from "./d2/vanillaDrops";
 import { FIGURE_TYPES, RUNE_TYPES, isSlamtrapMonster, type Difficulty } from "./d2/labels";
 import { MONSTER_DMG_COLS, MONSTER_HP_COLS } from "./d2/monsterStats";
@@ -88,6 +88,7 @@ type EditorState = {
   copyHirelingSkills: (rowIndex: number, scope: HireSkillScope, slots?: readonly number[]) => number;
   applyVanillaD2rDrops: () => void;
   scaleRuneDropRate: (diff: Difficulty, factor: number) => number;
+  applyVanillaRuneNoDrop: () => number;
   resetRuneDropRate: () => number;
   scaleSkillDamage: (factor: number, classFilter: string) => void;
   scaleMonsterCombat: (rowIndex: number, kind: "hp" | "damage", factor: number) => number;
@@ -753,6 +754,15 @@ export const useEditor = create<EditorState>((set, get) => ({
     if (!table) return 0;
     const next = cloneTable(table);
     const n = applyRuneDropRateScale(next, diff, factor);
+    if (n) set({ tables: { ...get().tables, treasure: next }, dirty: true });
+    return n;
+  },
+
+  applyVanillaRuneNoDrop: () => {
+    const table = get().tables.treasure;
+    if (!table) return 0;
+    const next = cloneTable(table);
+    const n = applyVanillaRuneNoDrop(next);
     if (n) set({ tables: { ...get().tables, treasure: next }, dirty: true });
     return n;
   },

@@ -75,7 +75,55 @@ export function applyRuneDropRateScale(
   return changed;
 }
 
-/** Restore rune-TC NoDrop, parent-TC rune weights, and chest Good/NoDrop. */
+/** Vanilla D2R no-drop chance for Countess rune TCs: NoDrop 5 vs item weight 15 → 25%.
+ * Rune ladders (Runes N, hyper) are absent here and stay at 0, matching vanilla. */
+const VANILLA_RUNE_NODROP: Record<string, { noDrop: number; probSum: number }> = {
+  "Countess Rune": { noDrop: 5, probSum: 15 },
+  "Countess Rune (N)": { noDrop: 5, probSum: 15 },
+  "Countess Rune (H)": { noDrop: 5, probSum: 15 },
+};
+
+function itemProbSum(row: string[], table: TsvTable): number {
+  let sum = 0;
+  for (const n of treasureItemSlots(table)) {
+    if (!getCell(row, table, `Item${n}`).trim()) continue;
+    sum += num(getCell(row, table, `Prob${n}`), 0);
+  }
+  return sum;
+}
+
+function isRuneLadder(name: string): boolean {
+  return /^(hyper\s+)?runes\s+\d+$/i.test(name.trim());
+}
+
+/**
+ * Set rune-ladder and Countess rune NoDrop so the no-drop chance matches vanilla D2R.
+ * Chance = NoDrop / (NoDrop + item weights). Ladders (Runes N, hyper Runes N) become 0.
+ * Countess rows are scaled to the current weights so the chance stays 25%.
+ * Other rune TCs such as "hyper Runes" are left alone. Picks and item slots stay.
+ */
+export function applyVanillaRuneNoDrop(table: TsvTable): number {
+  const nameI = colIndex(table, "Treasure Class");
+  let changed = 0;
+  for (const row of table.rows) {
+    if (!isDataRow(row)) continue;
+    const name = row[nameI] ?? "";
+    const spec = VANILLA_RUNE_NODROP[name];
+    if (!spec && !isRuneLadder(name)) continue;
+    const curSum = itemProbSum(row, table);
+    let next = 0;
+    if (spec && spec.noDrop > 0 && spec.probSum > 0) {
+      if (curSum <= 0) next = spec.noDrop;
+      else next = Math.max(1, Math.round((curSum * spec.noDrop) / spec.probSum));
+    }
+    const raw = getCell(row, table, "NoDrop");
+    if (num(raw, 0) === next) continue;
+    setCell(row, table, "NoDrop", next === 0 ? "" : String(next));
+    changed += 1;
+  }
+  return changed;
+}
+
 export function restoreRuneDropRate(table: TsvTable, orig: TsvTable): number {
   const slots = treasureItemSlots(table);
   const nameI = colIndex(table, "Treasure Class");

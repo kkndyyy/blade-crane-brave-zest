@@ -180,6 +180,7 @@ export function RuneTable() {
   const setRuneOpmSplitDouble = useEditor((s) => s.setRuneOpmSplitDouble);
   const difficulty = useEditor((s) => s.difficulty);
   const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
+  const applyVanillaRuneNoDrop = useEditor((s) => s.applyVanillaRuneNoDrop);
   const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
   const [runeWord, setRuneWord] = useState<number | null>(null);
   if (!table) return <NeedFile kind="룬" />;
@@ -227,6 +228,20 @@ export function RuneTable() {
             }}
           >
             2배
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const n = applyVanillaRuneNoDrop();
+              toast.success(
+                n
+                  ? `룬 노드랍을 바닐라와 맞췄습니다 (${n}칸). 사다리는 없음, 카운티스는 25%`
+                  : "룬 노드랍이 이미 바닐라와 같습니다",
+              );
+            }}
+          >
+            노드랍 바닐라
           </Button>
           <Button
             variant="ghost"

@@ -4,6 +4,7 @@ import { parseTsv, getCell } from "./tsv.ts";
 import { tcDifficulty } from "./paths.ts";
 import {
   applyRuneDropRateScale,
+  applyVanillaRuneNoDrop,
   restoreRuneDropRate,
   runeParentWeightStats,
   scaleIntWeight,
@@ -86,5 +87,31 @@ describe("runeDrops", () => {
     const normal = runeParentWeightStats(table, "normal");
     assert.equal(normal.weight, 6);
     assert.equal(normal.chestN, 0);
+  });
+
+  it("matches vanilla rune no-drop chance without touching chests or picks", () => {
+    const table = parseTsv(
+      [
+        HEADER,
+        "Runes 17\t1\t40\ta33\t1\tRunes 16\t720",
+        "Countess Rune\t1\t15\tRunes 6\t15\t",
+        "Countess Rune (N)\t2\t15\tRunes 11\t3\tRunes 8\t1",
+        "Countess Rune (H)\t3\t5\tRunes 11\t6\tRunes 15\t2\tRunes 16\t1",
+        "hyper Runes 1\t1\t9\ta01\t3\t",
+        "hyper Runes\t2\t5\thyper Runes 11\t6\t",
+        "Act 1 Chest A\t4\t50\tg01\t2\t",
+      ].join("\r\n") + "\r\n",
+    );
+    const n = applyVanillaRuneNoDrop(table);
+    assert.equal(n, 5);
+    assert.equal(getCell(table.rows[0]!, table, "NoDrop"), "");
+    assert.equal(getCell(table.rows[1]!, table, "NoDrop"), "5");
+    assert.equal(getCell(table.rows[1]!, table, "Picks"), "1");
+    assert.equal(getCell(table.rows[2]!, table, "NoDrop"), "1");
+    assert.equal(getCell(table.rows[3]!, table, "NoDrop"), "3");
+    assert.equal(getCell(table.rows[4]!, table, "NoDrop"), "");
+    assert.equal(getCell(table.rows[5]!, table, "NoDrop"), "5");
+    assert.equal(getCell(table.rows[6]!, table, "NoDrop"), "50");
+    assert.equal(applyVanillaRuneNoDrop(table), 0);
   });
 });

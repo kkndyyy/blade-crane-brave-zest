@@ -41,6 +41,7 @@ export function DropRates() {
   const resetTable = useEditor((s) => s.resetTable);
   const applyVanillaD2rDrops = useEditor((s) => s.applyVanillaD2rDrops);
   const scaleRuneDropRate = useEditor((s) => s.scaleRuneDropRate);
+  const applyVanillaRuneNoDrop = useEditor((s) => s.applyVanillaRuneNoDrop);
   const resetRuneDropRate = useEditor((s) => s.resetRuneDropRate);
 
   const stats = useMemo(() => {
@@ -173,6 +174,7 @@ export function DropRates() {
           <h4 className="font-medium">룬 드랍률 · {DIFF_KO[difficulty]}</h4>
           <p className="mt-1 text-xs text-fg-muted leading-relaxed">
             몬스터는 룬 TC 가중치를, 상자는 Act Good 가중치와 노드랍을 같이 바꿉니다. 2배 / 2배 하락은 현재 값에 누적됩니다. 유니크·세트·피규어는 그대로 둡니다.
+            룬 노드랍 바닐라는 전 난이도 룬 TC만 바꿉니다. 사다리는 노드랍 없음, 카운티스는 한 번 뽑을 때 25%입니다.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
@@ -193,6 +195,20 @@ export function DropRates() {
               }}
             >
               룬 드랍 2배
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const n = applyVanillaRuneNoDrop();
+                toast.success(
+                  n
+                    ? `룬 노드랍을 바닐라와 맞췄습니다 (${n}칸). 사다리는 없음, 카운티스는 25%`
+                    : "룬 노드랍이 이미 바닐라와 같습니다",
+                );
+              }}
+            >
+              룬 노드랍 바닐라
             </Button>
             <Button
               variant="ghost"
